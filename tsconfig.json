@@ -6,7 +6,6 @@
       "dom.iterable",
       "esnext"
     ],
-    "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -19,9 +18,10 @@
     "jsx": "react",
     "isolatedModules": true,
     "experimentalDecorators": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "allowJs": true
   },
   "include": [
-    "src", "../../../.Trash/loaders/shader-loader.js"
+    "src"
   ]
 }

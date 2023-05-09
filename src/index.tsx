@@ -4,10 +4,11 @@ import './index.module.scss';
 import * as serviceWorker from './serviceWorker';
 import { App } from './App';
 import { HashRouter, Route, Switch } from 'react-router-dom';
-import { TriangleDemo } from './App/examples/clip_plane';
+import { TriangleDemo } from './App/examples/triangle';
+import { ModelDemo } from './App/examples/model';
 
 const routes = [
-  { path: '/', app: TriangleDemo },
+  { path: '/', app: ModelDemo },
 ]
 
 ReactDOM.render(
