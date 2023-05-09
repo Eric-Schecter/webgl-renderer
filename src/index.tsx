@@ -8,7 +8,8 @@ import { TriangleDemo } from './App/examples/triangle';
 import { ModelDemo } from './App/examples/model';
 
 const routes = [
-  { path: '/', app: ModelDemo },
+  { path: '/', app: TriangleDemo },
+  { path: '/model', app: ModelDemo },
 ]
 
 ReactDOM.render(

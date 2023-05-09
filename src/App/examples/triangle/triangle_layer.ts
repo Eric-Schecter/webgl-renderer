@@ -1,4 +1,4 @@
-import { Layer, Shader } from "../../gl";
+import { Layer, Shader, Window } from "../../gl";
 import { Mesh } from "./mesh";
 import vs from './shader/triangle.vs';
 import fs from './shader/triangle.fs';
@@ -6,8 +6,8 @@ import fs from './shader/triangle.fs';
 export class TriangleLayer extends Layer {
   private mesh: Mesh;
   private shader: Shader;
-  constructor(private gl: WebGL2RenderingContext) {
-    super();
+  constructor(private gl: WebGL2RenderingContext, window: Window) {
+    super(window);
 
     const vertices = [
       -0.5, -0.5, 0.0, 1.0, 0.0, 0.0,
@@ -23,8 +23,8 @@ export class TriangleLayer extends Layer {
   }
 
   public update() {
-    // const { width, height } = this.window;
-    // this.gl.viewport(0, 0, width, height);
+    const { width, height } = this.window;
+    this.gl.viewport(0, 0, width, height);
 
     this.gl.clearColor(0, 0, 0, 1);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT);

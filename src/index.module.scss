@@ -1,4 +1,4 @@
-*{
+* {
   user-select: none;
   margin: 0;
   padding: 0;
@@ -12,7 +12,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-y: hidden;
-  height:100vh;
+  height: 100vh;
 }
 
 code {
@@ -20,19 +20,19 @@ code {
     monospace;
 }
 
-ul li{
+ul li {
   list-style-type: none;
 }
 
-button{
-  border:none;
+button {
+  border: none;
 }
 
-a{
+a {
   text-decoration: none;
   color: inherit;
 }
 
-input{
+input {
   cursor: pointer;
 }

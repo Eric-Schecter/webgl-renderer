@@ -5,7 +5,7 @@ export class TriangleDemo extends Application {
   constructor(container: HTMLDivElement) {
     super(container);
 
-    this.layers.push(new TriangleLayer(this.gl));
+    this.layers.push(new TriangleLayer(this.gl,this.window));
   }
 
 }

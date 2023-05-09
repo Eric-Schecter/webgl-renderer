@@ -30,6 +30,7 @@ export abstract class Application {
 
   private mainLoop = () => {
     this.clock.update();
+    this.window.updata();
     this.layers.forEach(layer => layer.update(this.clock.current));
     this.timer = requestAnimationFrame(this.mainLoop);
   }

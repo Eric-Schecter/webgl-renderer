@@ -1,6 +1,7 @@
 import { Layer, Shader } from "../../gl";
 import { GLTFLoader } from '../../gl/loader';
 import { Mesh } from "./mesh";
+import { Window } from '../../gl';
 import vs from './shader/triangle.vs';
 import fs from './shader/triangle.fs';
 
@@ -8,8 +9,8 @@ import fs from './shader/triangle.fs';
 export class ModelLayer extends Layer {
   private mesh?: Mesh;
   private shader?: Shader;
-  constructor(private gl: WebGL2RenderingContext) {
-    super();
+  constructor(private gl: WebGL2RenderingContext, window: Window) {
+    super(window);
 
     new GLTFLoader().load('models/DamagedHelmet/DamagedHelmet.gltf')
       .then((model) => {
@@ -24,8 +25,8 @@ export class ModelLayer extends Layer {
     if (!this.mesh || !this.shader) {
       return;
     }
-    // const { width, height } = this.window;
-    // this.gl.viewport(0, 0, width, height);
+    const { width, height } = this.window;
+    this.gl.viewport(0, 0, width, height);
 
     this.gl.clearColor(0, 0, 0, 1);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT);
