@@ -1,15 +1,16 @@
 import { Clock } from './clock';
+import { events } from './events';
 import { Layer } from './layer';
-import { Window } from './window';
+import { WGLWindow } from './window';
 
 export abstract class Application {
-  protected window: Window;
+  protected window: WGLWindow;
   private timer = 0;
   private clock = new Clock();
   protected layers: Layer[] = [];
 
   constructor(protected container: HTMLElement) {
-    this.window = new Window(container);
+    this.window = new WGLWindow(container);
     this.clock.reset();
   }
 
@@ -20,6 +21,7 @@ export abstract class Application {
   public dispose = () => {
     cancelAnimationFrame(this.timer);
     this.window.dispose();
+    events.dispose();
   }
 
   public setup = () => { };
@@ -30,7 +32,7 @@ export abstract class Application {
 
   private mainLoop = () => {
     this.clock.update();
-    this.window.updata();
+    this.window.update();
     this.layers.forEach(layer => layer.update(this.clock.current));
     this.timer = requestAnimationFrame(this.mainLoop);
   }

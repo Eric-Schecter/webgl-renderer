@@ -1,23 +1,23 @@
-import { Layer, Shader } from "../../gl";
+import { Layer, WGLWindow } from "../../gl";
 import { GLTFLoader } from '../../gl/loader';
 import { Mesh } from "./mesh";
-import { Window } from '../../gl';
 import vs from './shader/triangle.vs';
 import fs from './shader/triangle.fs';
+import { OrbitControl } from "../../gl/orbit_control";
+import { ModelShader } from "./model_shader";
 
 
 export class ModelLayer extends Layer {
   private mesh?: Mesh;
-  private shader?: Shader;
-  constructor(private gl: WebGL2RenderingContext, window: Window) {
+  private shader?: ModelShader;
+  constructor(private gl: WebGL2RenderingContext, window: WGLWindow,private control:OrbitControl) {
     super(window);
 
     new GLTFLoader().load('models/DamagedHelmet/DamagedHelmet.gltf')
       .then((model) => {
         const { positions, indices } = model[0];
         this.mesh = new Mesh(this.gl, Array.from(positions), Array.from(indices));
-
-        this.shader = new Shader(this.gl, vs, fs);
+        this.shader = new ModelShader(this.gl, vs, fs);
       })
   }
 
@@ -32,6 +32,9 @@ export class ModelLayer extends Layer {
     this.gl.clear(this.gl.COLOR_BUFFER_BIT);
 
     this.shader.bind();
+
+    this.shader.updateProjectMatrix(this.control.projectMatrix);
+    this.shader.updateViewMatrix(this.control.viewMatrix);
 
     this.mesh.bind();
     this.mesh.render();
