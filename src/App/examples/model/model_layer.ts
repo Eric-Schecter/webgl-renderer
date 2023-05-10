@@ -1,16 +1,14 @@
-import { Layer, WGLWindow } from "../../gl";
-import { GLTFLoader } from '../../gl/loader';
+import { Layer, WGLWindow, GLTFLoader, OrbitControl } from "../../gl";
 import { Mesh } from "./mesh";
 import vs from './shader/triangle.vs';
 import fs from './shader/triangle.fs';
-import { OrbitControl } from "../../gl/orbit_control";
 import { ModelShader } from "./model_shader";
 
 
 export class ModelLayer extends Layer {
   private mesh?: Mesh;
   private shader?: ModelShader;
-  constructor(private gl: WebGL2RenderingContext, window: WGLWindow,private control:OrbitControl) {
+  constructor(private gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl) {
     super(window);
 
     new GLTFLoader().load('models/DamagedHelmet/DamagedHelmet.gltf')
@@ -27,6 +25,8 @@ export class ModelLayer extends Layer {
     }
     const { width, height } = this.window;
     this.gl.viewport(0, 0, width, height);
+
+    this.gl.enable(this.gl.DEPTH_TEST);
 
     this.gl.clearColor(0, 0, 0, 1);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT);
