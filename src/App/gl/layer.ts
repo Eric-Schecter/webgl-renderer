@@ -1,6 +1,6 @@
-import { Window } from "./window";
+import { WGLWindow } from "./window";
 
 export abstract class Layer {
-  constructor(protected window:Window){}
+  constructor(protected window: WGLWindow) { }
   abstract update(time: number): void;
 }

@@ -1,5 +1,5 @@
 import { Clock } from './clock';
-import { events } from './events';
+import { WGLEvents } from './events';
 import { Layer } from './layer';
 import { WGLWindow } from './window';
 
@@ -21,7 +21,7 @@ export abstract class Application {
   public dispose = () => {
     cancelAnimationFrame(this.timer);
     this.window.dispose();
-    events.dispose();
+    WGLEvents.getInstance().dispose();
   }
 
   public setup = () => { };
@@ -33,6 +33,7 @@ export abstract class Application {
   private mainLoop = () => {
     this.clock.update();
     this.window.update();
+    WGLEvents.getInstance().update();
     this.layers.forEach(layer => layer.update(this.clock.current));
     this.timer = requestAnimationFrame(this.mainLoop);
   }

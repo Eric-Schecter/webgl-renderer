@@ -1,38 +1,43 @@
 import { vec2, vec3 } from 'gl-matrix';
 import { Camera } from "./camera";
-import { events, WGLEvent } from "./events";
+import { WGLEvents, Disposable, EventInfo } from "./events";
 
-class OrbitControlEvent extends WGLEvent {
+class OrbitControlEvent implements Disposable {
   private startPos = vec2.create();
   constructor(private canvas: HTMLCanvasElement, private control: OrbitControl) {
-    super();
-  }
-  public setup = () => {
     this.canvas.addEventListener('mousedown', this.mousedown);
-  };
+  }
 
   public dispose = () => {
     this.canvas.removeEventListener('mousedown', this.mousedown);
   };
 
   private mousedown = (e: MouseEvent) => {
-    this.canvas.addEventListener('mousemove', this.mousemove);
-    this.canvas.addEventListener('mouseup', this.mouseup);
+    this.canvas.addEventListener('mousemove', this.mousemoveDispatcher);
+    WGLEvents.getInstance().register('mousemove', this.canvas, this.mousemove);
+    this.canvas.addEventListener('mouseup', this.mouseupDispatcher);
+    WGLEvents.getInstance().register('mouseup', this.canvas, this.mouseup);
     this.startPos = this.getMousePos(e);
   }
+
+  private mousemoveDispatcher = (e: MouseEvent) => WGLEvents.getInstance().dispatch(new EventInfo('mousemove', this.canvas, e));
 
   private mousemove = (e: MouseEvent) => {
     const currPos = this.getMousePos(e);
     const offset = vec2.sub(vec2.create(), currPos, this.startPos);
     this.control.rotateAzimuth(offset[0] * 0.01);
-    this.control.rotatePolar(offset[1] * 0.01);
+    this.control.rotatePolar(-offset[1] * 0.01);
     this.control.setViewMatrix();
     this.startPos = currPos;
   }
 
+  private mouseupDispatcher = (e: MouseEvent) => WGLEvents.getInstance().dispatch(new EventInfo('mouseup', this.canvas, e));
+
   private mouseup = () => {
-    this.canvas.removeEventListener('mousemove', this.mousemove);
-    this.canvas.removeEventListener('mouseup', this.mouseup);
+    this.canvas.removeEventListener('mousemove', this.mousemoveDispatcher);
+    WGLEvents.getInstance().unregister('mousemove', this.canvas, this.mousemove);
+    this.canvas.removeEventListener('mouseup', this.mouseupDispatcher);
+    WGLEvents.getInstance().unregister('mouseup', this.canvas, this.mouseup);
   }
 
   private getMousePos = (e: MouseEvent) => {
@@ -41,10 +46,11 @@ class OrbitControlEvent extends WGLEvent {
   }
 }
 
-export class OrbitControl {
+export class OrbitControl implements Disposable {
   private camera = new Camera();
   private minRadius = -Infinity;
   private maxRadius = Infinity;
+  private event: Disposable;
   constructor(
     canvas: HTMLCanvasElement,
     private center: vec3,
@@ -53,7 +59,7 @@ export class OrbitControl {
     private azimuthAngle: number,
     private polarAngle: number
   ) {
-    events.attach(new OrbitControlEvent(canvas, this));
+    this.event = new OrbitControlEvent(canvas, this);
     this.camera.pos = this.getEye();
     this.camera.up = up;
   }
@@ -124,6 +130,10 @@ export class OrbitControl {
         ? max
         : value;
   }
+
+  public dispose = () => {
+    this.event.dispose();
+  };
 
   public get projectMatrix() {
     return this.camera.projection;

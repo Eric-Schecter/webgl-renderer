@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { Application } from './gl';
 import styles from './index.module.scss';
+import { Options } from './components';
 
 type Props = {
   GL_App: new (container: HTMLDivElement) => Application
@@ -21,11 +22,14 @@ export const App = ({ GL_App }: Props) => {
       }
     }
     start();
-    return () => app.dispose();
+    return app.dispose;
   }, [ref, GL_App])
 
-  return <div
-    ref={ref}
-    className={styles.main}
-  />
+  return <div>
+    <div
+      ref={ref}
+      className={styles.main}
+    />
+    <Options containerRef={ref} />
+  </div>
 }

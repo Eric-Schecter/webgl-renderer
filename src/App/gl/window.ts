@@ -1,17 +1,15 @@
-import { events, WGLEvent } from "./events";
+import { WGLEvents, Disposable, EventInfo } from "./events";
 import { throwErrorIfInvalid } from "./utils";
 
-class ResizeEvent extends WGLEvent {
+class ResizeEvent implements Disposable {
   constructor(private canvas: HTMLCanvasElement) {
-    super();
+    WGLEvents.getInstance().register('resize', window, this.resize);
+    window.addEventListener('resize', () => WGLEvents.getInstance().dispatch(new EventInfo('resize', window)));
   }
 
-  public setup = () => {
-    window.addEventListener('resize', this.resize);
-  };
-
   public dispose = () => {
-    window.removeEventListener('resize', this.resize);
+    WGLEvents.getInstance().unregister('resize', window, this.resize);
+    window.removeEventListener('resize', () => WGLEvents.getInstance().dispatch(new EventInfo('resize', window)));
   };
 
   private resize = () => {
@@ -25,18 +23,19 @@ class ResizeEvent extends WGLEvent {
 export class WGLWindow {
   private m_gl: WebGL2RenderingContext;
   private extensions = [];
-  public canvas: HTMLCanvasElement;
+  private m_canvas: HTMLCanvasElement;
+  private event: Disposable;
 
   constructor(protected container: HTMLElement) {
-    this.canvas = document.createElement('canvas');
+    this.m_canvas = document.createElement('canvas');
     const { clientWidth, clientHeight } = this.container;
-    this.canvas.width = clientWidth;
-    this.canvas.height = clientHeight;
-    this.canvas.style.width = '100%';
-    this.canvas.style.height = '100%';
-    this.container.appendChild(this.canvas);
+    this.m_canvas.width = clientWidth;
+    this.m_canvas.height = clientHeight;
+    this.m_canvas.style.width = '100%';
+    this.m_canvas.style.height = '100%';
+    this.container.appendChild(this.m_canvas);
 
-    this.m_gl = throwErrorIfInvalid(this.canvas.getContext('webgl2'));
+    this.m_gl = throwErrorIfInvalid(this.m_canvas.getContext('webgl2'));
     this.extensions.forEach(extension => {
       const ext = this.m_gl.getExtension(extension);
       if (!ext) {
@@ -44,7 +43,7 @@ export class WGLWindow {
       }
     });
 
-    events.attach(new ResizeEvent(this.canvas));
+    this.event = new ResizeEvent(this.m_canvas);
   }
 
   public update = () => {
@@ -52,11 +51,15 @@ export class WGLWindow {
   }
 
   public dispose = () => {
-
+    this.event.dispose();
   }
 
   public get gl() {
     return this.m_gl;
+  }
+
+  public get canvas() {
+    return this.m_canvas;
   }
 
   public get width() {
