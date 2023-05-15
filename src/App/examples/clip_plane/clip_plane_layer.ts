@@ -9,6 +9,7 @@ import { ModelShader } from "./model_shader";
 import { PlaneGeometry } from "./plane";
 import { PlaneShader } from "./plane_shader";
 import { GUIHandler } from "../../gui";
+import { OptionFolder } from "../../gui/option_folder";
 
 export class ClipPlaneLayer extends Layer {
   private mesh?: Mesh;
@@ -28,7 +29,7 @@ export class ClipPlaneLayer extends Layer {
         this.modelShader = new ModelShader(this.gl, modelVS, modelFS);
       })
 
-    const folder = GUIHandler.getInstance().createSelectionFolder('mode');
+    const folder = GUIHandler.getInstance().createFolder('mode', OptionFolder);
     folder.addItem('render plane', () => this.needRenderPlane = !this.needRenderPlane, this.needRenderPlane);
   }
 

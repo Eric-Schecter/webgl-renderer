@@ -1,10 +1,6 @@
-import { GUI } from "dat.gui";
+import { Folder } from "./folder";
 
-export class OptionFolder {
-  private data: { [prop: string]: boolean } = { 'a': true };
-  constructor(private folder: GUI, isOpened = true) {
-    isOpened && this.folder.open();
-  }
+export class OptionFolder extends Folder {
   public addItem = (item: string, cb: Function, value = false) => {
     if (!this.data[item]) {
       this.data[item] = value;

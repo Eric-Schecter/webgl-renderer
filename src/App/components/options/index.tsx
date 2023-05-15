@@ -1,6 +1,6 @@
 import { RefObject, useEffect } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import { GUIHandler } from "../../gui";
+import { GUIHandler, RadioFolder } from "../../gui";
 import { routes } from "../../routes";
 
 type Props = {
@@ -16,7 +16,7 @@ export const Options = ({ containerRef }: Props) => {
     }
     const gui = GUIHandler.getInstance();
     gui.append(containerRef.current);
-    const folder = GUIHandler.getInstance().createRadioFolder('pages');
+    const folder = GUIHandler.getInstance().createFolder('pages', RadioFolder);
     routes.forEach(({ path, name }) => {
       folder.addItem(name, () => navigate.push(path), path === pathname);
     })
