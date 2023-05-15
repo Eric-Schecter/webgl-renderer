@@ -8,15 +8,17 @@ import planeFS from './shader/plane.fs';
 import { ModelShader } from "./model_shader";
 import { PlaneGeometry } from "./plane";
 import { PlaneShader } from "./plane_shader";
+import { GUIHandler } from "../../gui";
 
 export class ClipPlaneLayer extends Layer {
   private mesh?: Mesh;
   private modelShader?: ModelShader;
   private plane: Mesh;
   private planeShader: PlaneShader;
+  private needRenderPlane = true;
   constructor(private gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl) {
     super(window);
-    const { vertices, indices } = new PlaneGeometry(3,3, 1, 1);
+    const { vertices, indices } = new PlaneGeometry(3, 3, 1, 1);
     this.plane = new Mesh(this.gl, vertices, indices);
     this.planeShader = new PlaneShader(this.gl, planeVS, planeFS);
     new GLTFLoader().load('models/DamagedHelmet/DamagedHelmet.gltf')
@@ -25,6 +27,9 @@ export class ClipPlaneLayer extends Layer {
         this.mesh = new Mesh(this.gl, Array.from(positions), Array.from(indices));
         this.modelShader = new ModelShader(this.gl, modelVS, modelFS);
       })
+
+    const folder = GUIHandler.getInstance().createSelectionFolder('mode');
+    folder.addItem('render plane', () => this.needRenderPlane = !this.needRenderPlane, this.needRenderPlane);
   }
 
   public update() {
@@ -55,18 +60,20 @@ export class ClipPlaneLayer extends Layer {
     this.modelShader.unbind();
 
     // render plane
-    this.gl.enable(this.gl.BLEND);
-    this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
+    if (this.needRenderPlane) {
+      this.gl.enable(this.gl.BLEND);
+      this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
 
-    this.planeShader.bind();
+      this.planeShader.bind();
 
-    this.planeShader.updateProjectMatrix(this.control.projectMatrix);
-    this.planeShader.updateViewMatrix(this.control.viewMatrix);
+      this.planeShader.updateProjectMatrix(this.control.projectMatrix);
+      this.planeShader.updateViewMatrix(this.control.viewMatrix);
 
-    this.plane.bind();
-    this.plane.render();
-    this.plane.unbind();
+      this.plane.bind();
+      this.plane.render();
+      this.plane.unbind();
 
-    this.planeShader.unbind();
+      this.planeShader.unbind();
+    }
   }
 }

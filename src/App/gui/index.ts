@@ -1,5 +1,6 @@
 import { GUI } from "dat.gui";
 import { throwErrorIfInvalid } from "../gl/utils";
+import { OptionFolder } from "./option_folder";
 import { RadioFolder } from "./radio_folder";
 
 export class GUIHandler {
@@ -28,6 +29,11 @@ export class GUIHandler {
     const gui = throwErrorIfInvalid(this.gui);
     const folder = gui.addFolder(folderName);
     return new RadioFolder(folder);
+  }
+  public createSelectionFolder = (folderName: string) => {
+    const gui = throwErrorIfInvalid(this.gui);
+    const folder = gui.addFolder(folderName);
+    return new OptionFolder(folder);
   }
   public dispose = () => {
     this.gui = undefined;
