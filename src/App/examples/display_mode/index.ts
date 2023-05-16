@@ -4,6 +4,7 @@ import { OrbitControl } from "../../gl/orbit_control";
 import { GUIHandler, RadioFolder } from "../../gui";
 import { MeshWireframeLayer } from "./mesh_wireframe_layer";
 import { ModelLayer } from "./model_layer";
+import { SurfaceWireframeLayer } from "./surface_wireframe_layer";
 import { TransparentLayer } from "./transparent_layer";
 import { WireframeLayer } from "./wireframe_layer";
 
@@ -28,11 +29,13 @@ export class DisplayModeDemo extends Application {
     const wireframeLayer = new WireframeLayer(this.gl, this.window, this.control, false);
     const meshWireframeLayer = new MeshWireframeLayer(this.gl, this.window, this.control, false);
     const transparentLayer = new TransparentLayer(this.gl, this.window, this.control, false);
+    const surfaceWireframeLayer = new SurfaceWireframeLayer(this.gl, this.window, this.control, false);
     const layers = [
       meshLayer,
       wireframeLayer,
       meshWireframeLayer,
       transparentLayer,
+      surfaceWireframeLayer,
     ]
     this.layers.push(...layers);
 
@@ -45,7 +48,7 @@ export class DisplayModeDemo extends Application {
     folder.addItem('wireframe', () => disableOthers(wireframeLayer), false);
     folder.addItem('mesh+wireframe', () => disableOthers(meshWireframeLayer), false);
     folder.addItem('transparent', () => disableOthers(transparentLayer), false);
-    // folder.addItem('Mesh with block - zbuffer', () => disableOthers(wireframeLayer), false);
+    folder.addItem('surface wireframe - zbuffer', () => disableOthers(surfaceWireframeLayer), false);
     // folder.addItem('Mesh with block - framebuffer', () => disableOthers(wireframeLayer), false);
     // folder.addItem('Mesh with block - stencil', () => disableOthers(wireframeLayer), false);
   }
