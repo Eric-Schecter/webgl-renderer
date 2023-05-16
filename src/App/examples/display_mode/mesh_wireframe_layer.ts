@@ -1,5 +1,5 @@
 import { Layer, WGLWindow, GLTFLoader, OrbitControl } from "../../gl";
-import { vec3 } from 'gl-matrix';
+import { mat4, vec3 } from 'gl-matrix';
 import { Mesh } from "./mesh";
 import vs from './shader/model.vs';
 import fs from './shader/model.fs';
@@ -40,6 +40,7 @@ export class MeshWireframeLayer extends Layer {
     this.colorShader.bind();
     this.colorShader.updateProjectMatrix(this.control.projectMatrix);
     this.colorShader.updateViewMatrix(this.control.viewMatrix);
+    this.colorShader.updateModelMatrix(mat4.create());
     this.colorShader.updateColor(vec3.fromValues(0, 0, 0));
     this.mesh.wireframe = true;
     this.mesh.render();
@@ -48,6 +49,7 @@ export class MeshWireframeLayer extends Layer {
     this.shader.bind();
     this.shader.updateProjectMatrix(this.control.projectMatrix);
     this.shader.updateViewMatrix(this.control.viewMatrix);
+    this.shader.updateModelMatrix(mat4.create());
     this.shader.updateAlpha(1);
     this.mesh.wireframe = false;
     this.mesh.render();

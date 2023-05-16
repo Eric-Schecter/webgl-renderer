@@ -3,6 +3,7 @@ import { Mesh } from "./mesh";
 import vs from './shader/model.vs';
 import fs from './shader/model.fs';
 import { ModelShader } from "./model_shader";
+import { mat4 } from "gl-matrix";
 
 export class WireframeLayer extends Layer {
   private mesh?: Mesh;
@@ -33,6 +34,7 @@ export class WireframeLayer extends Layer {
     this.shader.bind();
     this.shader.updateProjectMatrix(this.control.projectMatrix);
     this.shader.updateViewMatrix(this.control.viewMatrix);
+    this.shader.updateModelMatrix(mat4.create());
     this.shader.updateAlpha(1);
 
     this.mesh.bind();
