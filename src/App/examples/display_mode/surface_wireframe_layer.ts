@@ -1,16 +1,13 @@
 import { Layer, WGLWindow, GLTFLoader, OrbitControl } from "../../gl";
-import { mat4, vec3 } from 'gl-matrix';
+import { mat4 } from 'gl-matrix';
 import { Mesh } from "./mesh";
 import vs from './shader/model.vs';
 import fs from './shader/model.fs';
-import colorfs from './shader/model_color.fs';
 import { ModelShader } from "./model_shader";
-import { ModelColorShader } from "./model_color_shader";
 
 export class SurfaceWireframeLayer extends Layer {
   private mesh?: Mesh;
   private shader?: ModelShader;
-  private colorShader?: ModelColorShader;
   constructor(private gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl, visible: boolean) {
     super(window, visible);
 
@@ -19,12 +16,11 @@ export class SurfaceWireframeLayer extends Layer {
         const { positions, indices } = model[0];
         this.mesh = new Mesh(this.gl, Array.from(positions), Array.from(indices), true);
         this.shader = new ModelShader(this.gl, vs, fs);
-        this.colorShader = new ModelColorShader(this.gl, vs, colorfs);
       })
   }
 
   public update() {
-    if (!this.mesh || !this.shader || !this.colorShader) {
+    if (!this.mesh || !this.shader) {
       return;
     }
     const { width, height } = this.window;
@@ -45,17 +41,16 @@ export class SurfaceWireframeLayer extends Layer {
     this.shader.updateAlpha(1);
     this.mesh.wireframe = false;
     this.mesh.render();
-    this.shader.unbind();
 
     this.gl.colorMask(true, true, true, true);
-    this.colorShader.bind();
-    this.colorShader.updateProjectMatrix(this.control.projectMatrix);
-    this.colorShader.updateViewMatrix(this.control.viewMatrix);
-    this.colorShader.updateModelMatrix(mat4.create());
-    this.colorShader.updateColor(vec3.fromValues(1, 1, 1));
+    this.shader.bind();
+    this.shader.updateProjectMatrix(this.control.projectMatrix);
+    this.shader.updateViewMatrix(this.control.viewMatrix);
+    this.shader.updateModelMatrix(mat4.create());
+    this.shader.updateAlpha(1);
     this.mesh.wireframe = true;
     this.mesh.render();
-    this.colorShader.unbind();
+    this.shader.unbind();
 
     this.mesh.unbind();
   }
