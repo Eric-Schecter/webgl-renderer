@@ -6,11 +6,23 @@ class OrbitControlEvent implements Disposable {
   private startPos = vec2.create();
   constructor(private canvas: HTMLCanvasElement, private control: OrbitControl) {
     this.canvas.addEventListener('mousedown', this.mousedown);
+    this.canvas.addEventListener('wheel', this.wheel);
+    this.canvas.addEventListener('contextmenu', this.disableContext);
   }
 
   public dispose = () => {
     this.canvas.removeEventListener('mousedown', this.mousedown);
+    this.canvas.removeEventListener('contextmenu', this.disableContext);
   };
+
+  private disableContext = (e:MouseEvent) => {
+    e.preventDefault();
+  }
+
+  private wheel = (e: WheelEvent) => {
+    const { deltaY } = e;
+    this.control.zoom(deltaY / 100);
+  }
 
   private mousedown = (e: MouseEvent) => {
     this.canvas.addEventListener('mousemove', this.mousemoveDispatcher);
@@ -23,12 +35,22 @@ class OrbitControlEvent implements Disposable {
   private mousemoveDispatcher = (e: MouseEvent) => WGLEvents.getInstance().dispatch(new EventInfo('mousemove', this.canvas, e));
 
   private mousemove = (e: MouseEvent) => {
-    const currPos = this.getMousePos(e);
-    const offset = vec2.sub(vec2.create(), currPos, this.startPos);
-    this.control.rotateAzimuth(offset[0] * 0.01);
-    this.control.rotatePolar(-offset[1] * 0.01);
-    this.control.setViewMatrix();
-    this.startPos = currPos;
+    const { buttons } = e;
+    if (buttons === 1) {
+      const currPos = this.getMousePos(e);
+      const offset = vec2.sub(vec2.create(), currPos, this.startPos);
+      this.control.rotateAzimuth(offset[0] * 0.01);
+      this.control.rotatePolar(-offset[1] * 0.01);
+      this.control.setViewMatrix();
+      this.startPos = currPos;
+    } else if (buttons === 2) {
+      const currPos = this.getMousePos(e);
+      const offset = vec2.sub(vec2.create(), currPos, this.startPos);
+      this.control.moveHorizontal(-offset[0] * 0.01);
+      this.control.moveVertical(-offset[1] * 0.01);
+      this.control.setViewMatrix();
+      this.startPos = currPos;
+    }
   }
 
   private mouseupDispatcher = (e: MouseEvent) => WGLEvents.getInstance().dispatch(new EventInfo('mouseup', this.canvas, e));
@@ -93,6 +115,7 @@ export class OrbitControl implements Disposable {
 
   public zoom(by: number) {
     this.radius = this.clamp(this.radius + by, this.minRadius, this.maxRadius);
+    this.setViewMatrix();
     return this;
   }
 
