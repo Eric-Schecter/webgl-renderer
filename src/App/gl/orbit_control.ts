@@ -6,7 +6,8 @@ class OrbitControlEvent implements Disposable {
   private startPos = vec2.create();
   constructor(private canvas: HTMLCanvasElement, private control: OrbitControl) {
     this.canvas.addEventListener('mousedown', this.mousedown);
-    this.canvas.addEventListener('wheel', this.wheel);
+    this.canvas.addEventListener('wheel', this.wheelDispatcher);
+    WGLEvents.getInstance().register('wheel', this.canvas, this.wheel);
     this.canvas.addEventListener('contextmenu', this.disableContext);
   }
 
@@ -18,6 +19,8 @@ class OrbitControlEvent implements Disposable {
   private disableContext = (e:MouseEvent) => {
     e.preventDefault();
   }
+
+  private wheelDispatcher = (e: MouseEvent) => WGLEvents.getInstance().dispatch(new EventInfo('wheel', this.canvas, e));
 
   private wheel = (e: WheelEvent) => {
     const { deltaY } = e;
@@ -69,8 +72,8 @@ class OrbitControlEvent implements Disposable {
 }
 
 export class OrbitControl implements Disposable {
-  private minRadius = -Infinity;
-  private maxRadius = Infinity;
+  private m_minRadius = 0.1;
+  private m_maxRadius = Infinity;
   private event: Disposable;
   constructor(
     canvas: HTMLCanvasElement,
@@ -114,7 +117,7 @@ export class OrbitControl implements Disposable {
   }
 
   public zoom(by: number) {
-    this.radius = this.clamp(this.radius + by, this.minRadius, this.maxRadius);
+    this.radius = this.clamp(this.radius + by, this.m_minRadius, this.m_maxRadius);
     this.setViewMatrix();
     return this;
   }
@@ -165,4 +168,12 @@ export class OrbitControl implements Disposable {
   public get viewMatrix() {
     return this.camera.view;
   }
+
+  public set minRadius(value:number){
+    this.m_minRadius = value;
+  };
+
+  public set maxRadius(value:number){
+    this.m_maxRadius = value;
+  };
 }
