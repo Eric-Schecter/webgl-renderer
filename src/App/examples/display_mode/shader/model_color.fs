@@ -7,5 +7,5 @@ uniform vec3 u_color;
 out vec4 fColor;
 
 void main(){
-    fColor=vec4(1.f);
+    fColor=vec4(u_color,1.);
 }

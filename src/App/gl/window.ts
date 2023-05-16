@@ -14,7 +14,7 @@ export class WGLWindow {
     this.m_canvas.style.height = '100%';
     this.container.appendChild(this.m_canvas);
 
-    this.m_gl = throwErrorIfInvalid(this.m_canvas.getContext('webgl2'));
+    this.m_gl = throwErrorIfInvalid(this.m_canvas.getContext('webgl2', { stencil: true }));
     this.extensions.forEach(extension => {
       const ext = this.m_gl.getExtension(extension);
       if (!ext) {
