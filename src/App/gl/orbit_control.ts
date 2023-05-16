@@ -47,12 +47,12 @@ class OrbitControlEvent implements Disposable {
 }
 
 export class OrbitControl implements Disposable {
-  private camera = new Camera();
   private minRadius = -Infinity;
   private maxRadius = Infinity;
   private event: Disposable;
   constructor(
     canvas: HTMLCanvasElement,
+    private camera: Camera,
     private center: vec3,
     up: vec3,
     private radius: number,

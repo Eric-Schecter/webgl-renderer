@@ -1,30 +1,9 @@
-import { WGLEvents, Disposable, EventInfo } from "./events";
 import { throwErrorIfInvalid } from "./utils";
-
-class ResizeEvent implements Disposable {
-  constructor(private canvas: HTMLCanvasElement) {
-    WGLEvents.getInstance().register('resize', window, this.resize);
-    window.addEventListener('resize', () => WGLEvents.getInstance().dispatch(new EventInfo('resize', window)));
-  }
-
-  public dispose = () => {
-    WGLEvents.getInstance().unregister('resize', window, this.resize);
-    window.removeEventListener('resize', () => WGLEvents.getInstance().dispatch(new EventInfo('resize', window)));
-  };
-
-  private resize = () => {
-    if (this.canvas.width !== this.canvas.clientWidth || this.canvas.height !== this.canvas.clientHeight) {
-      this.canvas.width = this.canvas.clientWidth;
-      this.canvas.height = this.canvas.clientHeight;
-    }
-  }
-}
 
 export class WGLWindow {
   private m_gl: WebGL2RenderingContext;
   private extensions = [];
   private m_canvas: HTMLCanvasElement;
-  private event: Disposable;
 
   constructor(protected container: HTMLElement) {
     this.m_canvas = document.createElement('canvas');
@@ -42,8 +21,6 @@ export class WGLWindow {
         console.log(`failed to get ${extension}`);
       }
     });
-
-    this.event = new ResizeEvent(this.m_canvas);
   }
 
   public update = () => {
@@ -51,7 +28,7 @@ export class WGLWindow {
   }
 
   public dispose = () => {
-    this.event.dispose();
+
   }
 
   public get gl() {
