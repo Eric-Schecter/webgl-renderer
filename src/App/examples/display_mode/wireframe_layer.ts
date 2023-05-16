@@ -4,17 +4,16 @@ import vs from './shader/model.vs';
 import fs from './shader/model.fs';
 import { ModelShader } from "./model_shader";
 
-
-export class ModelLayer extends Layer {
+export class WireframeLayer extends Layer {
   private mesh?: Mesh;
   private shader?: ModelShader;
-  constructor(private gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl) {
-    super(window);
+  constructor(private gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl, visible: boolean) {
+    super(window, visible);
 
     new GLTFLoader().load('models/DamagedHelmet/DamagedHelmet.gltf')
       .then((model) => {
         const { positions, indices } = model[0];
-        this.mesh = new Mesh(this.gl, Array.from(positions), Array.from(indices));
+        this.mesh = new Mesh(this.gl, Array.from(positions), Array.from(indices), true);
         this.shader = new ModelShader(this.gl, vs, fs);
       })
   }
@@ -29,11 +28,12 @@ export class ModelLayer extends Layer {
     this.gl.enable(this.gl.DEPTH_TEST);
 
     this.gl.clearColor(0, 0, 0, 1);
-    this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
     this.shader.bind();
     this.shader.updateProjectMatrix(this.control.projectMatrix);
     this.shader.updateViewMatrix(this.control.viewMatrix);
+    this.shader.updateAlpha(1);
 
     this.mesh.bind();
     this.mesh.render();

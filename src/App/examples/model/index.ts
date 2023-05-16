@@ -1,6 +1,5 @@
 import { vec3 } from "gl-matrix";
-import { Application } from "../../gl";
-import { OrbitControl } from "../../gl/orbit_control";
+import { Application, OrbitControl } from "../../gl";
 import { ModelLayer } from "./model_layer";
 
 export class ModelDemo extends Application {

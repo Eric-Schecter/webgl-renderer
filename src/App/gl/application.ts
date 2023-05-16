@@ -34,7 +34,7 @@ export abstract class Application {
     this.clock.update();
     this.window.update();
     WGLEvents.getInstance().update();
-    this.layers.forEach(layer => layer.update(this.clock.current));
+    this.layers.forEach(layer => layer.visible && layer.update(this.clock.current));
     this.timer = requestAnimationFrame(this.mainLoop);
   }
 }

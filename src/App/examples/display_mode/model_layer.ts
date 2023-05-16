@@ -29,11 +29,12 @@ export class ModelLayer extends Layer {
     this.gl.enable(this.gl.DEPTH_TEST);
 
     this.gl.clearColor(0, 0, 0, 1);
-    this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
     this.shader.bind();
     this.shader.updateProjectMatrix(this.control.projectMatrix);
     this.shader.updateViewMatrix(this.control.viewMatrix);
+    this.shader.updateAlpha(1);
 
     this.mesh.bind();
     this.mesh.render();
