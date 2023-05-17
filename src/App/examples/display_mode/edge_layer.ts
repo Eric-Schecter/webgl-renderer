@@ -4,16 +4,16 @@ import { Mesh } from "./mesh";
 import vs from './shader/model.vs';
 import fs from './shader/model.fs';
 import copyVS from './shader/copy_shader.vs';
-import copyFS from './shader/copy_shader.fs';
+import edgeFS from './shader/edge_shader.fs';
 import { ModelShader } from "./model_shader";
 import { ScreenPlane } from "./screen_plane";
-import { CopyShader } from "./copy_shader";
+import { SobelShader } from "./sobel_shader";
 
 export class EdgeLayer extends Layer {
   private mesh?: Mesh;
   private plane: ScreenPlane;
   private shader?: ModelShader;
-  private copyShader: CopyShader;
+  private edgeShader: SobelShader;
   private renderpass: ColorDepthRenderPass;
   constructor(private gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl, visible: boolean) {
     super(window, visible);
@@ -21,7 +21,7 @@ export class EdgeLayer extends Layer {
     this.renderpass = new ColorDepthRenderPass(this.gl, width, height);
 
     this.plane = new ScreenPlane(this.gl);
-    this.copyShader = new CopyShader(this.gl, copyVS, copyFS);
+    this.edgeShader = new SobelShader(this.gl, copyVS, edgeFS);
 
     new GLTFLoader().load('models/DamagedHelmet/DamagedHelmet.gltf')
       .then((model) => {
@@ -62,14 +62,26 @@ export class EdgeLayer extends Layer {
     this.renderpass.bindForReadColor();
 
     // render buffer
-    this.copyShader.bind();
-    this.copyShader.updateTexture();
-    this.copyShader.updateSize(vec2.fromValues(width, height));
+    this.edgeShader.bind();
+    this.edgeShader.updateTexture();
+    this.edgeShader.updateSize(vec2.fromValues(width, height));
+    const hCoef = [
+      1.0, 0.0, -1.0,
+      2.0, 0.0, -2.0,
+      1.0, 0.0, -1.0
+    ];
+    const vCoef = [
+      1.0, 2.0, 1.0,
+      0.0, 0.0, 0.0,
+      -1.0, -2.0, -1.0
+    ];
+    this.edgeShader.updateHCoef(hCoef);
+    this.edgeShader.updateVCoef(vCoef);
 
     this.plane.bind();
     this.plane.render();
     this.plane.unbind();
 
-    this.copyShader.unbind();
+    this.edgeShader.unbind();
   }
 }
