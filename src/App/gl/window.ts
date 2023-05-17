@@ -2,7 +2,9 @@ import { throwErrorIfInvalid } from "./utils";
 
 export class WGLWindow {
   private m_gl: WebGL2RenderingContext;
-  private extensions = [];
+  private extensions = [
+    // 'EXT_color_buffer_float',
+  ];
   private m_canvas: HTMLCanvasElement;
 
   constructor(protected container: HTMLElement) {

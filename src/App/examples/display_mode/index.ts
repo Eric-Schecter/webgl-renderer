@@ -7,6 +7,7 @@ import { ModelLayer } from "./model_layer";
 import { OutlineLayer } from "./outline_layer";
 import { SurfaceWireframeLayer } from "./surface_wireframe_layer";
 import { TransparentLayer } from "./transparent_layer";
+import { WireframeDepthLayer } from "./wireframe_depth_layer";
 import { WireframeLayer } from "./wireframe_layer";
 
 export class DisplayModeDemo extends Application {
@@ -32,18 +33,19 @@ export class DisplayModeDemo extends Application {
     const transparentLayer = new TransparentLayer(this.gl, this.window, this.control, false);
     const surfaceWireframeLayer = new SurfaceWireframeLayer(this.gl, this.window, this.control, false);
     const outlineLayer = new OutlineLayer(this.gl, this.window, this.control, false);
-    const layers = [
+    const wireframeDepthLayer = new WireframeDepthLayer(this.gl, this.window, this.control, false);
+    this.layers.push(
       meshLayer,
       wireframeLayer,
       meshWireframeLayer,
       transparentLayer,
       surfaceWireframeLayer,
       outlineLayer,
-    ]
-    this.layers.push(...layers);
+      wireframeDepthLayer,
+    );
 
     const disableOthers = (selectedLayer: Layer) => {
-      layers.forEach(layer => layer.visible = layer === selectedLayer);
+      this.layers.forEach(layer => layer.visible = layer === selectedLayer);
     }
 
     const folder = GUIHandler.getInstance().createFolder('modes', RadioFolder);
@@ -52,8 +54,8 @@ export class DisplayModeDemo extends Application {
     folder.addItem('mesh+wireframe', () => disableOthers(meshWireframeLayer), false);
     folder.addItem('transparent', () => disableOthers(transparentLayer), false);
     folder.addItem('surface wireframe - zbuffer', () => disableOthers(surfaceWireframeLayer), false);
-    // folder.addItem('Mesh with block - framebuffer', () => disableOthers(wireframeLayer), false);
+    folder.addItem('wireframe - framebuffer', () => disableOthers(wireframeDepthLayer), false);
     folder.addItem('outline - stencil', () => disableOthers(outlineLayer), false);
   }
-
+  
 }
