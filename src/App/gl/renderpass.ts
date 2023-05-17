@@ -1,6 +1,7 @@
 import { Disposable } from "./events";
 import { throwErrorIfInvalid } from "./utils";
 
+// todo: set viewport to framebuffer size when use render pass
 export abstract class RenderPass {
   protected fbo: WebGLFramebuffer;
   constructor(protected gl: WebGL2RenderingContext) {
@@ -52,6 +53,7 @@ export class DepthRenderPass extends RenderPass implements Disposable {
   }
 }
 
+// no depth test support
 export class ColorRenderPass extends RenderPass implements Disposable {
   private colorTexture;
   constructor(gl: WebGL2RenderingContext, width: number, height: number) {
@@ -79,7 +81,7 @@ export class ColorRenderPass extends RenderPass implements Disposable {
     this.gl.bindTexture(this.gl.TEXTURE_2D, this.colorTexture);
   }
   public clear = () => {
-    this.gl.clear(this.gl.DEPTH_BUFFER_BIT);
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT);
   }
 }
 

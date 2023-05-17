@@ -2,6 +2,7 @@ import { vec3 } from "gl-matrix";
 import { Application, Layer } from "../../gl";
 import { OrbitControl } from "../../gl/orbit_control";
 import { GUIHandler, RadioFolder } from "../../gui";
+import { EdgeLayer } from "./edge_layer";
 import { MeshWireframeLayer } from "./mesh_wireframe_layer";
 import { ModelLayer } from "./model_layer";
 import { OutlineLayer } from "./outline_layer";
@@ -34,6 +35,7 @@ export class DisplayModeDemo extends Application {
     const surfaceWireframeLayer = new SurfaceWireframeLayer(this.gl, this.window, this.control, false);
     const outlineLayer = new OutlineLayer(this.gl, this.window, this.control, false);
     const wireframeDepthLayer = new WireframeDepthLayer(this.gl, this.window, this.control, false);
+    const edgeLayer = new EdgeLayer(this.gl, this.window, this.control, false);
     this.layers.push(
       meshLayer,
       wireframeLayer,
@@ -42,6 +44,7 @@ export class DisplayModeDemo extends Application {
       surfaceWireframeLayer,
       outlineLayer,
       wireframeDepthLayer,
+      edgeLayer,
     );
 
     const disableOthers = (selectedLayer: Layer) => {
@@ -54,8 +57,9 @@ export class DisplayModeDemo extends Application {
     folder.addItem('mesh+wireframe', () => disableOthers(meshWireframeLayer), false);
     folder.addItem('transparent', () => disableOthers(transparentLayer), false);
     folder.addItem('surface wireframe - zbuffer', () => disableOthers(surfaceWireframeLayer), false);
-    folder.addItem('wireframe - framebuffer', () => disableOthers(wireframeDepthLayer), false);
     folder.addItem('outline - stencil', () => disableOthers(outlineLayer), false);
+    folder.addItem('wireframe depth - framebuffer', () => disableOthers(wireframeDepthLayer), false);
+    folder.addItem('edge detection', () => disableOthers(edgeLayer), false);
   }
-  
+
 }

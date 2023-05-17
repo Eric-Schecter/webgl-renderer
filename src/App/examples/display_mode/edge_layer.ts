@@ -1,32 +1,32 @@
 import { mat4, vec2 } from "gl-matrix";
-import { Layer, WGLWindow, GLTFLoader, OrbitControl, DepthRenderPass } from "../../gl";
+import { Layer, WGLWindow, GLTFLoader, OrbitControl, ColorDepthRenderPass } from "../../gl";
 import { Mesh } from "./mesh";
 import vs from './shader/model.vs';
 import fs from './shader/model.fs';
 import copyVS from './shader/copy_shader.vs';
-import depthFS from './shader/depth_shader.fs';
+import copyFS from './shader/copy_shader.fs';
 import { ModelShader } from "./model_shader";
 import { ScreenPlane } from "./screen_plane";
 import { CopyShader } from "./copy_shader";
 
-export class WireframeDepthLayer extends Layer {
+export class EdgeLayer extends Layer {
   private mesh?: Mesh;
   private plane: ScreenPlane;
   private shader?: ModelShader;
   private copyShader: CopyShader;
-  private renderpass: DepthRenderPass;
+  private renderpass: ColorDepthRenderPass;
   constructor(private gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl, visible: boolean) {
     super(window, visible);
     const { width, height } = window;
-    this.renderpass = new DepthRenderPass(this.gl, width, height);
+    this.renderpass = new ColorDepthRenderPass(this.gl, width, height);
 
     this.plane = new ScreenPlane(this.gl);
-    this.copyShader = new CopyShader(this.gl, copyVS, depthFS);
+    this.copyShader = new CopyShader(this.gl, copyVS, copyFS);
 
     new GLTFLoader().load('models/DamagedHelmet/DamagedHelmet.gltf')
       .then((model) => {
         const { positions, indices } = model[0];
-        this.mesh = new Mesh(this.gl, Array.from(positions), Array.from(indices), true);
+        this.mesh = new Mesh(this.gl, Array.from(positions), Array.from(indices));
         this.shader = new ModelShader(this.gl, vs, fs);
       })
   }
@@ -59,7 +59,7 @@ export class WireframeDepthLayer extends Layer {
     this.shader.unbind();
 
     this.renderpass.unbind();
-    this.renderpass.bindForRead();
+    this.renderpass.bindForReadColor();
 
     // render buffer
     this.copyShader.bind();
