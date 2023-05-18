@@ -1,5 +1,6 @@
 import { vec3 } from "gl-matrix";
-import { Application, OrbitControl } from "../../gl";
+import { Application, GLTFLoader, OrbitControl, PerspectiveCamera } from "../../gl";
+import { Mesh } from "./mesh";
 import { ModelLayer } from "./model_layer";
 
 export class ModelDemo extends Application {
@@ -14,12 +15,17 @@ export class ModelDemo extends Application {
     const target = vec3.fromValues(0, 0, 0);
     const up = vec3.fromValues(0, 1, 0);
 
+    (this.camera as PerspectiveCamera).setProjection(fov, aspect, near, far);
+
     this.control = new OrbitControl(this.window.canvas, this.camera, target, up, 4, Math.PI / 3, Math.PI / 8);
-    this.control
-      .setViewMatrix()
-      .setProjectMatrix(fov, aspect, near, far);
+    this.control.updateViewMatrix()
 
-    this.layers.push(new ModelLayer(this.gl, this.window, this.control));
+    const modelLayer = new ModelLayer(this.gl, this.window, this.control);
+    this.layers.push(modelLayer);
+    new GLTFLoader().load('models/DamagedHelmet/DamagedHelmet.gltf')
+      .then((model) => {
+        const { positions, indices } = model[0];
+        modelLayer.mesh = new Mesh(this.gl, Array.from(positions), Array.from(indices));
+      })
   }
-
 }

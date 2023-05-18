@@ -1,5 +1,5 @@
 import { vec4 } from "gl-matrix";
-import { Layer, WGLWindow, GLTFLoader, OrbitControl } from "../../gl";
+import { Layer, WGLWindow, OrbitControl } from "../../gl";
 import { Mesh } from "./mesh";
 import modelVS from './shader/model.vs';
 import modelFS from './shader/model.fs';
@@ -12,6 +12,7 @@ import { GUIHandler } from "../../gui";
 import { OptionFolder } from "../../gui/option_folder";
 
 export class ClipPlaneLayer extends Layer {
+  public mesh?: Mesh;
   private modelShader?: ModelShader;
   private plane: Mesh;
   private planeShader: PlaneShader;
@@ -21,12 +22,7 @@ export class ClipPlaneLayer extends Layer {
     const { vertices, indices } = new PlaneGeometry(3, 3, 1, 1);
     this.plane = new Mesh(this.gl, vertices, indices);
     this.planeShader = new PlaneShader(this.gl, planeVS, planeFS);
-    new GLTFLoader().load('models/DamagedHelmet/DamagedHelmet.gltf')
-      .then((model) => {
-        const { positions, indices } = model[0];
-        this.mesh = new Mesh(this.gl, Array.from(positions), Array.from(indices));
-        this.modelShader = new ModelShader(this.gl, modelVS, modelFS);
-      })
+    this.modelShader = new ModelShader(this.gl, modelVS, modelFS);
 
     const folder = GUIHandler.getInstance().createFolder('mode', OptionFolder);
     folder.addItem('render plane', () => this.needRenderPlane = !this.needRenderPlane, this.needRenderPlane);

@@ -12,5 +12,7 @@ export abstract class AbstractMesh {
     this.gl.bindVertexArray(null);
   }
 
-  public abstract render(): void;
+  public render() {
+    this.gl.drawElements(this.gl.TRIANGLES, this.size, this.gl.UNSIGNED_SHORT, 0);
+  }
 }

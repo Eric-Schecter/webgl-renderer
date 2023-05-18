@@ -1,7 +1,8 @@
 import { vec3 } from "gl-matrix";
-import { Application } from "../../gl";
+import { Application, GLTFLoader } from "../../gl";
 import { OrbitControl } from "../../gl/orbit_control";
 import { ClipPlaneLayer } from "./clip_plane_layer";
+import { Mesh } from "./mesh";
 
 export class ClipPlaneDemo extends Application {
   private control: OrbitControl;
@@ -20,7 +21,16 @@ export class ClipPlaneDemo extends Application {
     this.control = new OrbitControl(this.window.canvas, this.camera, target, up, 4, Math.PI / 3, Math.PI / 8);
     this.control.updateViewMatrix();
 
-    this.layers.push(new ClipPlaneLayer(this.gl, this.window, this.control));
+    const clipPlaneLayer = new ClipPlaneLayer(this.gl, this.window, this.control)
+    this.layers.push(clipPlaneLayer);
+
+    new GLTFLoader().load('models/DamagedHelmet/DamagedHelmet.gltf')
+      .then((model) => {
+        const { positions, indices } = model[0];
+        clipPlaneLayer.mesh = new Mesh(this.gl, Array.from(positions), Array.from(indices));
+      })
+
+
   }
 
 }

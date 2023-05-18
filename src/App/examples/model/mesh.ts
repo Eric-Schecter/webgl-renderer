@@ -1,8 +1,8 @@
-export class Mesh {
-  private size = 0;
-  private vao: WebGLVertexArrayObject = 0;
+import { AbstractMesh } from "../../gl/mesh";
 
-  constructor(private gl: WebGL2RenderingContext, positions: number[], indices: number[]) {
+export class Mesh extends AbstractMesh {
+  constructor(gl: WebGL2RenderingContext, positions: number[], indices: number[]) {
+    super(gl);
     this.size = indices.length;
 
     // init
@@ -22,17 +22,5 @@ export class Mesh {
 
     // reset
     this.gl.bindVertexArray(null);
-  }
-
-  public bind() {
-    this.gl.bindVertexArray(this.vao)
-  }
-
-  public unbind() {
-    this.gl.bindVertexArray(null);
-  }
-
-  public render() {
-    this.gl.drawElements(this.gl.TRIANGLES, this.size, this.gl.UNSIGNED_SHORT, 0);
   }
 }

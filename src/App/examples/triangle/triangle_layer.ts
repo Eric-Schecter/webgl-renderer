@@ -1,12 +1,12 @@
-import { Layer, Shader, Window } from "../../gl";
+import { Layer, Shader, WGLWindow } from "../../gl";
 import { Mesh } from "./mesh";
 import vs from './shader/triangle.vs';
 import fs from './shader/triangle.fs';
 
 export class TriangleLayer extends Layer {
-  private mesh: Mesh;
+  public mesh: Mesh;
   private shader: Shader;
-  constructor(private gl: WebGL2RenderingContext, window: Window) {
+  constructor(private gl: WebGL2RenderingContext, window: WGLWindow) {
     super(window);
 
     const vertices = [
