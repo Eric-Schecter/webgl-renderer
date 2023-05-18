@@ -1,9 +1,10 @@
 import { Disposable } from "../events";
 import { RenderPass } from "./renderpass";
 
+// todo: texture manager to dispose
 export class DepthRenderPass extends RenderPass implements Disposable {
   private depthTexture;
-  constructor(gl: WebGL2RenderingContext, width: number, height: number) {
+  constructor(gl: WebGL2RenderingContext, protected width: number, protected height: number) {
     super(gl);
     this.bind();
 
@@ -31,10 +32,10 @@ export class DepthRenderPass extends RenderPass implements Disposable {
     this.gl.clear(this.gl.DEPTH_BUFFER_BIT);
   }
   public copyToScreen = (width: number, height: number) => {
-    this.bind();
-    this.bindForRead();
-    this.gl.bindFramebuffer(this.gl.DRAW_FRAMEBUFFER, null);
-    this.gl.blitFramebuffer(0, 0, width, height, 0, 0, width, height, this.gl.COLOR_BUFFER_BIT, this.gl.NEAREST);
-    this.unbind();
+    // this.bindForRead();
+    // this.gl.bindFramebuffer(this.gl.DRAW_FRAMEBUFFER, null);
+    // this.gl.bindFramebuffer(this.gl.READ_FRAMEBUFFER, this.fbo);
+    // this.gl.blitFramebuffer(0, 0, this.width, this.height, 0, 0, width, height, this.gl.DEPTH_BUFFER_BIT, this.gl.NEAREST);
+    // this.unbind();
   }
 }

@@ -17,8 +17,7 @@ export class EdgeLayer extends Layer {
   private renderpass: ColorDepthRenderPass;
   constructor(private gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl, visible: boolean) {
     super(window, visible);
-    const { width, height } = window;
-    this.renderpass = new ColorDepthRenderPass(this.gl, width, height);
+    this.renderpass = new ColorDepthRenderPass(this.gl, 2048, 2048);
 
     this.plane = new ScreenPlane(this.gl);
     this.edgeShader = new SobelShader(this.gl, copyVS, edgeFS);
@@ -55,6 +54,7 @@ export class EdgeLayer extends Layer {
     this.shader.unbind();
 
     this.renderpass.unbind();
+    this.gl.viewport(0, 0, width, height);
     this.renderpass.bindForReadColor();
 
     // render buffer

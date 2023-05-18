@@ -4,7 +4,7 @@ import { RenderPass } from "./renderpass";
 // no depth test support
 export class ColorRenderPass extends RenderPass implements Disposable {
   private colorTexture;
-  constructor(gl: WebGL2RenderingContext, width: number, height: number) {
+  constructor(gl: WebGL2RenderingContext, protected width: number, protected height: number) {
     super(gl);
     this.bind();
 
@@ -33,8 +33,9 @@ export class ColorRenderPass extends RenderPass implements Disposable {
   }
   public copyToScreen = (width: number, height: number) => {
     this.bindForRead();
-    this.gl.bindFramebuffer(this.gl.DRAW_FRAMEBUFFER, 0);
-    this.gl.blitFramebuffer(0, 0, width, height, 0, 0, width, height, this.gl.COLOR_BUFFER_BIT, this.gl.LINEAR);
+    this.gl.bindFramebuffer(this.gl.DRAW_FRAMEBUFFER, null);
+    this.gl.bindFramebuffer(this.gl.READ_FRAMEBUFFER, this.fbo);
+    this.gl.blitFramebuffer(0, 0, this.width, this.height, 0, 0, width, height, this.gl.COLOR_BUFFER_BIT, this.gl.NEAREST);
     this.unbind();
   }
 }
