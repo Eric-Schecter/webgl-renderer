@@ -1,6 +1,7 @@
 import { vec2, vec3 } from 'gl-matrix';
-import { Camera } from "./camera";
+import { Camera, OrthographicCamera } from "./camera";
 import { WGLEvents, Disposable, EventInfo } from "./events";
+import { clamp } from './utils';
 
 class OrbitControlEvent implements Disposable {
   private startPos = vec2.create();
@@ -16,7 +17,7 @@ class OrbitControlEvent implements Disposable {
     this.canvas.removeEventListener('contextmenu', this.disableContext);
   };
 
-  private disableContext = (e:MouseEvent) => {
+  private disableContext = (e: MouseEvent) => {
     e.preventDefault();
   }
 
@@ -44,14 +45,14 @@ class OrbitControlEvent implements Disposable {
       const offset = vec2.sub(vec2.create(), currPos, this.startPos);
       this.control.rotateAzimuth(offset[0] * 0.01);
       this.control.rotatePolar(-offset[1] * 0.01);
-      this.control.setViewMatrix();
+      this.control.updateViewMatrix();
       this.startPos = currPos;
     } else if (buttons === 2) {
       const currPos = this.getMousePos(e);
       const offset = vec2.sub(vec2.create(), currPos, this.startPos);
       this.control.moveHorizontal(-offset[0] * 0.01);
       this.control.moveVertical(-offset[1] * 0.01);
-      this.control.setViewMatrix();
+      this.control.updateViewMatrix();
       this.startPos = currPos;
     }
   }
@@ -77,7 +78,7 @@ export class OrbitControl implements Disposable {
   private event: Disposable;
   constructor(
     canvas: HTMLCanvasElement,
-    private camera: Camera,
+    public camera: Camera,
     private center: vec3,
     up: vec3,
     private radius: number,
@@ -105,20 +106,21 @@ export class OrbitControl implements Disposable {
     return vec3.normalize(vec3.create(), vec3.sub(vec3.create(), vec3.clone(this.center), this.getEye()));
   }
 
-  public setViewMatrix() {
+  public updateViewMatrix() {
     this.camera.pos = this.getEye();
-    this.camera.setView(this.center);
-    return this;
-  }
-
-  public setProjectMatrix(fov: number, aspect: number, near: number, far: number) {
-    this.camera.setProjection(fov, aspect, near, far);
+    this.camera.setViewMatrix(this.center);
     return this;
   }
 
   public zoom(by: number) {
-    this.radius = this.clamp(this.radius + by, this.m_minRadius, this.m_maxRadius);
-    this.setViewMatrix();
+    this.radius = clamp(this.radius + by, this.m_minRadius, this.m_maxRadius);
+    this.camera.pos = this.getEye();
+    if (this.camera instanceof OrthographicCamera) {
+      const ratio = 10;
+      this.camera.zoom(by / ratio);
+    } else {
+      this.camera.zoom(this.center);
+    }
     return this;
   }
 
@@ -145,16 +147,8 @@ export class OrbitControl implements Disposable {
 
   public rotatePolar(radians: number) {
     const piHalf = Math.PI / 2;
-    this.polarAngle = this.clamp(this.polarAngle + radians, -piHalf, piHalf);
+    this.polarAngle = clamp(this.polarAngle + radians, -piHalf, piHalf);
     return this;
-  }
-
-  private clamp = (value: number, min: number, max: number) => {
-    return value < min
-      ? min
-      : value > max
-        ? max
-        : value;
   }
 
   public dispose = () => {
@@ -162,18 +156,18 @@ export class OrbitControl implements Disposable {
   };
 
   public get projectMatrix() {
-    return this.camera.projection;
+    return this.camera.projectMatrix;
   }
 
   public get viewMatrix() {
-    return this.camera.view;
+    return this.camera.viewMatrix;
   }
 
-  public set minRadius(value:number){
+  public set minRadius(value: number) {
     this.m_minRadius = value;
   };
 
-  public set maxRadius(value:number){
+  public set maxRadius(value: number) {
     this.m_maxRadius = value;
   };
 }

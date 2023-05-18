@@ -15,10 +15,10 @@ export class ClipPlaneDemo extends Application {
     const target = vec3.fromValues(0, 0, 0);
     const up = vec3.fromValues(0, 1, 0);
 
+    this.camera.setProjection(fov, aspect, near, far);
+
     this.control = new OrbitControl(this.window.canvas, this.camera, target, up, 4, Math.PI / 3, Math.PI / 8);
-    this.control
-      .setViewMatrix()
-      .setProjectMatrix(fov, aspect, near, far);
+    this.control.updateViewMatrix();
 
     this.layers.push(new ClipPlaneLayer(this.gl, this.window, this.control));
   }

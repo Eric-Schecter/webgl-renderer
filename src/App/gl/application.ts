@@ -1,4 +1,5 @@
 import { Camera } from './camera';
+import { PerspectiveCamera } from './camera/perspective_camera';
 import { Clock } from './clock';
 import { Disposable, EventInfo, WGLEvents } from './events';
 import { Layer } from './layer';
@@ -29,12 +30,10 @@ export abstract class Application {
   private timer = 0;
   private clock = new Clock();
   private events: Disposable[] = [];
-  protected camera: Camera;
   protected layers: Layer[] = [];
 
-  constructor(protected container: HTMLElement) {
+  constructor(protected container: HTMLElement, protected camera: Camera = new PerspectiveCamera()) {
     this.window = new WGLWindow(container);
-    this.camera = new Camera();
     this.events.push(new ResizeEvent(this.window.canvas, this.camera));
     this.clock.reset();
   }

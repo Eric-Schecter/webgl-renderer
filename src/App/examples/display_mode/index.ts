@@ -1,6 +1,5 @@
 import { vec3 } from "gl-matrix";
-import { Application, Layer } from "../../gl";
-import { OrbitControl } from "../../gl/orbit_control";
+import { Application, Layer, OrbitControl, PerspectiveCamera } from "../../gl";
 import { GUIHandler, RadioFolder } from "../../gui";
 import { EdgeLayer } from "./edge_layer";
 import { MeshWireframeLayer } from "./mesh_wireframe_layer";
@@ -22,11 +21,11 @@ export class DisplayModeDemo extends Application {
     const far = 1000;
     const target = vec3.fromValues(0, 0, 0);
     const up = vec3.fromValues(0, 1, 0);
+    // (this.camera as OrthographicCamera).setProjection(2, 2, aspect, near, far)
+    (this.camera as PerspectiveCamera).setProjection(fov, aspect, near, far)
 
     this.control = new OrbitControl(this.window.canvas, this.camera, target, up, 4, Math.PI / 3, Math.PI / 8);
-    this.control
-      .setViewMatrix()
-      .setProjectMatrix(fov, aspect, near, far);
+    this.control.updateViewMatrix();
 
     const meshLayer = new ModelLayer(this.gl, this.window, this.control);
     const wireframeLayer = new WireframeLayer(this.gl, this.window, this.control, false);
