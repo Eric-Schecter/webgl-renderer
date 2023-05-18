@@ -19,6 +19,6 @@ export abstract class RenderPass {
   public unbind = () => {
     this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
   }
-  public abstract bindForRead: (id: number) => void;
+  // public abstract bindForRead: (id: number) => void;
   public abstract copyToScreen: (width: number, height: number) => void;
 }
