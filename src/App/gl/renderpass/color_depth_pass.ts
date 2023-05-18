@@ -42,6 +42,7 @@ export class ColorDepthRenderPass extends RenderPass implements Disposable {
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
   }
   public copyToScreen = (width: number, height: number) => {
+    this.gl.viewport(0, 0, width, height);
     this.bindForReadColor();
     this.gl.bindFramebuffer(this.gl.DRAW_FRAMEBUFFER, null);
     this.gl.bindFramebuffer(this.gl.READ_FRAMEBUFFER, this.fbo);

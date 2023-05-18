@@ -17,7 +17,8 @@ export class WireframeDepthLayer extends Layer {
   private renderpass: DepthRenderPass;
   constructor(private gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl, visible: boolean) {
     super(window, visible);
-    this.renderpass = new DepthRenderPass(this.gl, window.width, window.height);
+    const { width, height } = window;
+    this.renderpass = new DepthRenderPass(this.gl, width, height);
 
     this.plane = new ScreenPlane(this.gl);
     this.copyShader = new CopyShader(this.gl, copyVS, depthFS);

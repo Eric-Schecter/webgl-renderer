@@ -29,8 +29,6 @@ export class ClipPlaneDemo extends Application {
         const { positions, indices } = model[0];
         clipPlaneLayer.mesh = new Mesh(this.gl, Array.from(positions), Array.from(indices));
       })
-
-
   }
 
 }

@@ -1,5 +1,5 @@
 import { vec4 } from "gl-matrix";
-import { Layer, WGLWindow, OrbitControl } from "../../gl";
+import { Layer, WGLWindow, OrbitControl, OrthographicCamera, ColorDepthRenderPass } from "../../gl";
 import { Mesh } from "./mesh";
 import modelVS from './shader/model.vs';
 import modelFS from './shader/model.fs';
@@ -17,12 +17,17 @@ export class ClipPlaneLayer extends Layer {
   private plane: Mesh;
   private planeShader: PlaneShader;
   private needRenderPlane = true;
+  private camera: OrthographicCamera;
+  private renderpass: ColorDepthRenderPass;
   constructor(private gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl) {
     super(window);
     const { vertices, indices } = new PlaneGeometry(3, 3, 1, 1);
+    const { width, height } = window;
     this.plane = new Mesh(this.gl, vertices, indices);
     this.planeShader = new PlaneShader(this.gl, planeVS, planeFS);
     this.modelShader = new ModelShader(this.gl, modelVS, modelFS);
+    this.camera = new OrthographicCamera();
+    this.renderpass = new ColorDepthRenderPass(gl, width, height);
 
     const folder = GUIHandler.getInstance().createFolder('mode', OptionFolder);
     folder.addItem('render plane', () => this.needRenderPlane = !this.needRenderPlane, this.needRenderPlane);
@@ -39,6 +44,9 @@ export class ClipPlaneLayer extends Layer {
 
     this.gl.clearColor(0, 0, 0, 1);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+
+    this.renderpass.bind();
+    this.renderpass.clear();
 
     // render model
     this.modelShader.bind();
@@ -71,5 +79,7 @@ export class ClipPlaneLayer extends Layer {
 
       this.planeShader.unbind();
     }
+
+    this.renderpass.copyToScreen(width, height);
   }
 }
