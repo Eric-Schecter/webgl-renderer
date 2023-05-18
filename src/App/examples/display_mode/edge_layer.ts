@@ -1,6 +1,5 @@
 import { mat4, vec2 } from "gl-matrix";
-import { Layer, WGLWindow, GLTFLoader, OrbitControl, ColorDepthRenderPass } from "../../gl";
-import { Mesh } from "./mesh";
+import { Layer, WGLWindow, OrbitControl, ColorDepthRenderPass } from "../../gl";
 import vs from './shader/model.vs';
 import fs from './shader/model.fs';
 import copyVS from './shader/copy_shader.vs';
@@ -8,9 +7,10 @@ import edgeFS from './shader/edge_shader.fs';
 import { ModelShader } from "./model_shader";
 import { ScreenPlane } from "./screen_plane";
 import { SobelShader } from "./sobel_shader";
+import { Mesh } from "./mesh";
 
 export class EdgeLayer extends Layer {
-  private mesh?: Mesh;
+  public mesh?: Mesh;
   private plane: ScreenPlane;
   private shader?: ModelShader;
   private edgeShader: SobelShader;
@@ -23,12 +23,7 @@ export class EdgeLayer extends Layer {
     this.plane = new ScreenPlane(this.gl);
     this.edgeShader = new SobelShader(this.gl, copyVS, edgeFS);
 
-    new GLTFLoader().load('models/DamagedHelmet/DamagedHelmet.gltf')
-      .then((model) => {
-        const { positions, indices } = model[0];
-        this.mesh = new Mesh(this.gl, Array.from(positions), Array.from(indices));
-        this.shader = new ModelShader(this.gl, vs, fs);
-      })
+    this.shader = new ModelShader(this.gl, vs, fs);
   }
 
   public update() {
@@ -47,6 +42,7 @@ export class EdgeLayer extends Layer {
 
     // render mesh
     this.shader.bind();
+    this.mesh.wireframe = false;
     this.shader.updateProjectMatrix(this.control.projectMatrix);
     this.shader.updateViewMatrix(this.control.viewMatrix);
     this.shader.updateModelMatrix(mat4.create());

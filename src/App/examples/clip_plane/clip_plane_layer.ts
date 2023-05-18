@@ -12,7 +12,6 @@ import { GUIHandler } from "../../gui";
 import { OptionFolder } from "../../gui/option_folder";
 
 export class ClipPlaneLayer extends Layer {
-  private mesh?: Mesh;
   private modelShader?: ModelShader;
   private plane: Mesh;
   private planeShader: PlaneShader;

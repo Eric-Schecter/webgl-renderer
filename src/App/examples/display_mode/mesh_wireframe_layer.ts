@@ -1,4 +1,4 @@
-import { Layer, WGLWindow, GLTFLoader, OrbitControl } from "../../gl";
+import { Layer, WGLWindow, OrbitControl } from "../../gl";
 import { mat4, vec3 } from 'gl-matrix';
 import { Mesh } from "./mesh";
 import vs from './shader/model.vs';
@@ -8,19 +8,13 @@ import { ModelShader } from "./model_shader";
 import { ModelColorShader } from "./model_color_shader";
 
 export class MeshWireframeLayer extends Layer {
-  private mesh?: Mesh;
+  public mesh?: Mesh;
   private shader?: ModelShader;
   private colorShader?: ModelColorShader;
   constructor(private gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl, visible: boolean) {
     super(window, visible);
-
-    new GLTFLoader().load('models/DamagedHelmet/DamagedHelmet.gltf')
-      .then((model) => {
-        const { positions, indices } = model[0];
-        this.mesh = new Mesh(this.gl, Array.from(positions), Array.from(indices), true);
-        this.shader = new ModelShader(this.gl, vs, fs);
-        this.colorShader = new ModelColorShader(this.gl, vs, colorfs);
-      })
+    this.shader = new ModelShader(this.gl, vs, fs);
+    this.colorShader = new ModelColorShader(this.gl, vs, colorfs);
   }
 
   public update() {

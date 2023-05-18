@@ -30,4 +30,11 @@ export class DepthRenderPass extends RenderPass implements Disposable {
   public clear = () => {
     this.gl.clear(this.gl.DEPTH_BUFFER_BIT);
   }
+  public copyToScreen = (width: number, height: number) => {
+    this.bind();
+    this.bindForRead();
+    this.gl.bindFramebuffer(this.gl.DRAW_FRAMEBUFFER, null);
+    this.gl.blitFramebuffer(0, 0, width, height, 0, 0, width, height, this.gl.COLOR_BUFFER_BIT, this.gl.NEAREST);
+    this.unbind();
+  }
 }

@@ -1,4 +1,4 @@
-import { Layer, WGLWindow, GLTFLoader, OrbitControl } from "../../gl";
+import { Layer, WGLWindow, OrbitControl } from "../../gl";
 import { mat4, vec3 } from 'gl-matrix';
 import { Mesh } from "./mesh";
 import vs from './shader/model.vs';
@@ -6,17 +6,11 @@ import fs from './shader/model.fs';
 import { ModelShader } from "./model_shader";
 
 export class OutlineLayer extends Layer {
-  private mesh?: Mesh;
+  public mesh?: Mesh;
   private shader?: ModelShader;
   constructor(private gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl, visible: boolean) {
     super(window, visible);
-
-    new GLTFLoader().load('models/DamagedHelmet/DamagedHelmet.gltf')
-      .then((model) => {
-        const { positions, indices } = model[0];
-        this.mesh = new Mesh(this.gl, Array.from(positions), Array.from(indices));
-        this.shader = new ModelShader(this.gl, vs, fs);
-      })
+    this.shader = new ModelShader(this.gl, vs, fs);
   }
 
   public update() {
@@ -37,6 +31,7 @@ export class OutlineLayer extends Layer {
     const modelMatrix = mat4.create();
 
     this.mesh.bind();
+    this.mesh.wireframe = false;
 
     // write mesh info for mask
     // set 0xff as mask value

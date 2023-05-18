@@ -1,5 +1,5 @@
 import { mat4, vec2 } from "gl-matrix";
-import { Layer, WGLWindow, GLTFLoader, OrbitControl, DepthRenderPass } from "../../gl";
+import { Layer, WGLWindow, OrbitControl, DepthRenderPass } from "../../gl";
 import { Mesh } from "./mesh";
 import vs from './shader/model.vs';
 import fs from './shader/model.fs';
@@ -10,7 +10,7 @@ import { ScreenPlane } from "./screen_plane";
 import { CopyShader } from "./copy_shader";
 
 export class WireframeDepthLayer extends Layer {
-  private mesh?: Mesh;
+  public mesh?: Mesh;
   private plane: ScreenPlane;
   private shader?: ModelShader;
   private copyShader: CopyShader;
@@ -22,13 +22,7 @@ export class WireframeDepthLayer extends Layer {
 
     this.plane = new ScreenPlane(this.gl);
     this.copyShader = new CopyShader(this.gl, copyVS, depthFS);
-
-    new GLTFLoader().load('models/DamagedHelmet/DamagedHelmet.gltf')
-      .then((model) => {
-        const { positions, indices } = model[0];
-        this.mesh = new Mesh(this.gl, Array.from(positions), Array.from(indices), true);
-        this.shader = new ModelShader(this.gl, vs, fs);
-      })
+    this.shader = new ModelShader(this.gl, vs, fs);
   }
 
   public update() {
@@ -53,15 +47,16 @@ export class WireframeDepthLayer extends Layer {
     this.shader.updateAlpha(1);
 
     this.mesh.bind();
+    this.mesh.wireframe = true;
     this.mesh.render();
     this.mesh.unbind();
 
     this.shader.unbind();
 
     this.renderpass.unbind();
-    this.renderpass.bindForRead();
 
     // render buffer
+    this.renderpass.bindForRead();
     this.copyShader.bind();
     this.copyShader.updateTexture();
     this.copyShader.updateSize(vec2.fromValues(width, height));

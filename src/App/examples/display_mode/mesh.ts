@@ -1,8 +1,13 @@
-export class Mesh {
-  private size = 0;
-  private vao: WebGLVertexArrayObject = 0;
+import { AbstractMesh } from "../../gl/mesh";
+import { BoundingBox } from "./bounding_box";
 
-  constructor(private gl: WebGL2RenderingContext, positions: number[], indices: number[], public wireframe = false) {
+export class Mesh extends AbstractMesh {
+  public boundingBox = new BoundingBox();
+  public wireframe = false;
+
+  constructor(gl: WebGL2RenderingContext, positions: number[], indices: number[]) {
+    super(gl);
+
     this.size = indices.length;
 
     // init
@@ -22,14 +27,8 @@ export class Mesh {
 
     // reset
     this.gl.bindVertexArray(null);
-  }
 
-  public bind() {
-    this.gl.bindVertexArray(this.vao)
-  }
-
-  public unbind() {
-    this.gl.bindVertexArray(null);
+    this.boundingBox.setFromArray(positions);
   }
 
   public render() {

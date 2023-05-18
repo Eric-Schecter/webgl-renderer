@@ -1,7 +1,8 @@
 import { vec3 } from "gl-matrix";
-import { Application, Layer, OrbitControl, PerspectiveCamera } from "../../gl";
+import { Application, GLTFLoader, Layer, OrbitControl, OrthographicCamera, PerspectiveCamera } from "../../gl";
 import { GUIHandler, RadioFolder } from "../../gui";
 import { EdgeLayer } from "./edge_layer";
+import { Mesh } from "./mesh";
 import { MeshWireframeLayer } from "./mesh_wireframe_layer";
 import { ModelLayer } from "./model_layer";
 import { OutlineLayer } from "./outline_layer";
@@ -22,7 +23,7 @@ export class DisplayModeDemo extends Application {
     const target = vec3.fromValues(0, 0, 0);
     const up = vec3.fromValues(0, 1, 0);
     // (this.camera as OrthographicCamera).setProjection(2, 2, aspect, near, far)
-    (this.camera as PerspectiveCamera).setProjection(fov, aspect, near, far)
+    (this.camera as PerspectiveCamera).setProjection(fov, aspect, near, far);
 
     this.control = new OrbitControl(this.window.canvas, this.camera, target, up, 4, Math.PI / 3, Math.PI / 8);
     this.control.updateViewMatrix();
@@ -45,6 +46,20 @@ export class DisplayModeDemo extends Application {
       wireframeDepthLayer,
       edgeLayer,
     );
+
+    new GLTFLoader().load('models/DamagedHelmet/DamagedHelmet.gltf')
+      .then((model) => {
+        const { positions, indices } = model[0];
+        const mesh = new Mesh(this.gl, Array.from(positions), Array.from(indices));
+        meshLayer.mesh = mesh;
+        wireframeLayer.mesh = mesh;
+        meshWireframeLayer.mesh = mesh;
+        transparentLayer.mesh = mesh;
+        surfaceWireframeLayer.mesh = mesh;
+        outlineLayer.mesh = mesh;
+        wireframeDepthLayer.mesh = mesh;
+        edgeLayer.mesh = mesh;
+      })
 
     const disableOthers = (selectedLayer: Layer) => {
       this.layers.forEach(layer => layer.visible = layer === selectedLayer);
