@@ -10,10 +10,10 @@ export class RadioFolder extends Folder {
       .name(item)
       .listen()
       .onChange((value: boolean) => {
-        if (!value) {  // prevent self click to false
+        this.disableOthers(item);
+        if (!value) {  // prevent call function when self click to false
           return;
         }
-        this.disableOthers(item);
         cb();
       });
   }

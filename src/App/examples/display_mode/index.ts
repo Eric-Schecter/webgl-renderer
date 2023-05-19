@@ -49,8 +49,8 @@ export class DisplayModeDemo extends Application {
 
     new GLTFLoader().load('models/DamagedHelmet/DamagedHelmet.gltf')
       .then((model) => {
-        const { positions, indices } = model[0];
-        const mesh = new Mesh(this.gl, Array.from(positions), Array.from(indices));
+        const { positions, indices, normals } = model[0];
+        const mesh = new Mesh(this.gl, Array.from(positions), Array.from(indices), Array.from(normals));
         meshLayer.mesh = mesh;
         wireframeLayer.mesh = mesh;
         meshWireframeLayer.mesh = mesh;

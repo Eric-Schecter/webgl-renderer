@@ -14,6 +14,14 @@ export function consoleWarningIfInvalid<T>(a: T): T {
   return a;
 }
 
+export function defaultValueIfInvalid<T>(a: T, defaultValue: T): T {
+  if (a === null || a === undefined || Number.isNaN(a)) {
+    console.log('value is null or undifined');
+    return defaultValue;
+  }
+  return a;
+}
+
 export function clamp(value: number, min: number, max: number) {
   return value < min
     ? min

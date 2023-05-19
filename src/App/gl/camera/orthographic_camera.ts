@@ -7,8 +7,6 @@ export class OrthographicCamera extends Camera {
   private right = 1;
   private bottom = -1;
   private top = 1;
-  private near = 0.1;
-  private far = 1000;
   private _zoom = 1;
   private aspect = 1;
 
@@ -21,7 +19,7 @@ export class OrthographicCamera extends Camera {
     this.near = near;
     this.far = far;
 
-    mat4.ortho(this.projection, this.left, this.right, this.bottom, this.top, near, far);
+    this.update();
     return this;
   }
   public updateAspect = (aspect: number) => {
@@ -40,4 +38,7 @@ export class OrthographicCamera extends Camera {
 
     mat4.ortho(this.projection, left, right, bottom, top, this.near, this.far);
   };
+  public update = () => {
+    mat4.ortho(this.projection, this.left, this.right, this.bottom, this.top, this.near, this.far);
+  }
 }
