@@ -1,4 +1,4 @@
-import { vec2, vec3, vec4 } from "gl-matrix";
+import { vec3, vec4 } from "gl-matrix";
 import { Layer, WGLWindow, OrbitControl, OrthographicCamera, ColorDepthRenderPass } from "../../gl";
 import { Mesh } from "./mesh";
 import modelVS from './shader/model.vs';
@@ -50,53 +50,92 @@ export class ClipPlaneLayer extends Layer {
     this.gl.clearColor(0, 0, 0, 1);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-    this.renderpass.bind();
-    this.renderpass.clear();
+    if (!this.needRenderPlane) {
+      // render opaque objects
+      // render model
+      this.modelShader.bind();
 
-    // set camere
-    const focus = vec3.create();
-    this.camera.pos = vec3.fromValues(0, 0, 1);
-    this.camera.setViewMatrix(focus).setProjection(3, 3, 1, 0.1, 1000);
+      this.modelShader.updateProjectMatrix(this.control.projectMatrix);
+      this.modelShader.updateViewMatrix(this.control.viewMatrix);
+      this.modelShader.updateNeedRenderPlane(0);
 
-    // render model
-    this.modelShader.bind();
+      this.mesh.bind();
+      this.mesh.render();
+      this.mesh.unbind();
 
-    this.modelShader.updateProjectMatrix(this.camera.projectMatrix);
-    this.modelShader.updateViewMatrix(this.camera.viewMatrix);
+      this.modelShader.unbind();
+    } else {
+      this.renderpass.bind();
+      this.renderpass.clear();
 
-    const a = 0;
-    const b = 0;
-    const c = 1;
-    const d = 0;
-    const plane = vec4.fromValues(a, b, c, d);
-    this.modelShader.updatePlane(plane);
+      // set camere
+      const focus = vec3.create();
+      this.camera.pos = vec3.fromValues(0, 0, 1);
+      this.camera.setViewMatrix(focus).setProjection(3, 3, 1, 0.1, 1000);
 
-    this.mesh.bind();
-    this.mesh.render();
-    this.mesh.unbind();
+      // render model
+      this.modelShader.bind();
 
-    this.modelShader.unbind();
+      this.modelShader.updateProjectMatrix(this.camera.projectMatrix);
+      this.modelShader.updateViewMatrix(this.camera.viewMatrix);
+      this.modelShader.updateNeedRenderPlane(1);
 
-    this.renderpass.unbind();
+      const a = 0;
+      const b = 0;
+      const c = 1;
+      const d = 0;
+      const plane = vec4.fromValues(a, b, c, d);
+      this.modelShader.updatePlane(plane);
 
-    // render opaque objects
-    // render model
-    this.modelShader.bind();
+      this.mesh.bind();
+      this.mesh.render();
+      this.mesh.unbind();
 
-    this.modelShader.updateProjectMatrix(this.control.projectMatrix);
-    this.modelShader.updateViewMatrix(this.control.viewMatrix);
+      this.modelShader.unbind();
 
-    this.modelShader.updatePlane(plane);
+      this.renderpass.unbind();
 
-    this.mesh.bind();
-    this.mesh.render();
-    this.mesh.unbind();
+      // render opaque objects
+      // render model
+      this.modelShader.bind();
 
-    this.modelShader.unbind();
+      this.modelShader.updateProjectMatrix(this.control.projectMatrix);
+      this.modelShader.updateViewMatrix(this.control.viewMatrix);
+      this.modelShader.updateNeedRenderPlane(1);
 
-    // render transparent objects
-    // render plane
-    if (this.needRenderPlane) {
+      this.modelShader.updatePlane(plane);
+
+      this.mesh.bind();
+      this.mesh.render();
+      this.mesh.unbind();
+
+      this.modelShader.unbind();
+
+      this.gl.enable(this.gl.BLEND);
+      this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
+
+      this.renderpass.bindForReadDepth();
+
+      this.projectShader.bind();
+
+      // refer to https://www.cuemath.com/geometry/distance-between-point-and-plane/
+      const { pos } = this.camera;
+      const nearestDepth = Math.abs(a * pos[0] + b * pos[1] + c * pos[2]) / Math.sqrt(a ** 2 + b ** 2 + c ** 2);
+
+      this.projectShader.updateProjectMatrix(this.control.projectMatrix);
+      this.projectShader.updateViewMatrix(this.control.viewMatrix);
+      this.projectShader.updateTexture();
+      this.projectShader.updateNearestDepth(nearestDepth / (1000 - 0.1));
+
+      this.plane.bind();
+      this.plane.render();
+      this.plane.unbind();
+
+      this.projectShader.unbind();
+
+      // render transparent objects
+      // render plane
+
       this.planeShader.bind();
 
       this.planeShader.updateProjectMatrix(this.control.projectMatrix);
@@ -108,27 +147,5 @@ export class ClipPlaneLayer extends Layer {
 
       this.planeShader.unbind();
     }
-
-    this.gl.enable(this.gl.BLEND);
-    this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
-
-    this.renderpass.bindForReadDepth();
-
-    this.projectShader.bind();
-
-    // refer to https://www.cuemath.com/geometry/distance-between-point-and-plane/
-    const { pos } = this.camera;
-    const nearestDepth = Math.abs(a * pos[0] + b * pos[1] + c * pos[2]) / Math.sqrt(a ** 2 + b ** 2 + c ** 2);
-
-    this.projectShader.updateProjectMatrix(this.control.projectMatrix);
-    this.projectShader.updateViewMatrix(this.control.viewMatrix);
-    this.projectShader.updateTexture();
-    this.projectShader.updateNearestDepth(nearestDepth / (1000 - 0.1));
-
-    this.plane.bind();
-    this.plane.render();
-    this.plane.unbind();
-
-    this.projectShader.unbind();
   }
 }
