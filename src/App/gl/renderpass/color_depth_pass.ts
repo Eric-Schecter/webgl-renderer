@@ -1,22 +1,24 @@
 import { Disposable } from "../events";
+import { ColorTexture, DepthTexture } from "../texture";
 import { RenderPass } from "./renderpass";
 
 export class ColorDepthRenderPass extends RenderPass implements Disposable {
-  private colorTexture;
-  private depthTexture;
+  private colorTexture: ColorTexture;
+  private depthTexture: DepthTexture;
   constructor(gl: WebGL2RenderingContext, protected m_width: number, protected m_height: number) {
     super(gl);
+    this.colorTexture = new ColorTexture(this.gl);
+    this.depthTexture = new DepthTexture(this.gl);
+
     this.bind();
 
-    this.colorTexture = this.gl.createTexture();
-    this.gl.bindTexture(this.gl.TEXTURE_2D, this.colorTexture);
-    this.resize(m_width, m_height, this.gl.RGBA8, this.gl.RGBA, this.gl.UNSIGNED_BYTE);
-    this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.COLOR_ATTACHMENT0, this.gl.TEXTURE_2D, this.colorTexture, 0);
+    this.colorTexture.bind();
+    this.colorTexture.resize(m_width, m_height, this.gl.RGBA8, this.gl.RGBA, this.gl.UNSIGNED_BYTE);
+    this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.COLOR_ATTACHMENT0, this.gl.TEXTURE_2D, this.colorTexture.id, 0);
 
-    this.depthTexture = this.gl.createTexture();
-    this.gl.bindTexture(this.gl.TEXTURE_2D, this.depthTexture);
-    this.resize(m_width, m_height, this.gl.DEPTH_COMPONENT32F, this.gl.DEPTH_COMPONENT, this.gl.FLOAT);
-    this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.DEPTH_ATTACHMENT, this.gl.TEXTURE_2D, this.depthTexture, 0);
+    this.depthTexture.bind();
+    this.depthTexture.resize(m_width, m_height, this.gl.DEPTH_COMPONENT32F, this.gl.DEPTH_COMPONENT, this.gl.FLOAT);
+    this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.DEPTH_ATTACHMENT, this.gl.TEXTURE_2D, this.depthTexture.id, 0);
 
     const status = this.gl.checkFramebufferStatus(this.gl.FRAMEBUFFER);
     if (status !== this.gl.FRAMEBUFFER_COMPLETE) {
@@ -27,19 +29,18 @@ export class ColorDepthRenderPass extends RenderPass implements Disposable {
   }
   public dispose = () => {
     this.gl.deleteFramebuffer(this.fbo);
-    this.gl.deleteTexture(this.colorTexture);
-    this.gl.deleteTexture(this.depthTexture);
+    this.colorTexture.dispose();
+    this.depthTexture.dispose();
   }
   public bindForReadColor = (id = 0) => {
-    this.gl.activeTexture(this.gl.TEXTURE0 + id);
-    this.gl.bindTexture(this.gl.TEXTURE_2D, this.colorTexture);
+    this.colorTexture.bind(id);
   }
   public bindForReadDepth = (id = 0) => {
-    this.gl.activeTexture(this.gl.TEXTURE0 + id);
-    this.gl.bindTexture(this.gl.TEXTURE_2D, this.depthTexture);
+    this.depthTexture.bind(id);
   }
-  public clear = () => {
-    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+  public clear = () => { // todo: need to modify to bind then clear
+    this.colorTexture.clear();
+    this.depthTexture.clear();
   }
   public copyToScreen = (width: number, height: number) => {
     this.gl.viewport(0, 0, width, height);

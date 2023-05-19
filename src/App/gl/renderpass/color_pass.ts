@@ -1,17 +1,19 @@
 import { Disposable } from "../events";
+import { ColorTexture } from "../texture";
 import { RenderPass } from "./renderpass";
 
 // no depth test support
 export class ColorRenderPass extends RenderPass implements Disposable {
-  private colorTexture;
+  private colorTexture: ColorTexture;
   constructor(gl: WebGL2RenderingContext, protected m_width: number, protected m_height: number) {
     super(gl);
+    this.colorTexture = new ColorTexture(this.gl);
+
     this.bind();
 
-    this.colorTexture = this.gl.createTexture();
-    this.gl.bindTexture(this.gl.TEXTURE_2D, this.colorTexture);
-    this.resize(m_width, m_height, this.gl.RGBA8, this.gl.RGBA, this.gl.UNSIGNED_BYTE);
-    this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.COLOR_ATTACHMENT0, this.gl.TEXTURE_2D, this.colorTexture, 0);
+    this.colorTexture.bind();
+    this.colorTexture.resize(m_width, m_height, this.gl.RGBA8, this.gl.RGBA, this.gl.UNSIGNED_BYTE);
+    this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.COLOR_ATTACHMENT0, this.gl.TEXTURE_2D, this.colorTexture.id, 0);
 
     const status = this.gl.checkFramebufferStatus(this.gl.FRAMEBUFFER);
     if (status !== this.gl.FRAMEBUFFER_COMPLETE) {
@@ -22,11 +24,10 @@ export class ColorRenderPass extends RenderPass implements Disposable {
   }
   public dispose = () => {
     this.gl.deleteFramebuffer(this.fbo);
-    this.gl.deleteTexture(this.colorTexture);
+    this.colorTexture.dispose();
   }
   public bindForRead = (id = 0) => {
-    this.gl.activeTexture(this.gl.TEXTURE0 + id);
-    this.gl.bindTexture(this.gl.TEXTURE_2D, this.colorTexture);
+    this.colorTexture.bind(id);
   }
   public clear = () => {
     this.gl.clear(this.gl.COLOR_BUFFER_BIT);

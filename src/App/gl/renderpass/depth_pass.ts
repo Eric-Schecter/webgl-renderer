@@ -1,17 +1,18 @@
 import { Disposable } from "../events";
+import { DepthTexture } from "../texture";
 import { RenderPass } from "./renderpass";
-
 // todo: texture manager to dispose
 export class DepthRenderPass extends RenderPass implements Disposable {
-  private depthTexture;
+  private depthTexture: DepthTexture;
   constructor(gl: WebGL2RenderingContext, protected m_width: number, protected m_height: number) {
     super(gl);
+    this.depthTexture = new DepthTexture(this.gl);
+
     this.bind();
 
-    this.depthTexture = this.gl.createTexture();
-    this.gl.bindTexture(this.gl.TEXTURE_2D, this.depthTexture);
-    this.resize(m_width, m_height, this.gl.DEPTH_COMPONENT32F, this.gl.DEPTH_COMPONENT, this.gl.FLOAT);
-    this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.DEPTH_ATTACHMENT, this.gl.TEXTURE_2D, this.depthTexture, 0);
+    this.depthTexture.bind();
+    this.depthTexture.resize(m_width, m_height, this.gl.DEPTH_COMPONENT32F, this.gl.DEPTH_COMPONENT, this.gl.FLOAT);
+    this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.DEPTH_ATTACHMENT, this.gl.TEXTURE_2D, this.depthTexture.id, 0);
 
     const status = this.gl.checkFramebufferStatus(this.gl.FRAMEBUFFER);
     if (status !== this.gl.FRAMEBUFFER_COMPLETE) {
@@ -22,13 +23,12 @@ export class DepthRenderPass extends RenderPass implements Disposable {
   }
   public dispose = () => {
     this.gl.deleteFramebuffer(this.fbo);
-    this.gl.deleteTexture(this.depthTexture);
+    this.depthTexture.dispose();
   }
   public bindForRead = (id = 0) => {
-    this.gl.activeTexture(this.gl.TEXTURE0 + id);
-    this.gl.bindTexture(this.gl.TEXTURE_2D, this.depthTexture);
+    this.depthTexture.bind(id);
   }
   public clear = () => {
-    this.gl.clear(this.gl.DEPTH_BUFFER_BIT);
+    this.depthTexture.clear();
   }
 }

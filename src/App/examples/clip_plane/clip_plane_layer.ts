@@ -36,6 +36,7 @@ export class ClipPlaneLayer extends Layer {
 
     const folder = GUIHandler.getInstance().createFolder('mode', OptionFolder);
     folder.addItem('render plane', () => this.needRenderPlane = !this.needRenderPlane, this.needRenderPlane);
+
   }
 
   public update() {
