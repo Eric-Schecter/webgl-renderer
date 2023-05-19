@@ -4,13 +4,13 @@ import { RenderPass } from "./renderpass";
 // todo: texture manager to dispose
 export class DepthRenderPass extends RenderPass implements Disposable {
   private depthTexture;
-  constructor(gl: WebGL2RenderingContext, protected width: number, protected height: number) {
+  constructor(gl: WebGL2RenderingContext, protected m_width: number, protected m_height: number) {
     super(gl);
     this.bind();
 
     this.depthTexture = this.gl.createTexture();
     this.gl.bindTexture(this.gl.TEXTURE_2D, this.depthTexture);
-    this.resize(width, height, this.gl.DEPTH_COMPONENT32F, this.gl.DEPTH_COMPONENT, this.gl.FLOAT);
+    this.resize(m_width, m_height, this.gl.DEPTH_COMPONENT32F, this.gl.DEPTH_COMPONENT, this.gl.FLOAT);
     this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.DEPTH_ATTACHMENT, this.gl.TEXTURE_2D, this.depthTexture, 0);
 
     const status = this.gl.checkFramebufferStatus(this.gl.FRAMEBUFFER);

@@ -1,7 +1,8 @@
 export class PlaneGeometry {
   public vertices: number[] = [];
   public indices: number[] = [];
-  constructor(width:number,height:number,widthSegments:number,heightSegments:number) {
+  public uvs: number[] = [];
+  constructor(width: number, height: number, widthSegments: number, heightSegments: number) {
     const width_half = width / 2;
     const height_half = height / 2;
     const gridX = Math.floor(widthSegments);
@@ -18,6 +19,9 @@ export class PlaneGeometry {
         const x = ix * segment_width - width_half;
 
         this.vertices.push(x, - y, 0); // position
+
+        this.uvs.push(ix / gridX);
+        this.uvs.push(1 - (iy / gridY));
       }
     }
 
