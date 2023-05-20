@@ -25,8 +25,10 @@ export class OutlineLayer extends Layer {
       .setMesh(this.mesh)
       .bind(this.window)
       .clear()
+      .setStencilMask()
       .update(this.control, 0, false, modelMatrix)
       .render()
+      .compareStencilMask()
       .update(this.control, 1, false, mat4.scale(modelMatrix, modelMatrix, vec3.fromValues(1.01, 1.01, 1.01)))
       .render()
       .unbind();
