@@ -1,5 +1,5 @@
 import { vec3 } from "gl-matrix";
-import { Application, GLTFLoader, Layer, OrbitControl, OrthographicCamera, PerspectiveCamera } from "../../gl";
+import { Application, GLTFLoader, Layer, OrbitControl, PerspectiveCamera } from "../../gl";
 import { GUIHandler, RadioFolder } from "../../gui";
 import { EdgeLayer, ModelLayer, OutlineLayer, SurfaceWireframeLayer, TransparentLayer, WireframeDepthLayer, WireframeLayer } from "./layers";
 import { Mesh } from "./mesh";

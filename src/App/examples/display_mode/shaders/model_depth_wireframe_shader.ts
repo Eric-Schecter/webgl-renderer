@@ -17,21 +17,26 @@ export class ModelDepthWireframeShader extends Shader {
   }
   public updateProjectMatrix = (matrix: mat4) => {
     this.gl.uniformMatrix4fv(this.uProjectMatrix, false, matrix.values());
+    return this;
   }
 
   public updateViewMatrix = (matrix: mat4) => {
     this.gl.uniformMatrix4fv(this.uViewMatrix, false, matrix.values());
+    return this;
   }
 
   public updateModelMatrix = (matrix: mat4) => {
     this.gl.uniformMatrix4fv(this.uModelMatrix, false, matrix.values());
+    return this;
   }
 
   public updateTexture = () => {
     this.gl.uniform1i(this.uTexture, 0);
+    return this;
   }
 
   public updateSize = (size: vec2) => {
     this.gl.uniform2fv(this.uSize, size);
+    return this;
   }
 }

@@ -15,16 +15,20 @@ export class DepthShader extends Shader {
   }
   public updateTexture = (id = 0) => {
     this.gl.uniform1i(this.uTexture, id);
+    return this;
   }
 
   public updateSize = (size: vec2) => {
     this.gl.uniform2fv(this.uSize, size);
+    return this;
   }
 
   public updateMinDepth = (depth: number) => {
     this.gl.uniform1f(this.uDepthMin, depth);
+    return this;
   }
   public updateMaxDepth = (depth: number) => {
     this.gl.uniform1f(this.uDepthMax, depth);
+    return this;
   }
 }

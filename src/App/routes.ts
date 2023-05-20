@@ -1,4 +1,4 @@
-import { TriangleDemo, ModelDemo, ClipPlaneDemo, DisplayModeDemo } from './examples';
+import { TriangleDemo, ClipPlaneDemo, DisplayModeDemo } from './examples';
 
 export const routes = [
   { path: '/', name: 'triangle', app: TriangleDemo },

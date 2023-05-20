@@ -13,13 +13,16 @@ export class ModelDepthShader extends Shader {
   }
   public updateProjectMatrix = (matrix: mat4) => {
     this.gl.uniformMatrix4fv(this.uProjectMatrix, false, matrix.values());
+    return this;
   }
 
   public updateViewMatrix = (matrix: mat4) => {
     this.gl.uniformMatrix4fv(this.uViewMatrix, false, matrix.values());
+    return this;
   }
 
   public updateModelMatrix = (matrix: mat4) => {
     this.gl.uniformMatrix4fv(this.uModelMatrix, false, matrix.values());
+    return this;
   }
 }
