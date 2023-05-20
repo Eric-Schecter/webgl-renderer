@@ -28,9 +28,11 @@ export class ColorRenderPass extends RenderPass implements Disposable {
   }
   public bindForRead = (id = 0) => {
     this.colorTexture.bind(id);
+    return this;
   }
   public clear = () => {
     this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+    return this;
   }
   public copyToScreen = (width: number, height: number) => {
     this.gl.viewport(0, 0, width, height);
@@ -39,5 +41,6 @@ export class ColorRenderPass extends RenderPass implements Disposable {
     this.gl.bindFramebuffer(this.gl.READ_FRAMEBUFFER, this.fbo);
     this.gl.blitFramebuffer(0, 0, this.m_width, this.m_height, 0, 0, width, height, this.gl.COLOR_BUFFER_BIT, this.gl.NEAREST);
     this.unbind();
+    return this;
   }
 }

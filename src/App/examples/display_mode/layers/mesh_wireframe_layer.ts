@@ -1,52 +1,41 @@
-import { mat4, vec3 } from 'gl-matrix';
+import { vec3 } from 'gl-matrix';
 import { Layer, WGLWindow, OrbitControl } from "../../../gl";
 import { Mesh } from "../mesh";
 import { ModelVS, ModelFS, ModelColorFS } from '../shader_source';
 import { ModelShader, ModelColorShader } from "../shaders";
+import { ModelColorPipeline, ModelPipeline } from '../pipelines';
 
 export class MeshWireframeLayer extends Layer {
   public mesh?: Mesh;
-  private shader?: ModelShader;
-  private colorShader?: ModelColorShader;
-  constructor(private gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl, visible: boolean) {
+  private pipeline: ModelPipeline;
+  private colorPipeline: ModelColorPipeline;
+  constructor(gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl, visible: boolean) {
     super(window, visible);
-    this.shader = new ModelShader(this.gl, ModelVS, ModelFS);
-    this.colorShader = new ModelColorShader(this.gl, ModelVS, ModelColorFS);
+    const shader = new ModelShader(gl, ModelVS, ModelFS);
+    const colorShader = new ModelColorShader(gl, ModelVS, ModelColorFS);
+    this.pipeline = new ModelPipeline(gl).setShader(shader);
+    this.colorPipeline = new ModelColorPipeline(gl).setShader(colorShader);
   }
 
   public update() {
-    if (!this.mesh || !this.shader || !this.colorShader) {
+    if (!this.mesh) {
       return;
     }
-    const { width, height } = this.window;
-    this.gl.viewport(0, 0, width, height);
-    this.gl.enable(this.gl.DEPTH_TEST);
-    this.gl.clearColor(0, 0, 0, 1);
-    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+    const black = vec3.fromValues(0, 0, 0);
 
-    this.mesh.bind();
+    this.colorPipeline
+      .setMesh(this.mesh)
+      .bind(this.window)
+      .clear()
+      .update(this.control, black, true)
+      .render()
+      .unbind()
 
-    this.colorShader.bind();
-    this.colorShader.updateProjectMatrix(this.control.projectMatrix);
-    this.colorShader.updateViewMatrix(this.control.viewMatrix);
-    this.colorShader.updateModelMatrix(mat4.create());
-    this.colorShader.updateColor(vec3.fromValues(0, 0, 0));
-
-    this.mesh.setWireframe(true);
-    this.mesh.render();
-
-    this.colorShader.unbind();
-
-    this.shader.bind();
-    this.shader.updateProjectMatrix(this.control.projectMatrix);
-    this.shader.updateViewMatrix(this.control.viewMatrix);
-    this.shader.updateModelMatrix(mat4.create());
-    this.shader.updateAlpha(1);
-
-    this.mesh.setWireframe(false);
-    this.mesh.render();
-
-    this.shader.unbind();
-    this.mesh.unbind();
+    this.pipeline
+      .setMesh(this.mesh)
+      .bind(this.window)
+      .update(this.control)
+      .render()
+      .unbind();
   }
 }

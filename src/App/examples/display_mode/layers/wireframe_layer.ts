@@ -20,7 +20,9 @@ export class WireframeLayer extends Layer {
 
     this.pipeline
       .setMesh(this.mesh)
-      .bind(this.window, this.control, true)
+      .bind(this.window)
+      .clear()
+      .update(this.control, 1, true)
       .render()
       .unbind();
   }

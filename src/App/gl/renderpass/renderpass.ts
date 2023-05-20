@@ -11,9 +11,11 @@ export abstract class RenderPass {
   public bind = () => {
     this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.fbo);
     this.gl.viewport(0, 0, this.m_width, this.m_height);
+    return this;
   }
   public unbind = () => {
     this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
+    return this;
   }
   public get width() {
     return this.m_width;

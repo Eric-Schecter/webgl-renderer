@@ -27,8 +27,10 @@ export class DepthRenderPass extends RenderPass implements Disposable {
   }
   public bindForRead = (id = 0) => {
     this.depthTexture.bind(id);
+    return this;
   }
   public clear = () => {
     this.depthTexture.clear();
+    return this;
   }
 }

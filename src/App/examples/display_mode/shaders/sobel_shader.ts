@@ -15,17 +15,21 @@ export class SobelShader extends Shader {
   }
   public updateTexture = (id = 0) => {
     this.gl.uniform1i(this.uTexture, id);
+    return this;
   }
 
   public updateSize = (size: vec2) => {
     this.gl.uniform2fv(this.uSize, size);
+    return this;
   }
 
   public updateHCoef = (coef: number[]) => {
     this.gl.uniform1fv(this.uHCoef, coef);
+    return this;
   }
 
   public updateVCoef = (coef: number[]) => {
     this.gl.uniform1fv(this.uVCoef, coef);
+    return this;
   }
 }

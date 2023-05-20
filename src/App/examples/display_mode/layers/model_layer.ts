@@ -20,7 +20,9 @@ export class ModelLayer extends Layer {
 
     this.pipeline
       .setMesh(this.mesh)
-      .bind(this.window, this.control)
+      .bind(this.window)
+      .clear()
+      .update(this.control)
       .render()
       .unbind();
   }
