@@ -1,18 +1,10 @@
 import { vec3, vec4 } from "gl-matrix";
 import { Layer, WGLWindow, OrbitControl, OrthographicCamera, ColorDepthRenderPass } from "../../gl";
 import { Mesh } from "./mesh";
-import modelVS from './shader/model.vs';
-import modelFS from './shader/model.fs';
-import planeVS from './shader/plane.vs';
-import planeFS from './shader/plane.fs';
-import projectVS from './shader/project_shader.vs';
-import projectFS from './shader/project_shader.fs';
-import { ModelShader } from "./model_shader";
+import { ModelVS, ModelFS, PlaneVS, PlaneFS, ProjectVS, ProjectFS } from './shader_source';
+import { ModelShader, PlaneShader, ProjectShader } from "./shaders";
 import { PlaneGeometry } from "./plane";
-import { PlaneShader } from "./plane_shader";
-import { GUIHandler } from "../../gui";
-import { OptionFolder } from "../../gui/option_folder";
-import { ProjectShader } from "./project_shader";
+import { GUIHandler, OptionFolder } from "../../gui";
 
 export class ClipPlaneLayer extends Layer {
   public mesh?: Mesh;
@@ -28,9 +20,9 @@ export class ClipPlaneLayer extends Layer {
     const { vertices, indices, uvs } = new PlaneGeometry(3, 3, 1, 1);
     const { width, height } = window;
     this.plane = new Mesh(this.gl, vertices, indices, uvs);
-    this.planeShader = new PlaneShader(this.gl, planeVS, planeFS);
-    this.modelShader = new ModelShader(this.gl, modelVS, modelFS);
-    this.projectShader = new ProjectShader(this.gl, projectVS, projectFS);
+    this.planeShader = new PlaneShader(this.gl, PlaneVS, PlaneFS);
+    this.modelShader = new ModelShader(this.gl, ModelVS, ModelFS);
+    this.projectShader = new ProjectShader(this.gl, ProjectVS, ProjectFS);
     this.camera = new OrthographicCamera();
     this.renderpass = new ColorDepthRenderPass(gl, width, height);
 

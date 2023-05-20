@@ -1,18 +1,22 @@
-import { mat4, vec4 } from "gl-matrix";
-import { Shader } from "../../gl";
+import { mat4 } from "gl-matrix";
+import { Shader } from "../../../gl";
 
-export class ModelShader extends Shader {
+export class ProjectShader extends Shader {
   private uProjectMatrix;
   private uViewMatrix;
-  private uPlane;
-  private uNeedRenderplane;
+  private uTexture;
+  private uNearestDepth;
   constructor(gl: WebGL2RenderingContext, vs: string, fs: string) {
     super(gl, vs, fs);
     this.uProjectMatrix = this.gl.getUniformLocation(this.id, 'u_projectMatrix');
     this.uViewMatrix = this.gl.getUniformLocation(this.id, 'u_viewMatrix');
-    this.uPlane = this.gl.getUniformLocation(this.id, 'u_plane');
-    this.uNeedRenderplane = this.gl.getUniformLocation(this.id, 'u_needrenderplane');
+    this.uTexture = this.gl.getUniformLocation(this.id, 'u_texture');
+    this.uNearestDepth = this.gl.getUniformLocation(this.id, 'u_nearestDepth');
   }
+  public updateTexture = (id = 0) => {
+    this.gl.uniform1i(this.uTexture, id);
+  }
+
   public updateProjectMatrix = (matrix: mat4) => {
     this.gl.uniformMatrix4fv(this.uProjectMatrix, false, matrix.values());
   }
@@ -21,11 +25,7 @@ export class ModelShader extends Shader {
     this.gl.uniformMatrix4fv(this.uViewMatrix, false, matrix.values());
   }
 
-  public updatePlane = (plane: vec4) => {
-    this.gl.uniform4fv(this.uPlane, plane.values());
-  }
-
-  public updateNeedRenderPlane = (needRenderPlane: number) => {
-    this.gl.uniform1i(this.uNeedRenderplane, needRenderPlane);
+  public updateNearestDepth = (depth: number) => {
+    this.gl.uniform1f(this.uNearestDepth, depth);
   }
 }

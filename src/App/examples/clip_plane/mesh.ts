@@ -1,4 +1,4 @@
-import { AbstractMesh } from "../../gl/mesh";
+import { AbstractMesh } from "../../gl";
 
 export class Mesh extends AbstractMesh {
   constructor(gl: WebGL2RenderingContext, positions: number[], indices: number[], uvs?: number[]) {

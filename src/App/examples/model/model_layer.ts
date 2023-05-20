@@ -1,7 +1,6 @@
 import { Layer, WGLWindow, OrbitControl } from "../../gl";
 import { Mesh } from "./mesh";
-import vs from './shader/model.vs';
-import fs from './shader/model.fs';
+import { ModelVS, ModelFS } from './shader_source';
 import { ModelShader } from "./model_shader";
 
 
@@ -10,7 +9,7 @@ export class ModelLayer extends Layer {
   private shader?: ModelShader;
   constructor(private gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl) {
     super(window);
-    this.shader = new ModelShader(this.gl, vs, fs);
+    this.shader = new ModelShader(this.gl, ModelVS, ModelFS);
   }
 
   public update() {

@@ -1,7 +1,6 @@
 import { Layer, Shader, WGLWindow } from "../../gl";
 import { Mesh } from "./mesh";
-import vs from './shader/triangle.vs';
-import fs from './shader/triangle.fs';
+import { TriangleVS, TriangleFS } from './shader_source'
 
 export class TriangleLayer extends Layer {
   public mesh: Mesh;
@@ -19,7 +18,7 @@ export class TriangleLayer extends Layer {
     ];
     this.mesh = new Mesh(this.gl, vertices, indices);
 
-    this.shader = new Shader(this.gl, vs, fs);
+    this.shader = new Shader(this.gl, TriangleVS, TriangleFS);
   }
 
   public update() {
