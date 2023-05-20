@@ -1,5 +1,5 @@
 import { mat4 } from "gl-matrix";
-import { Shader } from "../../gl";
+import { Shader } from "../../../gl";
 
 export class ModelDepthShader extends Shader {
   private uProjectMatrix;

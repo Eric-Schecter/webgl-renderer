@@ -1,5 +1,5 @@
 import { mat4 } from "gl-matrix";
-import { Shader } from "../../gl";
+import { Shader } from "../../../gl";
 
 export class ModelShader extends Shader {
   private uProjectMatrix;
@@ -15,17 +15,21 @@ export class ModelShader extends Shader {
   }
   public updateProjectMatrix = (matrix: mat4) => {
     this.gl.uniformMatrix4fv(this.uProjectMatrix, false, matrix.values());
+    return this;
   }
 
   public updateViewMatrix = (matrix: mat4) => {
     this.gl.uniformMatrix4fv(this.uViewMatrix, false, matrix.values());
+    return this;
   }
 
   public updateModelMatrix = (matrix: mat4) => {
     this.gl.uniformMatrix4fv(this.uModelMatrix, false, matrix.values());
+    return this;
   }
 
   public updateAlpha = (alpha: number) => {
     this.gl.uniform1f(this.uAlpha, alpha);
+    return this;
   }
 }

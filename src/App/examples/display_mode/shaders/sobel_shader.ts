@@ -1,17 +1,17 @@
 import { vec2 } from "gl-matrix";
-import { Shader } from "../../gl";
+import { Shader } from "../../../gl";
 
-export class DepthShader extends Shader {
+export class SobelShader extends Shader {
   private uTexture;
   private uSize;
-  private uDepthMin;
-  private uDepthMax;
+  private uHCoef;
+  private uVCoef;
   constructor(gl: WebGL2RenderingContext, vs: string, fs: string) {
     super(gl, vs, fs);
     this.uTexture = this.gl.getUniformLocation(this.id, 'u_texture');
     this.uSize = this.gl.getUniformLocation(this.id, 'u_size');
-    this.uDepthMin = this.gl.getUniformLocation(this.id, 'u_depth_min');
-    this.uDepthMax = this.gl.getUniformLocation(this.id, 'u_depth_max');
+    this.uHCoef = this.gl.getUniformLocation(this.id, 'u_hCoef');
+    this.uVCoef = this.gl.getUniformLocation(this.id, 'u_vCoef');
   }
   public updateTexture = (id = 0) => {
     this.gl.uniform1i(this.uTexture, id);
@@ -21,10 +21,11 @@ export class DepthShader extends Shader {
     this.gl.uniform2fv(this.uSize, size);
   }
 
-  public updateMinDepth = (depth: number) => {
-    this.gl.uniform1f(this.uDepthMin, depth);
+  public updateHCoef = (coef: number[]) => {
+    this.gl.uniform1fv(this.uHCoef, coef);
   }
-  public updateMaxDepth = (depth: number) => {
-    this.gl.uniform1f(this.uDepthMax, depth);
+
+  public updateVCoef = (coef: number[]) => {
+    this.gl.uniform1fv(this.uVCoef, coef);
   }
 }

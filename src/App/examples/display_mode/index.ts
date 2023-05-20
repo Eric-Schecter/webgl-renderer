@@ -1,15 +1,9 @@
 import { vec3 } from "gl-matrix";
 import { Application, GLTFLoader, Layer, OrbitControl, OrthographicCamera, PerspectiveCamera } from "../../gl";
 import { GUIHandler, RadioFolder } from "../../gui";
-import { EdgeLayer } from "./edge_layer";
+import { EdgeLayer, ModelLayer, OutlineLayer, SurfaceWireframeLayer, TransparentLayer, WireframeDepthLayer, WireframeLayer } from "./layers";
 import { Mesh } from "./mesh";
-import { MeshWireframeLayer } from "./mesh_wireframe_layer";
-import { ModelLayer } from "./model_layer";
-import { OutlineLayer } from "./outline_layer";
-import { SurfaceWireframeLayer } from "./surface_wireframe_layer";
-import { TransparentLayer } from "./transparent_layer";
-import { WireframeDepthLayer } from "./wireframe_depth_layer";
-import { WireframeLayer } from "./wireframe_layer";
+import { MeshWireframeLayer } from "./layers";
 
 export class DisplayModeDemo extends Application {
   private control: OrbitControl;

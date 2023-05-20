@@ -6,3 +6,6 @@ export * from './window';
 export * from './orbit_control';
 export * from './loader';
 export * from './renderpass';
+export * from './pipeline';
+export * from './mesh';
+export * from './bounding_box';

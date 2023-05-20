@@ -1,9 +1,8 @@
-import { AbstractMesh } from "../../gl/mesh";
-import { BoundingBox } from "./bounding_box";
+import { AbstractMesh, BoundingBox } from "../../gl";
 
 export class Mesh extends AbstractMesh {
   public boundingBox = new BoundingBox();
-  public wireframe = false;
+  private wireframe = false;
 
   constructor(gl: WebGL2RenderingContext, positions: number[], indices: number[], normals?: number[]) {
     super(gl);
@@ -19,7 +18,7 @@ export class Mesh extends AbstractMesh {
     this.gl.vertexAttribPointer(0, 3, this.gl.FLOAT, false, 12, 0);
     this.gl.enableVertexAttribArray(0);
 
-    if(normals){
+    if (normals) {
       const normalVbo = this.gl.createBuffer();
       this.gl.bindBuffer(this.gl.ARRAY_BUFFER, normalVbo);
       this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(normals), this.gl.STATIC_DRAW);
@@ -39,5 +38,11 @@ export class Mesh extends AbstractMesh {
 
   public render() {
     this.gl.drawElements(this.wireframe ? this.gl.LINES : this.gl.TRIANGLES, this.size, this.gl.UNSIGNED_SHORT, 0);
+    return this;
+  }
+
+  public setWireframe(value: boolean): Mesh {
+    this.wireframe = value;
+    return this;
   }
 }

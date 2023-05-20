@@ -1,17 +1,19 @@
-import { mat4, vec3 } from "gl-matrix";
-import { Shader } from "../../gl";
+import { mat4, vec2 } from "gl-matrix";
+import { Shader } from "../../../gl";
 
-export class ModelColorShader extends Shader {
+export class ModelDepthWireframeShader extends Shader {
   private uProjectMatrix;
   private uViewMatrix;
   private uModelMatrix;
-  private uColor;
+  private uTexture;
+  private uSize;
   constructor(gl: WebGL2RenderingContext, vs: string, fs: string) {
     super(gl, vs, fs);
     this.uProjectMatrix = this.gl.getUniformLocation(this.id, 'u_projectMatrix');
     this.uViewMatrix = this.gl.getUniformLocation(this.id, 'u_viewMatrix');
     this.uModelMatrix = this.gl.getUniformLocation(this.id, 'u_modelMatrix');
-    this.uColor = this.gl.getUniformLocation(this.id, 'u_color');
+    this.uTexture = this.gl.getUniformLocation(this.id, 'u_texture');
+    this.uSize = this.gl.getUniformLocation(this.id, 'u_size');
   }
   public updateProjectMatrix = (matrix: mat4) => {
     this.gl.uniformMatrix4fv(this.uProjectMatrix, false, matrix.values());
@@ -25,7 +27,11 @@ export class ModelColorShader extends Shader {
     this.gl.uniformMatrix4fv(this.uModelMatrix, false, matrix.values());
   }
 
-  public updateColor = (color: vec3) => {
-    this.gl.uniform3fv(this.uColor, color);
+  public updateTexture = () => {
+    this.gl.uniform1i(this.uTexture, 0);
+  }
+
+  public updateSize = (size: vec2) => {
+    this.gl.uniform2fv(this.uSize, size);
   }
 }

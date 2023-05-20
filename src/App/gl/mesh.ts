@@ -5,14 +5,16 @@ export abstract class AbstractMesh {
   constructor(protected gl: WebGL2RenderingContext) { }
 
   public bind() {
-    this.gl.bindVertexArray(this.vao)
-  }
-
-  public unbind() {
-    this.gl.bindVertexArray(null);
+    this.gl.bindVertexArray(this.vao);
+    return this;
   }
 
   public render() {
     this.gl.drawElements(this.gl.TRIANGLES, this.size, this.gl.UNSIGNED_SHORT, 0);
+    return this;
+  }
+
+  public unbind() {
+    this.gl.bindVertexArray(null);
   }
 }

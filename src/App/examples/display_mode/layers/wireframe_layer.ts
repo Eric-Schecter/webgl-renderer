@@ -1,15 +1,15 @@
 import { mat4 } from "gl-matrix";
-import { Layer, WGLWindow, OrbitControl } from "../../gl";
-import { Mesh } from "./mesh";
-import vs from './shader/model.vs';
-import fs from './shader/model.fs';
-import { ModelShader } from "./model_shader";
+import { Layer, WGLWindow, OrbitControl } from "../../../gl";
+import { Mesh } from "../mesh";
+import vs from '../shader_source/model.vs';
+import fs from '../shader_source/model.fs';
+import { ModelShader } from "../shaders";
 
-export class ModelLayer extends Layer {
+export class WireframeLayer extends Layer {
   public mesh?: Mesh;
   private shader?: ModelShader;
-  constructor(private gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl) {
-    super(window);
+  constructor(private gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl, visible: boolean) {
+    super(window, visible);
     this.shader = new ModelShader(this.gl, vs, fs);
   }
 
@@ -32,7 +32,7 @@ export class ModelLayer extends Layer {
     this.shader.updateAlpha(1);
 
     this.mesh.bind();
-    this.mesh.wireframe = false;
+    this.mesh.setWireframe(true);
     this.mesh.render();
     this.mesh.unbind();
 

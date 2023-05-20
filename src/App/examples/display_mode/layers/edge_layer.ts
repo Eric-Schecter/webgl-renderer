@@ -1,13 +1,9 @@
 import { mat4, vec2 } from "gl-matrix";
-import { Layer, WGLWindow, OrbitControl, ColorDepthRenderPass } from "../../gl";
-import vs from './shader/model.vs';
-import fs from './shader/model.fs';
-import copyVS from './shader/copy_shader.vs';
-import edgeFS from './shader/edge_shader.fs';
-import { ModelShader } from "./model_shader";
-import { ScreenPlane } from "./screen_plane";
-import { SobelShader } from "./sobel_shader";
-import { Mesh } from "./mesh";
+import { Layer, WGLWindow, OrbitControl, ColorDepthRenderPass } from "../../../gl";
+import { CopyVS, EdgeFS, ModelVS, ModelFS } from '../shader_source';
+import { ModelShader, SobelShader } from "../shaders";
+import { ScreenPlane } from "../screen_plane";
+import { Mesh } from "../mesh";
 
 export class EdgeLayer extends Layer {
   public mesh?: Mesh;
@@ -21,9 +17,9 @@ export class EdgeLayer extends Layer {
     this.renderpass = new ColorDepthRenderPass(this.gl, width, height);
 
     this.plane = new ScreenPlane(this.gl);
-    this.edgeShader = new SobelShader(this.gl, copyVS, edgeFS);
+    this.edgeShader = new SobelShader(this.gl, CopyVS, EdgeFS);
 
-    this.shader = new ModelShader(this.gl, vs, fs);
+    this.shader = new ModelShader(this.gl, ModelVS, ModelFS);
   }
 
   public update() {
@@ -42,7 +38,7 @@ export class EdgeLayer extends Layer {
 
     // render mesh
     this.shader.bind();
-    this.mesh.wireframe = false;
+    this.mesh.setWireframe(false);
     this.shader.updateProjectMatrix(this.control.projectMatrix);
     this.shader.updateViewMatrix(this.control.viewMatrix);
     this.shader.updateModelMatrix(mat4.create());

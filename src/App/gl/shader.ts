@@ -53,6 +53,7 @@ export class Shader {
 
   public bind() {
     this.gl.useProgram(this.id);
+    return this;
   }
 
   public unbind() {

@@ -1,15 +1,10 @@
 import { mat4, vec2, vec3 } from "gl-matrix";
-import { Layer, WGLWindow, OrbitControl, DepthRenderPass } from "../../gl";
-import { Mesh } from "./mesh";
-import vs from './shader/model_depth.vs';
-import fs from './shader/model_depth.fs';
-import wireframefs from './shader/model_depth_wireframe.fs';
-import copyVS from './shader/copy_shader.vs';
-import depthFS from './shader/depth_shader.fs';
-import { ScreenPlane } from "./screen_plane";
-import { DepthShader } from "./depth_shader";
-import { ModelDepthShader } from "./model_depth_shader";
-import { ModelDepthWireframeShader } from "./model_depth_wireframe_shader";
+import { Layer, WGLWindow, OrbitControl, DepthRenderPass } from "../../../gl";
+import { Mesh } from "../mesh";
+import { ModelDepthVS, ModelDepthFS, ModelDepthWireframeFS, CopyVS, DepthFS } from '../shader_source';
+import { ScreenPlane } from "../screen_plane";
+import { DepthShader } from "../shaders";
+import { ModelDepthShader, ModelDepthWireframeShader } from "../shaders";
 
 export class WireframeDepthLayer extends Layer {
   public mesh?: Mesh;
@@ -25,9 +20,9 @@ export class WireframeDepthLayer extends Layer {
     this.renderpass = new DepthRenderPass(this.gl, width, height);
     this.renderpassSurface = new DepthRenderPass(this.gl, width, height);
     this.plane = new ScreenPlane(this.gl);
-    this.depthShader = new DepthShader(this.gl, copyVS, depthFS);
-    this.shader = new ModelDepthShader(this.gl, vs, fs);
-    this.wireframeShader = new ModelDepthWireframeShader(this.gl, vs, wireframefs);
+    this.depthShader = new DepthShader(this.gl, CopyVS, DepthFS);
+    this.shader = new ModelDepthShader(this.gl, ModelDepthVS, ModelDepthFS);
+    this.wireframeShader = new ModelDepthWireframeShader(this.gl, ModelDepthVS, ModelDepthWireframeFS);
   }
 
   public update() {
@@ -66,7 +61,7 @@ export class WireframeDepthLayer extends Layer {
     this.shader.updateModelMatrix(mat4.create());
 
     this.mesh.bind();
-    this.mesh.wireframe = false;
+    this.mesh.setWireframe(false);
     this.mesh.render();
     this.mesh.unbind();
 
@@ -88,7 +83,7 @@ export class WireframeDepthLayer extends Layer {
     this.wireframeShader.updateSize(vec2.fromValues(width, height));
 
     this.mesh.bind();
-    this.mesh.wireframe = true;
+    this.mesh.setWireframe(true);
     this.mesh.render();
     this.mesh.unbind();
 
