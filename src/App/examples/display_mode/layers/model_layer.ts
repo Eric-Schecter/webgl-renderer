@@ -7,9 +7,9 @@ import { ModelPipeline } from "../pipelines";
 export class ModelLayer extends Layer {
   public mesh?: Mesh;
   private pipeline: ModelPipeline;
-  constructor(private gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl) {
+  constructor(gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl) {
     super(window);
-    const shader = new ModelShader(this.gl, ModelVS, ModelFS);
+    const shader = new ModelShader(gl, ModelVS, ModelFS);
     this.pipeline = new ModelPipeline(gl).setShader(shader)
   }
 

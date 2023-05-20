@@ -9,7 +9,10 @@ export class ModelPipeline extends Pipeline {
   constructor(private gl: WebGL2RenderingContext) {
     super();
   }
-  public bind = (window: WGLWindow, control: OrbitControl) => {
+  public bind = (window: WGLWindow, control: OrbitControl, isWireframe = false) => {
+    if (!this.shader || !this.mesh) {
+      return this;
+    }
     const { width, height } = window;
     this.gl.viewport(0, 0, width, height);
     this.gl.enable(this.gl.DEPTH_TEST);
@@ -17,15 +20,15 @@ export class ModelPipeline extends Pipeline {
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
     this.shader
-      ?.bind()
+      .bind()
       .updateProjectMatrix(control.projectMatrix)
       .updateViewMatrix(control.viewMatrix)
       .updateModelMatrix(mat4.create())
       .updateAlpha(1);
 
     this.mesh
-      ?.bind()
-      .setWireframe(false);
+      .bind()
+      .setWireframe(isWireframe);
 
     return this;
   }
