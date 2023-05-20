@@ -62,5 +62,8 @@ export class EdgePipeline extends Pipeline {
     this.mesh?.unbind();
     this.shader?.unbind();
     this.renderpass?.unbind();
+
+    this.gl.stencilMask(0xFF);
+    this.gl.disable(this.gl.STENCIL_TEST);
   }
 }
