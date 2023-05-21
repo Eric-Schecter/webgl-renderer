@@ -1,14 +1,14 @@
 import { Disposable } from "../events";
-import { ColorTexture, DepthTexture } from "../texture";
+import { Texture } from "../texture";
 import { RenderPass } from "./renderpass";
 
 export class ColorDepthRenderPass extends RenderPass implements Disposable {
-  private colorTexture: ColorTexture;
-  private depthTexture: DepthTexture;
+  private colorTexture: Texture;
+  private depthTexture: Texture;
   constructor(gl: WebGL2RenderingContext, protected m_width: number, protected m_height: number) {
     super(gl);
-    this.colorTexture = new ColorTexture(this.gl);
-    this.depthTexture = new DepthTexture(this.gl);
+    this.colorTexture = new Texture(this.gl);
+    this.depthTexture = new Texture(this.gl);
 
     this.bind();
 
@@ -41,8 +41,7 @@ export class ColorDepthRenderPass extends RenderPass implements Disposable {
     return this;
   }
   public clear = () => { // todo: need to modify to bind then clear
-    this.colorTexture.clear();
-    this.depthTexture.clear();
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
     return this;
   }
   public copyToScreen = (width: number, height: number) => {

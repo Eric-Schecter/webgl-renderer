@@ -4,7 +4,7 @@ export class Mesh extends AbstractMesh {
   public boundingBox = new BoundingBox();
   private wireframe = false;
 
-  constructor(gl: WebGL2RenderingContext, positions: number[], indices: number[], normals?: number[]) {
+  constructor(gl: WebGL2RenderingContext, positions: number[], indices: number[], normals: number[], uvs: number[]) {
     super(gl);
 
     this.size = indices.length;
@@ -18,13 +18,17 @@ export class Mesh extends AbstractMesh {
     this.gl.vertexAttribPointer(0, 3, this.gl.FLOAT, false, 12, 0);
     this.gl.enableVertexAttribArray(0);
 
-    if (normals) {
-      const normalVbo = this.gl.createBuffer();
-      this.gl.bindBuffer(this.gl.ARRAY_BUFFER, normalVbo);
-      this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(normals), this.gl.STATIC_DRAW);
-      this.gl.vertexAttribPointer(1, 3, this.gl.FLOAT, false, 12, 0);
-      this.gl.enableVertexAttribArray(1);
-    }
+    const normalVbo = this.gl.createBuffer();
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, normalVbo);
+    this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(normals), this.gl.STATIC_DRAW);
+    this.gl.vertexAttribPointer(1, 3, this.gl.FLOAT, false, 12, 0);
+    this.gl.enableVertexAttribArray(1);
+
+    const uvVbo = this.gl.createBuffer();
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, uvVbo);
+    this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(uvs), this.gl.STATIC_DRAW);
+    this.gl.vertexAttribPointer(2, 2, this.gl.FLOAT, false, 8, 0);
+    this.gl.enableVertexAttribArray(2);
 
     const ibo = this.gl.createBuffer();
     this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, ibo);

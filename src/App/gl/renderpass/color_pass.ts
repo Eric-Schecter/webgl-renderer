@@ -1,13 +1,13 @@
 import { Disposable } from "../events";
-import { ColorTexture } from "../texture";
+import { Texture } from "../texture";
 import { RenderPass } from "./renderpass";
 
 // no depth test support
 export class ColorRenderPass extends RenderPass implements Disposable {
-  private colorTexture: ColorTexture;
+  private colorTexture: Texture;
   constructor(gl: WebGL2RenderingContext, protected m_width: number, protected m_height: number) {
     super(gl);
-    this.colorTexture = new ColorTexture(this.gl);
+    this.colorTexture = new Texture(this.gl);
 
     this.bind();
 

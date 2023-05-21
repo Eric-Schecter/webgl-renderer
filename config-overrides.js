@@ -3,7 +3,7 @@ module.exports = function override(config, env) {
   const index = loaders.length - 2;
   loaders.splice(index, 0, {
     test: /\.(frag|vert|fragment|vertex|shader|glsl|vs|fs)$/,
-    use: ['raw-loader', 'glslify-loader']
+    use: ['raw-loader']
   })
 
   return config;

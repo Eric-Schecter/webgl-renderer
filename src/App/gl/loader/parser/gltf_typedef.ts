@@ -135,9 +135,14 @@ export interface ISampler {
     wrapT?: number;
 }
 
-export interface ITexture {
+export interface IRawTexture {
     sampler: number;
     source: number;
+}
+
+export interface ITexture {
+    sampler: number;
+    image: string;
 }
 
 export interface IGLTFJSON {
@@ -152,7 +157,7 @@ export interface IGLTFJSON {
     scenes: IGLTFScene[];
     images: { uri: string }[];
     samplers: ISampler[];
-    textures: ITexture[];
+    textures: IRawTexture[];
 }
 
 export interface IGLTFExtensions {
@@ -212,7 +217,7 @@ export interface IGLTFRenderObject {
     mode?: EN_PRIMITIVE_MODE; // default should be 4
     images?: string[];
     samplers?: ISampler[];
-    textures: ITexture[];
+    textures: IRawTexture[];
 }
 
 /** 最终要转化出来的gltf数据 end ======================================== */

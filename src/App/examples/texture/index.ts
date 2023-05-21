@@ -1,6 +1,8 @@
 import { vec3 } from "gl-matrix";
 import { Application, GLTFLoader, OrbitControl, PerspectiveCamera } from "../../gl";
-import { ModelLayer} from "./layers";
+import { ITexture } from "../../gl/loader/parser";
+import { Texture } from "../../gl/texture";
+import { ModelLayer } from "./layers";
 import { Mesh } from "./mesh";
 
 export class TextureDemo extends Application {
@@ -24,11 +26,27 @@ export class TextureDemo extends Application {
       meshLayer,
     );
 
+    const modelPath = 'models/DamagedHelmet/DamagedHelmet.gltf';
+    const folderPath = modelPath.slice(0, modelPath.lastIndexOf('/'));
+    console.log(folderPath)
     new GLTFLoader().load('models/DamagedHelmet/DamagedHelmet.gltf')
       .then((model) => {
-        const { positions, indices, normals } = model[0];
-        const mesh = new Mesh(this.gl, Array.from(positions), Array.from(indices), Array.from(normals));
+        const { positions, indices, normals, uvs, textures } = model[0];
+        const mesh = new Mesh(this.gl, Array.from(positions), Array.from(indices), Array.from(normals), Array.from(uvs));
         meshLayer.mesh = mesh;
+
+        console.log(textures)
+        const texture = new Texture(this.gl);
+        // const texturePath = folderPath + '/' + (textures?.baseColorTexture as ITexture).image;
+        const texturePath = folderPath + '/' + (textures?.normalTexture as ITexture).image;
+        // const texturePath = folderPath + '/' + (textures?.metallicRoughnessTexture as ITexture).image;
+        // const texturePath = folderPath + '/' + (textures?.occlusionTexture as ITexture).image;
+        // const texturePath = folderPath + '/' + (textures?.emissiveTexture as ITexture).image;
+        texture.load(texturePath).then(() => {
+
+        })
+
+        meshLayer.texture = texture;
       })
   }
 

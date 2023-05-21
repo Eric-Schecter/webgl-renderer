@@ -12,7 +12,7 @@ import {
     ITypedArray,
     IGLTFMaterial,
     ISampler,
-    ITexture,
+    // ITexture,
 } from '../parser';
 import { EN_GLTF_GEOMETRY_TYPE, IGeometry, ILine, ILines, IMesh, IPBRTexture, IPoints, IXYZ } from './i_geo_typedef';
 

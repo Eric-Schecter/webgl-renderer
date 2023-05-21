@@ -5,14 +5,11 @@
   "dependencies": {
     "dat.gui": "^0.7.9",
     "gl-matrix": "^3.4.3",
-    "glsl-noise": "^0.0.0",
-    "gsap": "^3.10.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^4.0.3",
     "stats.js": "^0.17.0",
-    "tga-js": "^1.1.1",
     "typescript": "^3.7.5"
   },
   "scripts": {
@@ -40,8 +37,6 @@
     "@types/react": "^16.9.45",
     "@types/react-dom": "^16.9.8",
     "@types/react-router-dom": "^5.3.3",
-    "glslify": "^7.1.1",
-    "glslify-loader": "^2.0.0",
     "node-sass": "^6.0.1",
     "raw-loader": "^4.0.2",
     "react-app-rewired": "^2.2.1"

@@ -1,5 +1,5 @@
 import { mat4 } from "gl-matrix";
-import { ColorDepthRenderPass, OrbitControl, Pipeline, WGLWindow } from "../../../gl";
+import { ColorDepthRenderPass, OrbitControl, Pipeline, Texture, WGLWindow } from "../../../gl";
 import { Mesh } from "../mesh";
 import { ModelShader } from "../shaders";
 
@@ -46,6 +46,7 @@ export class ModelPipeline extends Pipeline {
       .updateProjectMatrix(control.projectMatrix)
       .updateViewMatrix(control.viewMatrix)
       .updateModelMatrix(mat4.create())
+      .updateColorTexture(0)
       .updateAlpha(alpha);
 
     this.mesh

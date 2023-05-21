@@ -9,3 +9,4 @@ export * from './renderpass';
 export * from './pipeline';
 export * from './mesh';
 export * from './bounding_box';
+export * from './texture';

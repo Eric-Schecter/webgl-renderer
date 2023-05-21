@@ -1,12 +1,12 @@
 import { Disposable } from "../events";
-import { DepthTexture } from "../texture";
+import { Texture } from "../texture";
 import { RenderPass } from "./renderpass";
 // todo: texture manager to dispose
 export class DepthRenderPass extends RenderPass implements Disposable {
-  private depthTexture: DepthTexture;
+  private depthTexture: Texture;
   constructor(gl: WebGL2RenderingContext, protected m_width: number, protected m_height: number) {
     super(gl);
-    this.depthTexture = new DepthTexture(this.gl);
+    this.depthTexture = new Texture(this.gl);
 
     this.bind();
 
@@ -30,7 +30,7 @@ export class DepthRenderPass extends RenderPass implements Disposable {
     return this;
   }
   public clear = () => {
-    this.depthTexture.clear();
+    this.gl.clear(this.gl.DEPTH_BUFFER_BIT);
     return this;
   }
 }

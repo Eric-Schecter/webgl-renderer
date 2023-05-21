@@ -6,12 +6,14 @@ export class ModelShader extends Shader {
   private uViewMatrix;
   private uModelMatrix;
   private uAlpha;
+  private uColorTexture;
   constructor(gl: WebGL2RenderingContext, vs: string, fs: string) {
     super(gl, vs, fs);
     this.uProjectMatrix = this.gl.getUniformLocation(this.id, 'u_projectMatrix');
     this.uViewMatrix = this.gl.getUniformLocation(this.id, 'u_viewMatrix');
     this.uModelMatrix = this.gl.getUniformLocation(this.id, 'u_modelMatrix');
     this.uAlpha = this.gl.getUniformLocation(this.id, 'u_alpha');
+    this.uColorTexture = this.gl.getUniformLocation(this.id, 'u_colorTexture');
   }
   public updateProjectMatrix = (matrix: mat4) => {
     this.gl.uniformMatrix4fv(this.uProjectMatrix, false, matrix.values());
@@ -30,6 +32,11 @@ export class ModelShader extends Shader {
 
   public updateAlpha = (alpha: number) => {
     this.gl.uniform1f(this.uAlpha, alpha);
+    return this;
+  }
+
+  public updateColorTexture = (id = 0) => {
+    this.gl.uniform1i(this.uColorTexture, id);
     return this;
   }
 }
