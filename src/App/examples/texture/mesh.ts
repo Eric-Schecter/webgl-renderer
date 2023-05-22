@@ -4,7 +4,7 @@ export class Mesh extends AbstractMesh {
   public boundingBox = new BoundingBox();
   private wireframe = false;
 
-  constructor(gl: WebGL2RenderingContext, positions: number[], indices: number[], normals: number[], uvs: number[]) {
+  constructor(gl: WebGL2RenderingContext, positions: number[], indices: number[], normals: number[], uvs: number[], tangents: number[], bitangents: number[]) {
     super(gl);
 
     this.size = indices.length;
@@ -29,6 +29,18 @@ export class Mesh extends AbstractMesh {
     this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(uvs), this.gl.STATIC_DRAW);
     this.gl.vertexAttribPointer(2, 2, this.gl.FLOAT, false, 8, 0);
     this.gl.enableVertexAttribArray(2);
+
+    const tangentsVbo = this.gl.createBuffer();
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, tangentsVbo);
+    this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(tangents), this.gl.STATIC_DRAW);
+    this.gl.vertexAttribPointer(3, 3, this.gl.FLOAT, false, 12, 0);
+    this.gl.enableVertexAttribArray(3);
+
+    const bitangentsVbo = this.gl.createBuffer();
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, bitangentsVbo);
+    this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(bitangents), this.gl.STATIC_DRAW);
+    this.gl.vertexAttribPointer(4, 3, this.gl.FLOAT, false, 12, 0);
+    this.gl.enableVertexAttribArray(4);
 
     const ibo = this.gl.createBuffer();
     this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, ibo);

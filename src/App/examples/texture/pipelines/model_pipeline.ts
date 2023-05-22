@@ -41,11 +41,15 @@ export class ModelPipeline extends Pipeline {
       return this;
     }
 
+    const modelMatrix = mat4.create();
+    const normalMatrix = mat4.transpose(mat4.create(), (mat4.invert(mat4.create(), modelMatrix)));
+
     this.shader
       .bind()
       .updateProjectMatrix(control.projectMatrix)
       .updateViewMatrix(control.viewMatrix)
-      .updateModelMatrix(mat4.create())
+      .updateModelMatrix(modelMatrix)
+      .updateNormalMatrix(normalMatrix)
       .updateColorTexture(0)
       .updateAlpha(alpha);
 

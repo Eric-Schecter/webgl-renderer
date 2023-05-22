@@ -31,11 +31,18 @@ export class TextureDemo extends Application {
     console.log(folderPath)
     new GLTFLoader().load('models/DamagedHelmet/DamagedHelmet.gltf')
       .then((model) => {
-        const { positions, indices, normals, uvs, textures } = model[0];
-        const mesh = new Mesh(this.gl, Array.from(positions), Array.from(indices), Array.from(normals), Array.from(uvs));
+        const { positions, indices, normals, uvs, tangents, bitangents, textures } = model[0];
+        const mesh = new Mesh(
+          this.gl,
+          Array.from(positions),
+          Array.from(indices),
+          Array.from(normals),
+          Array.from(uvs),
+          Array.from(tangents),
+          Array.from(bitangents),
+        );
         meshLayer.mesh = mesh;
 
-        console.log(textures)
         const texture = new Texture(this.gl);
         // const texturePath = folderPath + '/' + (textures?.baseColorTexture as ITexture).image;
         const texturePath = folderPath + '/' + (textures?.normalTexture as ITexture).image;

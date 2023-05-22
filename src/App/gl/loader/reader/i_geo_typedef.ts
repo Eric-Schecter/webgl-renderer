@@ -46,6 +46,8 @@ export interface IMesh extends IGeometry<EN_GLTF_GEOMETRY_TYPE.MESH> {
     indices: Uint32Array;
     normals: Float32Array;
     uvs: Float32Array;
+    tangents: Float32Array;
+    bitangents: Float32Array;
     metalness?: number;
     roughness?: number;
     textures?: IPBRTexture;

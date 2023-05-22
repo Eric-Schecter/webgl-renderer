@@ -1,3 +1,4 @@
+import { vec2, vec3 } from 'gl-matrix';
 import {
     IGLTFBufferAccessor,
     IGLTFRenderObject,
@@ -129,6 +130,38 @@ export class GLTFReader {
         }
     }
 
+    private _generateTangents(pos: number[], uvs: number[], index: number[]) {
+        const tangentsArray = new Array(index.length).fill(0);
+        const bitangentsArray = new Array(index.length).fill(0);
+        for (let i = 0; i < index.length; i += 3) {
+            const index1 = index[i];
+            const index2 = index[i] + 1;
+            const index3 = index[i] + 2;
+            const pos1 = vec3.fromValues(pos[index1], pos[index1 + 1], pos[index1 + 2]);
+            const pos2 = vec3.fromValues(pos[index2], pos[index2 + 1], pos[index2 + 2]);
+            const pos3 = vec3.fromValues(pos[index3], pos[index3 + 1], pos[index3 + 2]);
+            const uv1 = vec2.fromValues(uvs[index1], uvs[index1 + 1]);
+            const uv2 = vec2.fromValues(uvs[index2], uvs[index2 + 1]);
+            const uv3 = vec2.fromValues(uvs[index3], uvs[index3 + 1]);
+            const edge1 = vec3.subtract(vec3.create(), pos2, pos1);
+            const edge2 = vec3.subtract(vec3.create(), pos3, pos1);
+            const deltaUV1 = vec2.subtract(vec2.create(), uv2, uv1);
+            const deltaUV2 = vec2.subtract(vec2.create(), uv3, uv1);
+            const f = 1 / (deltaUV1[0] * deltaUV2[1] - deltaUV2[0] * deltaUV1[1]);
+
+            tangentsArray[index1] += f * (deltaUV2[1] * edge1[0] - deltaUV1[1] * edge2[0]);
+            tangentsArray[index2] += f * (deltaUV2[1] * edge1[1] - deltaUV1[1] * edge2[1]);
+            tangentsArray[index3] += f * (deltaUV2[1] * edge1[2] - deltaUV1[1] * edge2[2]);
+
+            bitangentsArray[index1] += f * (-deltaUV2[0] * edge1[0] + deltaUV1[0] * edge2[0]);
+            bitangentsArray[index2] += f * (-deltaUV2[0] * edge1[1] + deltaUV1[0] * edge2[1]);
+            bitangentsArray[index3] += f * (-deltaUV2[0] * edge1[2] + deltaUV1[0] * edge2[2]);
+        }
+        const tangents = new Float32Array(tangentsArray);
+        const bitangents = new Float32Array(bitangentsArray);
+        return { tangents, bitangents };
+    }
+
     private _readMesh(renderObject: IGLTFRenderObject): IMesh {
         const { attributes, indices: indicesBufferAccessor, material: materialDef, transforms, images, samplers, textures } = renderObject;
         const matrix = multiplyMatrices(transforms);
@@ -138,17 +171,18 @@ export class GLTFReader {
         }
 
         const verts = this._loadAttribute(POSITION);
-
+        const texcoords = TEXCOORD_n ? this._loadAttribute(TEXCOORD_n) : [];
         const positions = new Float32Array(verts);
         const idxValues = indicesBufferAccessor ? this._loadAttribute(indicesBufferAccessor) : new Uint32Array();
         const indices = new Uint32Array(idxValues);
         const norms = NORMAL ? this._loadAttribute(NORMAL) : new Float32Array();
         const normals = new Float32Array(norms);
-        const uvs = TEXCOORD_n ? new Float32Array(this._loadAttribute(TEXCOORD_n)) : new Float32Array();
+        const uvs = new Float32Array(texcoords);
+        const { tangents, bitangents } = this._generateTangents(Array.from(positions), Array.from(uvs), Array.from(idxValues));
         const { color, metalness, roughness } = this._getMeshStyle(materialDef?.pbrMetallicRoughness);
         const res = {};
         this._parseImages(res, materialDef, images, samplers, textures);
-        return { color, metalness, roughness, type: EN_GLTF_GEOMETRY_TYPE.MESH, normals, positions, indices, uvs, matrix, textures: res };
+        return { color, metalness, roughness, type: EN_GLTF_GEOMETRY_TYPE.MESH, normals, positions, indices, uvs, tangents, bitangents, matrix, textures: res };
     }
 
     private _getMeshStyle(
