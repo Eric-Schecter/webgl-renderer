@@ -1,5 +1,5 @@
 import { mat4 } from "gl-matrix";
-import { ColorDepthRenderPass, OrbitControl, Pipeline, Texture, WGLWindow } from "../../../gl";
+import { ColorDepthRenderPass, OrbitControl, PBRTextures, Pipeline, WGLWindow } from "../../../gl";
 import { Mesh } from "../mesh";
 import { ModelShader } from "../shaders";
 
@@ -36,7 +36,7 @@ export class ModelPipeline extends Pipeline {
     }
     return this;
   }
-  public update = (control: OrbitControl, alpha = 1, isWireframe = false) => {
+  public update = (control: OrbitControl, pbrTextures: PBRTextures, alpha = 1, isWireframe = false) => {
     if (!this.shader || !this.mesh) {
       return this;
     }
@@ -50,7 +50,11 @@ export class ModelPipeline extends Pipeline {
       .updateViewMatrix(control.viewMatrix)
       .updateModelMatrix(modelMatrix)
       .updateNormalMatrix(normalMatrix)
-      .updateColorTexture(0)
+      .updateColorTexture(0, pbrTextures.baseColorTexture)
+      .updateNormalTexture(1, pbrTextures.normalTexture)
+      .updateMetalRoughnessTexture(2, pbrTextures.metallicRoughnessTexture)
+      .updateOcclusionTexture(3, pbrTextures.occlusionTexture)
+      .updateEmissiveTexture(4, pbrTextures.emissiveTexture)
       .updateAlpha(alpha);
 
     this.mesh

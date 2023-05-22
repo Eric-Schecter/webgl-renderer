@@ -1,5 +1,5 @@
 import { mat4 } from "gl-matrix";
-import { Shader } from "../../../gl";
+import { Shader, Texture } from "../../../gl";
 
 export class ModelShader extends Shader {
   private uProjectMatrix;
@@ -8,6 +8,10 @@ export class ModelShader extends Shader {
   private uNormalMatrix;
   private uAlpha;
   private uColorTexture;
+  private uNormalTexture;
+  private uMetalRoughnessTexture;
+  private uOcclusionTexture;
+  private uEmissiveTexture;
   constructor(gl: WebGL2RenderingContext, vs: string, fs: string) {
     super(gl, vs, fs);
     this.uProjectMatrix = this.gl.getUniformLocation(this.id, 'u_projectMatrix');
@@ -16,6 +20,10 @@ export class ModelShader extends Shader {
     this.uNormalMatrix = this.gl.getUniformLocation(this.id, 'u_normalMatrix');
     this.uAlpha = this.gl.getUniformLocation(this.id, 'u_alpha');
     this.uColorTexture = this.gl.getUniformLocation(this.id, 'u_colorTexture');
+    this.uNormalTexture = this.gl.getUniformLocation(this.id, 'u_normalTexture');
+    this.uMetalRoughnessTexture = this.gl.getUniformLocation(this.id, 'u_metalRoughnessTexture');
+    this.uOcclusionTexture = this.gl.getUniformLocation(this.id, 'u_occlusionTexture');
+    this.uEmissiveTexture = this.gl.getUniformLocation(this.id, 'u_emissiveTexture');
   }
   public updateProjectMatrix = (matrix: mat4) => {
     this.gl.uniformMatrix4fv(this.uProjectMatrix, false, matrix.values());
@@ -42,8 +50,43 @@ export class ModelShader extends Shader {
     return this;
   }
 
-  public updateColorTexture = (id = 0) => {
-    this.gl.uniform1i(this.uColorTexture, id);
+  public updateColorTexture = (id = 0, texture?: Texture) => {
+    if (texture) {
+      this.gl.uniform1i(this.uColorTexture, id);
+      texture.bind(id);
+    }
+    return this;
+  }
+
+  public updateNormalTexture = (id = 0, texture?: Texture) => {
+    if (texture) {
+      this.gl.uniform1i(this.uNormalTexture, id);
+      texture.bind(id);
+    }
+    return this;
+  }
+
+  public updateMetalRoughnessTexture = (id = 0, texture?: Texture) => {
+    if (texture) {
+      this.gl.uniform1i(this.uMetalRoughnessTexture, id);
+      texture.bind(id);
+    }
+    return this;
+  }
+
+  public updateOcclusionTexture = (id = 0, texture?: Texture) => {
+    if (texture) {
+      this.gl.uniform1i(this.uOcclusionTexture, id);
+      texture.bind(id);
+    }
+    return this;
+  }
+
+  public updateEmissiveTexture = (id = 0, texture?: Texture) => {
+    if (texture) {
+      this.gl.uniform1i(this.uEmissiveTexture, id);
+      texture.bind(id);
+    }
     return this;
   }
 }

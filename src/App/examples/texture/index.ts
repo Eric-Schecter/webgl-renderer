@@ -29,7 +29,7 @@ export class TextureDemo extends Application {
     const modelPath = 'models/DamagedHelmet/DamagedHelmet.gltf';
     const folderPath = modelPath.slice(0, modelPath.lastIndexOf('/'));
     console.log(folderPath)
-    new GLTFLoader().load('models/DamagedHelmet/DamagedHelmet.gltf')
+    new GLTFLoader().load(modelPath)
       .then((model) => {
         const { positions, indices, normals, uvs, tangents, bitangents, textures } = model[0];
         const mesh = new Mesh(
@@ -43,17 +43,11 @@ export class TextureDemo extends Application {
         );
         meshLayer.mesh = mesh;
 
-        const texture = new Texture(this.gl);
-        // const texturePath = folderPath + '/' + (textures?.baseColorTexture as ITexture).image;
-        const texturePath = folderPath + '/' + (textures?.normalTexture as ITexture).image;
-        // const texturePath = folderPath + '/' + (textures?.metallicRoughnessTexture as ITexture).image;
-        // const texturePath = folderPath + '/' + (textures?.occlusionTexture as ITexture).image;
-        // const texturePath = folderPath + '/' + (textures?.emissiveTexture as ITexture).image;
-        texture.load(texturePath).then(() => {
-
-        })
-
-        meshLayer.texture = texture;
+        meshLayer.pbrTextures.baseColorTexture = new Texture(this.gl, folderPath + '/' + (textures?.baseColorTexture as ITexture).image);
+        meshLayer.pbrTextures.normalTexture = new Texture(this.gl, folderPath + '/' + (textures?.normalTexture as ITexture).image);
+        meshLayer.pbrTextures.metallicRoughnessTexture = new Texture(this.gl, folderPath + '/' + (textures?.metallicRoughnessTexture as ITexture).image);
+        meshLayer.pbrTextures.occlusionTexture = new Texture(this.gl, folderPath + '/' + (textures?.occlusionTexture as ITexture).image);
+        meshLayer.pbrTextures.emissiveTexture = new Texture(this.gl, folderPath + '/' + (textures?.emissiveTexture as ITexture).image);
       })
   }
 
