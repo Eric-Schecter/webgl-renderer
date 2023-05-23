@@ -1,5 +1,5 @@
 import { vec2 } from "gl-matrix";
-import { Shader } from "../../../gl";
+import { Shader } from "../../gl";
 
 export class CopyShader extends Shader {
   private uTexture;
