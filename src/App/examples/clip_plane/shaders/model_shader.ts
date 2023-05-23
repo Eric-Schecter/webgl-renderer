@@ -15,17 +15,21 @@ export class ModelShader extends Shader {
   }
   public updateProjectMatrix = (matrix: mat4) => {
     this.gl.uniformMatrix4fv(this.uProjectMatrix, false, matrix.values());
+    return this;
   }
 
   public updateViewMatrix = (matrix: mat4) => {
     this.gl.uniformMatrix4fv(this.uViewMatrix, false, matrix.values());
+    return this;
   }
 
   public updatePlane = (plane: vec4) => {
     this.gl.uniform4fv(this.uPlane, plane.values());
+    return this;
   }
 
   public updateNeedRenderPlane = (needRenderPlane: number) => {
     this.gl.uniform1i(this.uNeedRenderplane, needRenderPlane);
+    return this;
   }
 }

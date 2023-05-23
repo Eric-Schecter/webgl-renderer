@@ -10,15 +10,22 @@ class OrbitControlEvent implements Disposable {
     this.canvas.addEventListener('wheel', this.wheelDispatcher);
     WGLEvents.getInstance().register('wheel', this.canvas, this.wheel);
     this.canvas.addEventListener('contextmenu', this.disableContext);
+    document.addEventListener('wheel', this.disableDefaultWheel, { passive: false });
   }
 
   public dispose = () => {
     this.canvas.removeEventListener('mousedown', this.mousedown);
     this.canvas.removeEventListener('contextmenu', this.disableContext);
+    document.removeEventListener('wheel', this.disableDefaultWheel);
   };
 
   private disableContext = (e: MouseEvent) => {
     e.preventDefault();
+  }
+
+  private disableDefaultWheel = (e: MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
   }
 
   private wheelDispatcher = (e: MouseEvent) => WGLEvents.getInstance().dispatch(new EventInfo('wheel', this.canvas, e));

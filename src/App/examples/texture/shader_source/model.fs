@@ -17,18 +17,20 @@ in mat3 v_TBN;
 out vec4 fColor;
 
 void main(){
+    fColor=vec4(1.);
+
     // vec3 normal=texture(u_normalTexture,v_uv).xyz;
     // normal=normalize(normal*2.-vec3(1.));
     // normal=normalize(v_TBN*normal);
     // fColor=vec4(normal,u_alpha);
     
-    // fColor=texture(u_colorTexture,v_uv);
+    fColor=texture(u_colorTexture,v_uv);
     
-    fColor=texture(u_metalRoughnessTexture,v_uv);
+    // fColor+=texture(u_metalRoughnessTexture,v_uv);
     
-    // fColor=texture(u_occlusionTexture,v_uv);
+    // fColor+=texture(u_occlusionTexture,v_uv);
     
-    // fColor=texture(u_emissiveTexture,v_uv);
+    fColor+=texture(u_emissiveTexture,v_uv);
     
     fColor.a=u_alpha;
 }

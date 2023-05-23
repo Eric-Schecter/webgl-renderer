@@ -2,7 +2,7 @@
 
 precision mediump float;
 
-const float PI = 3.14;
+const float PI=3.14;
 
 uniform sampler2D u_texture;
 uniform float u_nearestDepth;
@@ -20,11 +20,12 @@ mat2 rotate(float angle)
 
 void main(){
     float depth=texture(u_texture,v_uv).x;
+    depth*=1000. - 0.1;
     if(depth>u_nearestDepth){
         discard;
     }
     
-    vec2 uv = v_uv * rotate(-45.);
+    vec2 uv=v_uv*rotate(-45.);
     float temp=fract(uv.y*60.);
     if(temp<1.&&temp>.5){
         fColor=vec4(vec3(0.),1.);

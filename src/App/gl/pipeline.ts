@@ -19,7 +19,7 @@ export abstract class Pipeline {
     this.mesh = t_mesh;
     return this;
   }
-  public setRenderPass(t_renderpass: RenderPass | undefined) {
+  public setRenderPass(t_renderpass?: RenderPass) {
     this.renderpass = t_renderpass;
     return this;
   }

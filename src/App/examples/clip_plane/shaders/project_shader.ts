@@ -15,17 +15,21 @@ export class ProjectShader extends Shader {
   }
   public updateTexture = (id = 0) => {
     this.gl.uniform1i(this.uTexture, id);
+    return this;
   }
 
   public updateProjectMatrix = (matrix: mat4) => {
     this.gl.uniformMatrix4fv(this.uProjectMatrix, false, matrix.values());
+    return this;
   }
 
   public updateViewMatrix = (matrix: mat4) => {
     this.gl.uniformMatrix4fv(this.uViewMatrix, false, matrix.values());
+    return this;
   }
 
   public updateNearestDepth = (depth: number) => {
     this.gl.uniform1f(this.uNearestDepth, depth);
+    return this;
   }
 }

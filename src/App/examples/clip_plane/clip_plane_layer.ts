@@ -5,26 +5,31 @@ import { ModelVS, ModelFS, PlaneVS, PlaneFS, ProjectVS, ProjectFS } from './shad
 import { ModelShader, PlaneShader, ProjectShader } from "./shaders";
 import { PlaneGeometry } from "./plane";
 import { GUIHandler, OptionFolder } from "../../gui";
+import { ModelPipeline, ProjectPipeline } from "./pipelines";
+import { PlanePipeline } from "./pipelines/plane_pipeline";
 
 export class ClipPlaneLayer extends Layer {
   public mesh?: Mesh;
-  private plane: Mesh;
-  private modelShader: ModelShader;
-  private projectShader: ProjectShader;
-  private planeShader: PlaneShader;
   private needRenderPlane = false;
   private camera: OrthographicCamera;
   private renderpass: ColorDepthRenderPass;
+  private pipeline: ModelPipeline;
+  private projectPipeline: ProjectPipeline;
+  private planePipeline: PlanePipeline;
   constructor(private gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl) {
     super(window);
     const { vertices, indices, uvs } = new PlaneGeometry(3, 3, 1, 1);
     const { width, height } = window;
-    this.plane = new Mesh(this.gl, vertices, indices, uvs);
-    this.planeShader = new PlaneShader(this.gl, PlaneVS, PlaneFS);
-    this.modelShader = new ModelShader(this.gl, ModelVS, ModelFS);
-    this.projectShader = new ProjectShader(this.gl, ProjectVS, ProjectFS);
+    const plane = new Mesh(this.gl, vertices, indices, uvs);
+    const planeShader = new PlaneShader(this.gl, PlaneVS, PlaneFS);
+    const modelShader = new ModelShader(this.gl, ModelVS, ModelFS);
+    const projectShader = new ProjectShader(this.gl, ProjectVS, ProjectFS);
     this.camera = new OrthographicCamera();
     this.renderpass = new ColorDepthRenderPass(gl, width, height);
+
+    this.pipeline = new ModelPipeline(gl).setShader(modelShader);
+    this.projectPipeline = new ProjectPipeline(gl).setMesh(plane).setShader(projectShader);
+    this.planePipeline = new PlanePipeline(gl).setMesh(plane).setShader(planeShader);
 
     const folder = GUIHandler.getInstance().createFolder('mode', OptionFolder);
     folder.addItem('render plane', () => this.needRenderPlane = !this.needRenderPlane, this.needRenderPlane);
@@ -32,113 +37,69 @@ export class ClipPlaneLayer extends Layer {
   }
 
   public update() {
-    if (!this.mesh || !this.modelShader) {
+    if (!this.mesh) {
       return;
     }
-    const { width, height } = this.window;
-    this.gl.viewport(0, 0, width, height);
-
-    this.gl.enable(this.gl.DEPTH_TEST);
-
-    this.gl.clearColor(0, 0, 0, 1);
-    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
     if (!this.needRenderPlane) {
       // render opaque objects
       // render model
-      this.modelShader.bind();
-
-      this.modelShader.updateProjectMatrix(this.control.projectMatrix);
-      this.modelShader.updateViewMatrix(this.control.viewMatrix);
-      this.modelShader.updateNeedRenderPlane(0);
-
-      this.mesh.bind();
-      this.mesh.render();
-      this.mesh.unbind();
-
-      this.modelShader.unbind();
+      this.pipeline
+        .setMesh(this.mesh)
+        .bind(this.window)
+        .clear()
+        .update(this.control.projectMatrix, this.control.viewMatrix, this.needRenderPlane)
+        .render()
+        .unbind();
     } else {
-      this.renderpass.bind();
-      this.renderpass.clear();
-
       // set camere
       const focus = vec3.create();
       this.camera.pos = vec3.fromValues(0, 0, 1);
       this.camera.setViewMatrix(focus).setProjection(3, 3, 1, 0.1, 1000);
-
+ 
       // render model
-      this.modelShader.bind();
-
-      this.modelShader.updateProjectMatrix(this.camera.projectMatrix);
-      this.modelShader.updateViewMatrix(this.camera.viewMatrix);
-      this.modelShader.updateNeedRenderPlane(1);
 
       const a = 0;
       const b = 0;
       const c = 1;
       const d = 0;
       const plane = vec4.fromValues(a, b, c, d);
-      this.modelShader.updatePlane(plane);
 
-      this.mesh.bind();
-      this.mesh.render();
-      this.mesh.unbind();
-
-      this.modelShader.unbind();
-
-      this.renderpass.unbind();
+      this.pipeline
+        .setMesh(this.mesh)
+        .setRenderPass(this.renderpass)
+        .bind(this.window)
+        .clear()
+        .update(this.camera.projectMatrix, this.camera.viewMatrix, this.needRenderPlane, plane)
+        .render()
+        .unbind();
 
       // render opaque objects
       // render model
-      this.modelShader.bind();
-
-      this.modelShader.updateProjectMatrix(this.control.projectMatrix);
-      this.modelShader.updateViewMatrix(this.control.viewMatrix);
-      this.modelShader.updateNeedRenderPlane(1);
-
-      this.modelShader.updatePlane(plane);
-
-      this.mesh.bind();
-      this.mesh.render();
-      this.mesh.unbind();
-
-      this.modelShader.unbind();
-
-      this.gl.enable(this.gl.BLEND);
-      this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
-
-      this.renderpass.bindForReadDepth();
-
-      this.projectShader.bind();
+      this.pipeline
+        .setRenderPass()
+        .clear()
+        .update(this.control.projectMatrix, this.control.viewMatrix, this.needRenderPlane, plane)
+        .render()
+        .unbind();
 
       // refer to https://www.cuemath.com/geometry/distance-between-point-and-plane/
       const { pos } = this.camera;
       const nearestDepth = Math.abs(a * pos[0] + b * pos[1] + c * pos[2]) / Math.sqrt(a ** 2 + b ** 2 + c ** 2);
 
-      this.projectShader.updateProjectMatrix(this.control.projectMatrix);
-      this.projectShader.updateViewMatrix(this.control.viewMatrix);
-      this.projectShader.updateTexture();
-      this.projectShader.updateNearestDepth(nearestDepth / (1000 - 0.1));
-
-      this.plane.bind();
-      this.plane.render();
-      this.plane.unbind();
-
-      this.projectShader.unbind();
+      this.projectPipeline
+        .bind(this.window)
+        .update(this.control.projectMatrix, this.control.viewMatrix, nearestDepth , this.renderpass)
+        .render()
+        .unbind()
 
       // render transparent objects
       // render plane
-
-      this.planeShader.bind();
-
-      this.planeShader.updateProjectMatrix(this.control.projectMatrix);
-      this.planeShader.updateViewMatrix(this.control.viewMatrix);
-
-      this.plane.bind();
-      this.plane.render();
-      this.plane.unbind();
-
-      this.planeShader.unbind();
+      this.planePipeline
+        .bind(this.window)
+        .update(this.control.projectMatrix, this.control.viewMatrix)
+        .render()
+        .unbind()
     }
   }
 }
