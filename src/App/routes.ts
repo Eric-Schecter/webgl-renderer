@@ -1,5 +1,11 @@
-import { TriangleDemo, ClipPlaneDemo, DisplayModeDemo, TextureDemo } from './examples';
-import { AntiAliasingDemo } from './examples/anti_aliasing';
+import {
+  TriangleDemo,
+  ClipPlaneDemo,
+  DisplayModeDemo,
+  TextureDemo,
+  AntiAliasingDemo,
+  LightsDemo,
+} from './examples';
 
 export const routes = [
   { path: '/', name: 'triangle', app: TriangleDemo },
@@ -8,4 +14,5 @@ export const routes = [
   { path: '/display-mode', name: 'display-mode', app: DisplayModeDemo },
   { path: '/texture', name: 'texture', app: TextureDemo },
   { path: '/anti-aliasing', name: 'anti-aliasing', app: AntiAliasingDemo },
+  { path: '/lights', name: 'lights', app: LightsDemo },
 ]
