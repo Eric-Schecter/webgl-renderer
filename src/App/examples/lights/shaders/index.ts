@@ -1,1 +1,1 @@
-export * from './mesh_shader';
+export * from './phong_shader';

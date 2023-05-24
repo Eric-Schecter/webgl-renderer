@@ -1,10 +1,11 @@
 import { mat4, vec3 } from "gl-matrix";
 import { ColorDepthRenderPass, Pipeline, WGLWindow } from "../../../gl";
+import { Lights } from "../lights";
 import { Mesh } from "../mesh";
-import { MeshShader } from "../shaders";
+import { PhongShader } from "../shaders";
 
 export class MeshPipeline extends Pipeline {
-  protected shader?: MeshShader;
+  protected shader?: PhongShader;
   protected mesh?: Mesh;
   protected renderpass?: ColorDepthRenderPass | undefined;
   constructor(private gl: WebGL2RenderingContext) {
@@ -26,7 +27,7 @@ export class MeshPipeline extends Pipeline {
     }
     return this;
   }
-  public update = (projectMatrix: mat4, viewMatrix: mat4, modelMatrix: mat4, color: vec3) => {
+  public update = (projectMatrix: mat4, viewMatrix: mat4, modelMatrix: mat4, color: vec3, lights: Lights) => {
     if (!this.shader || !this.mesh) {
       return this;
     }
@@ -36,7 +37,8 @@ export class MeshPipeline extends Pipeline {
       .updateProjectMatrix(projectMatrix)
       .updateViewMatrix(viewMatrix)
       .updateModelMatrix(modelMatrix)
-      .updateColor(color);
+      .updateColor(color)
+      .updateAmbientLight(lights.ambientLights)
 
     this.mesh.bind()
 
