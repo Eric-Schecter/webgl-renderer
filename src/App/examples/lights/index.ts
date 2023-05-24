@@ -1,7 +1,7 @@
 import { vec3, vec4 } from "gl-matrix";
 import { Application, OrbitControl } from "../../gl";
 import { BoxLayer, PlaneLayer } from "./layers";
-import { AmbientLight, Lights } from "./lights";
+import { AmbientLight, DirectionalLight, Lights } from "./lights";
 
 export class LightsDemo extends Application {
   private control: OrbitControl;
@@ -22,6 +22,7 @@ export class LightsDemo extends Application {
 
     const lights = new Lights();
     lights.ambientLights.push(new AmbientLight(vec4.fromValues(1, 1, 1, 1), 0.1));
+    lights.directionalLighs.push(new DirectionalLight(vec4.fromValues(1, 1, 1, 1), vec3.fromValues(-1, -1, -1), 0.5));
 
     const planeLayer = new PlaneLayer(this.gl, this.window, this.control);
     const boxLayer = new BoxLayer(this.gl, this.window, this.control);

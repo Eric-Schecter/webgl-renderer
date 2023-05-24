@@ -13,8 +13,8 @@ export class PlaneLayer extends Layer {
   private shader?: PhongShader;
   constructor(private gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl) {
     super(window);
-    const { vertices, indices, uvs } = new PlaneGeometry(3, 3, 1, 1);
-    const plane = new Mesh(this.gl, vertices, indices, uvs);
+    const { vertices, indices, normals, uvs } = new PlaneGeometry(3, 3, 1, 1);
+    const plane = new Mesh(this.gl, vertices, indices, normals, uvs);
     this.pipeline = new MeshPipeline(gl).setMesh(plane);
   }
 

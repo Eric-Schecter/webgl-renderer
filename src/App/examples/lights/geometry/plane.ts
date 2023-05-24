@@ -1,6 +1,7 @@
 export class PlaneGeometry {
   public vertices: number[] = [];
   public indices: number[] = [];
+  public normals: number[] = [];
   public uvs: number[] = [];
   constructor(width: number, height: number, widthSegments: number, heightSegments: number) {
     const width_half = width / 2;
@@ -19,6 +20,8 @@ export class PlaneGeometry {
         const x = ix * segment_width - width_half;
 
         this.vertices.push(x, - y, 0); // position
+
+        this.normals.push( 0, 0, 1 );
 
         this.uvs.push(ix / gridX);
         this.uvs.push(1 - (iy / gridY));

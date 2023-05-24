@@ -6,7 +6,6 @@ export class BoxGeometry {
   public normals: number[] = [];
   public uvs: number[] = [];
   private numberOfVertices = 0;
-  private groupStart = 0;
   constructor(width: number, height: number, depth: number, widthSegments = 1, heightSegments = 1, depthSegments = 1) {
     this.buildPlane(2, 1, 0, - 1, - 1, depth, height, width, depthSegments, heightSegments); // px
     this.buildPlane(2, 1, 0, 1, - 1, depth, height, - width, depthSegments, heightSegments); // nx

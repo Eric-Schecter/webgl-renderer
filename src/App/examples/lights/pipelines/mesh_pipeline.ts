@@ -38,7 +38,8 @@ export class MeshPipeline extends Pipeline {
       .updateViewMatrix(viewMatrix)
       .updateModelMatrix(modelMatrix)
       .updateColor(color)
-      .updateAmbientLight(lights.ambientLights)
+      .updateAmbientLights(lights.ambientLights)
+      .updateDirectionalLights(lights.directionalLighs)
 
     this.mesh.bind()
 
