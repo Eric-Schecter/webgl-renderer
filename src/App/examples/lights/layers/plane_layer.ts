@@ -23,7 +23,8 @@ export class PlaneLayer extends Layer {
       return;
     }
 
-    const modelMatrix = mat4.rotateX(mat4.create(), mat4.create(), Math.PI / 2);
+    const modelMatrix = mat4.rotateX(mat4.create(), mat4.create(), -Math.PI / 2);
+    const normalMatrix = mat4.transpose(mat4.create(), (mat4.invert(mat4.create(), modelMatrix)));
     const color = vec3.fromValues(1, 1, 1);
     const { projectMatrix, viewMatrix } = this.control;
 
@@ -34,7 +35,7 @@ export class PlaneLayer extends Layer {
 
     this.pipeline
       .bind(this.window)
-      .update(projectMatrix, viewMatrix, modelMatrix, color, this.lights)
+      .update(projectMatrix, viewMatrix, modelMatrix, normalMatrix, color, this.lights)
       .render()
       .unbind();
   }

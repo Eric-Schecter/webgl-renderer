@@ -19,7 +19,7 @@ export class PlaneGeometry {
 
         const x = ix * segment_width - width_half;
 
-        this.vertices.push(x, - y, 0); // position
+        this.vertices.push(x, - y, 0);
 
         this.normals.push( 0, 0, 1 );
 

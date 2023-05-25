@@ -27,6 +27,7 @@ export class BoxLayer extends Layer {
     }
 
     const modelMatrix = mat4.translate(mat4.create(), mat4.create(), vec3.fromValues(0, 0.5, 0));
+    const normalMatrix = mat4.transpose(mat4.create(), (mat4.invert(mat4.create(), modelMatrix)));
     const color = vec3.fromValues(1, 0, 0);
     const { projectMatrix, viewMatrix } = this.control;
 
@@ -37,7 +38,7 @@ export class BoxLayer extends Layer {
 
     this.pipeline
       .bind(this.window)
-      .update(projectMatrix, viewMatrix, modelMatrix, color, this.lights)
+      .update(projectMatrix, viewMatrix, modelMatrix, normalMatrix, color, this.lights)
       .render()
       .unbind();
   }
