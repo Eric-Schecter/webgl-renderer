@@ -26,7 +26,7 @@ export class EdgeLayer extends Layer {
     this.pipeline = new ModelPipeline(gl).setShader(shader);
   }
 
-  public update() {
+  public render() {
     if (!this.mesh) {
       return;
     }

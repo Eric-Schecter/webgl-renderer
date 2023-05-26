@@ -21,7 +21,7 @@ export class TriangleLayer extends Layer {
     this.shader = new Shader(this.gl, TriangleVS, TriangleFS);
   }
 
-  public update() {
+  public render() {
     const { width, height } = this.window;
     this.gl.viewport(0, 0, width, height);
 

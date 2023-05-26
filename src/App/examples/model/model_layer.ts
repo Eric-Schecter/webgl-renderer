@@ -12,7 +12,7 @@ export class ModelLayer extends Layer {
     this.shader = new ModelShader(this.gl, ModelVS, ModelFS);
   }
 
-  public update() {
+  public render() {
     if (!this.mesh || !this.shader) {
       return;
     }

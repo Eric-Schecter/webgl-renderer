@@ -1,4 +1,4 @@
-import { mat4, vec3 } from "gl-matrix";
+import { mat4, vec4 } from "gl-matrix";
 import { Shader } from "../../../gl";
 
 export class BasicShader extends Shader {
@@ -28,8 +28,8 @@ export class BasicShader extends Shader {
     return this;
   }
 
-  public updateColor = (color: vec3) => {
-    this.gl.uniform3fv(this.uColor, color);
+  public updateColor = (color: vec4) => {
+    this.gl.uniform4fv(this.uColor, color);
     return this;
   }
 }

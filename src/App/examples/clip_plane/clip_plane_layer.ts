@@ -36,7 +36,7 @@ export class ClipPlaneLayer extends Layer {
 
   }
 
-  public update() {
+  public render() {
     if (!this.mesh) {
       return;
     }

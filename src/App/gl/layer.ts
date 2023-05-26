@@ -4,5 +4,6 @@ import { WGLWindow } from "./window";
 export abstract class Layer {
   public mesh?: AbstractMesh;
   constructor(protected window: WGLWindow, public visible = true) { }
-  abstract update(time: number): void;
+  public update = (time: number) => { };
+  public abstract render(): void;
 }

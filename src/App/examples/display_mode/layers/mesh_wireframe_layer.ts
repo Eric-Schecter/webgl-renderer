@@ -17,7 +17,7 @@ export class MeshWireframeLayer extends Layer {
     this.colorPipeline = new ModelColorPipeline(gl).setShader(colorShader);
   }
 
-  public update() {
+  public render() {
     if (!this.mesh) {
       return;
     }

@@ -1,8 +1,12 @@
-export abstract class AbstractMesh {
+import { Object3D } from "./object3D";
+
+export abstract class AbstractMesh extends Object3D {
   protected size = 0;
   protected vao: WebGLVertexArrayObject = 0;
 
-  constructor(protected gl: WebGL2RenderingContext) { }
+  constructor(protected gl: WebGL2RenderingContext) {
+    super();
+  }
 
   public bind() {
     this.gl.bindVertexArray(this.vao);

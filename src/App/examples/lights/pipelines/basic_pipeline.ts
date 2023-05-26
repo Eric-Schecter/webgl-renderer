@@ -1,4 +1,4 @@
-import { mat4, vec3 } from "gl-matrix";
+import { mat4, vec4 } from "gl-matrix";
 import { ColorDepthRenderPass, Pipeline, WGLWindow } from "../../../gl";
 import { Mesh } from "../mesh";
 import { BasicShader } from "../shaders";
@@ -26,7 +26,7 @@ export class BasicPipeline extends Pipeline {
     }
     return this;
   }
-  public update = (projectMatrix: mat4, viewMatrix: mat4, modelMatrix: mat4, color: vec3) => {
+  public update = (projectMatrix: mat4, viewMatrix: mat4, modelMatrix: mat4, color: vec4) => {
     if (!this.shader || !this.mesh) {
       return this;
     }

@@ -21,7 +21,7 @@ export class BoxLayer extends Layer {
     this.pipeline = new MeshPipeline(gl).setMesh(box);
   }
 
-  public update() {
+  public render() {
     if (!this.lights) {
       return;
     }

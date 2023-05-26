@@ -30,7 +30,7 @@ export class TriangleLayer extends Layer {
     folder.addItem('anti aliasing', () => { this.antiAliasing = true }, false);
   }
 
-  public update() {
+  public render() {
     if (this.antiAliasing) {
       this.renderpass.bind();
     }

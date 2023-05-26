@@ -18,7 +18,7 @@ export class PlaneLayer extends Layer {
     this.pipeline = new MeshPipeline(gl).setMesh(plane);
   }
 
-  public update() {
+  public render() {
     if (!this.lights) {
       return;
     }

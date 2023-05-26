@@ -34,7 +34,7 @@ export class WireframeDepthLayer extends Layer {
 
   }
 
-  public update() {
+  public render() {
     if (!this.mesh) {
       return;
     }
