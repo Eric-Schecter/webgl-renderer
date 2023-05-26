@@ -27,12 +27,12 @@ export class LightsDemo extends Application {
 
     const targetSpotLight = vec3.fromValues(0, 0, 0);
     const posSpotLight = vec3.fromValues(0, 10, 0);
-    const dirSpotLigh = vec3.normalize(vec3.create(), (vec3.subtract(vec3.create(), targetSpotLight, posSpotLight)));
+    const dirSpotLight = vec3.normalize(vec3.create(), (vec3.subtract(vec3.create(), targetSpotLight, posSpotLight)));
     lights.spotLights.push(
       new SpotLight(
         vec4.fromValues(1, 1, 1, 1),
         posSpotLight,
-        dirSpotLigh,
+        dirSpotLight,
         Math.cos(12.5 / 180 * Math.PI),
         Math.cos(17.5 / 180 * Math.PI),
         0.5,
