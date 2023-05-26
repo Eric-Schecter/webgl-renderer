@@ -10,7 +10,7 @@ import { Lights } from "../lights";
 export class PlaneLayer extends Layer {
   public lights?: Lights;
   private pipeline: MeshPipeline;
-  private shader?: PhongShader;
+  public shader?: PhongShader;
   constructor(private gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl) {
     super(window);
     const { vertices, indices, normals, uvs } = new PlaneGeometry(3, 3, 1, 1);

@@ -69,7 +69,7 @@ export class PhongShader extends Shader {
       }
     })
 
-    this.uDirectionalLights = lights.directionalLighs.map((light, index) => {
+    this.uDirectionalLights = lights.directionalLights.map((light, index) => {
       return {
         color: this.gl.getUniformLocation(this.id, `u_directionalLight[${index}].color`),
         direction: this.gl.getUniformLocation(this.id, `u_directionalLight[${index}].direction`),

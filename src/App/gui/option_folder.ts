@@ -11,7 +11,7 @@ export class OptionFolder extends Folder {
       .listen()
       .onChange((value: boolean) => {
         this.data[item] = value;
-        cb();
+        cb(value);
       });
   }
 }

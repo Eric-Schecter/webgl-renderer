@@ -11,7 +11,7 @@ export class BoxLayer extends Layer {
   public lights?: Lights;
   // private renderpass: ColorDepthRenderPass;
   private pipeline: MeshPipeline;
-  private shader?: PhongShader;
+  public shader?: PhongShader;
   constructor(private gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl) {
     super(window);
     const { vertices, indices, normals, uvs } = new BoxGeometry(0.5, 0.5, 0.5);

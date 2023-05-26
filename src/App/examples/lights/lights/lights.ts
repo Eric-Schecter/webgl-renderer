@@ -6,12 +6,12 @@ import { SpotLight } from "./spot_light";
 
 export class Lights {
   public ambientLights: AmbientLight[] = [];
-  public directionalLighs: DirectionalLight[] = [];
+  public directionalLights: DirectionalLight[] = [];
   public spotLights: SpotLight[] = [];
   public pointLights: PointLight[] = [];
 
   public update = (layers: Layer[]) => {
-    this.directionalLighs.forEach(light => light.update(layers));
+    this.directionalLights.forEach(light => light.update(layers));
     this.spotLights.forEach(light => light.update(layers));
     this.pointLights.forEach(light => light.update(layers));
   }

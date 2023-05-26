@@ -40,7 +40,7 @@ export class MeshPipeline extends Pipeline {
       .updateNormalMatrix(normalMatrix)
       .updateColor(color)
       .updateAmbientLights(lights.ambientLights)
-      .updateDirectionalLights(lights.directionalLighs)
+      .updateDirectionalLights(lights.directionalLights)
       .updateSpotLights(lights.spotLights)
       .updatePointLights(lights.pointLights);
 
