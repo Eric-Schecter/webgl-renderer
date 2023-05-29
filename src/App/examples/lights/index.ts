@@ -33,7 +33,7 @@ export class LightsDemo extends Application {
     this.lights.directionalLights.push(directionalLight);
 
     const targetSpotLight = vec3.fromValues(0, 0, 0);
-    const posSpotLight = vec3.fromValues(0, 10, 0);
+    const posSpotLight = vec3.fromValues(0, 3, 0);
     const dirSpotLight = vec3.normalize(vec3.create(), (vec3.subtract(vec3.create(), targetSpotLight, posSpotLight)));
     const spotLight = new SpotLight(
       vec4.fromValues(1, 1, 1, 1),
@@ -43,6 +43,7 @@ export class LightsDemo extends Application {
       Math.cos(17.5 / 180 * Math.PI),
       0.5,
     );
+    spotLight.setupShadowMap(this.gl);
     this.lights.spotLights.push(spotLight);
 
     const pointLight = new PointLight(

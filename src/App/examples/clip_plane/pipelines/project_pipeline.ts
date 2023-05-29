@@ -33,7 +33,7 @@ export class ProjectPipeline extends Pipeline {
       return this;
     }
 
-    renderpass.bindForReadDepth();
+    renderpass.bindForRead(0, this.gl.DEPTH_BUFFER_BIT);
 
     this.shader
       .bind()

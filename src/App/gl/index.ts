@@ -10,3 +10,5 @@ export * from './pipeline';
 export * from './mesh';
 export * from './bounding_box';
 export * from './texture';
+export * from './object3D';
+export * from './postprocessing';

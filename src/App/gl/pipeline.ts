@@ -1,10 +1,10 @@
-import { Mesh } from "../examples/model/mesh";
+import { AbstractMesh } from "./mesh";
 import { RenderPass } from "./renderpass";
 import { Shader } from "./shader";
 
 export abstract class Pipeline {
   protected shader?: Shader;
-  protected mesh?: Mesh;
+  protected mesh?: AbstractMesh;
   protected renderpass?: RenderPass;
   public abstract bind: (...args: any) => Pipeline;
   public abstract clear: () => Pipeline;
@@ -15,7 +15,7 @@ export abstract class Pipeline {
     this.shader = t_shader;
     return this;
   }
-  public setMesh(t_mesh: Mesh) {
+  public setMesh(t_mesh: AbstractMesh) {
     this.mesh = t_mesh;
     return this;
   }

@@ -1,21 +1,23 @@
-import { mat4, vec4 } from "gl-matrix";
-import { ColorDepthRenderPass, WGLWindow } from "../../../gl";
+import { mat4 } from "gl-matrix";
+import { DepthRenderPass } from "../../../gl";
 import { Pipeline } from '../../../gl/pipeline';
 import { Mesh } from "../mesh";
-import { BasicShader } from "../shaders";
+import { ProjectionShadowShader } from "../shaders";
 
-export class BasicPipeline extends Pipeline {
-  protected shader?: BasicShader;
+export class ProjectionShadowPipeline extends Pipeline {
+  protected shader?: ProjectionShadowShader;
   protected mesh?: Mesh;
-  protected renderpass?: ColorDepthRenderPass;
+  protected renderpass?: DepthRenderPass;
   constructor(private gl: WebGL2RenderingContext) {
     super();
   }
-  public bind = (window: WGLWindow) => {
-    const { width, height } = window;
-    this.gl.viewport(0, 0, width, height);
+  public bind = (width: number, height: number) => {
+    if (this.renderpass) {
+      this.gl.viewport(0, 0, this.renderpass.width, this.renderpass.height);
+    } else {
+      this.gl.viewport(0, 0, width, height);
+    }
     this.gl.enable(this.gl.DEPTH_TEST);
-    this.gl.clearColor(0, 0, 0, 1);
     this.renderpass?.bind();
     return this;
   }
@@ -23,11 +25,11 @@ export class BasicPipeline extends Pipeline {
     if (this.renderpass) {
       this.renderpass.clear();
     } else {
-      this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+      this.gl.clear(this.gl.DEPTH_BUFFER_BIT | this.gl.COLOR_BUFFER_BIT);
     }
     return this;
   }
-  public update = (projectMatrix: mat4, viewMatrix: mat4, modelMatrix: mat4, color: vec4) => {
+  public update = (projectMatrix: mat4, viewMatrix: mat4, modelMatrix: mat4) => {
     if (!this.shader || !this.mesh) {
       return this;
     }
@@ -36,8 +38,7 @@ export class BasicPipeline extends Pipeline {
       .bind()
       .updateProjectMatrix(projectMatrix)
       .updateViewMatrix(viewMatrix)
-      .updateModelMatrix(modelMatrix)
-      .updateColor(color);
+      .updateModelMatrix(modelMatrix);
 
     this.mesh.bind()
 

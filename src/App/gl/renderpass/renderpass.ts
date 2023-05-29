@@ -17,6 +17,7 @@ export abstract class RenderPass {
     this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
     return this;
   }
+  public abstract bindForRead: () => this;
   public get width() {
     return this.m_width;
   }

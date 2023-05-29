@@ -1,5 +1,5 @@
 import { ColorRenderPass, Layer, Shader, WGLWindow } from "../../../gl";
-import { AntiAliasingPostProcess } from "../../../gl/postprocessing";
+import { AntiAliasingPostProcess } from "../../../gl";
 import { GUIHandler, RadioFolder } from "../../../gui";
 import { Mesh } from "../mesh";
 import { TriangleVS, TriangleFS } from '../shader_source'

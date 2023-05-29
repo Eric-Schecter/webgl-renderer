@@ -1,5 +1,5 @@
 import { mat4, vec3 } from "gl-matrix";
-import { Shader } from "../../../gl";
+import { Shader } from "../../../gl/shader";
 import { AmbientLight, DirectionalLight, Lights, PointLight, SpotLight } from "../lights";
 
 type AmbientLightUniforms = {
@@ -20,6 +20,9 @@ type SpotLightUniforms = {
   cutOff: WebGLUniformLocation | null,
   outerCutOff: WebGLUniformLocation | null,
   intensity: WebGLUniformLocation | null,
+  shadowmap: WebGLUniformLocation | null,
+  projectMatrix: WebGLUniformLocation | null,
+  viewMatrix: WebGLUniformLocation | null,
 }
 
 type PointLightUniforms = {
@@ -42,7 +45,7 @@ export class PhongShader extends Shader {
     shader = shader.replaceAll('DIRECTIONAL_LIGHT_COUNT', lights.ambientLights.length.toString());
     shader = shader.replaceAll('SPOT_LIGHT_COUNT', lights.spotLights.length.toString());
     shader = shader.replaceAll('POINT_LIGHT_COUNT', lights.pointLights.length.toString());
-    
+
     return shader;
   }
   private uProjectMatrix;
@@ -55,7 +58,7 @@ export class PhongShader extends Shader {
   private uSpotLights: SpotLightUniforms[] = [];
   private uPointLights: PointLightUniforms[] = [];
   constructor(gl: WebGL2RenderingContext, vs: string, fs: string, lights: Lights) {
-    super(gl, vs, PhongShader.updateShader(fs, lights));
+    super(gl, PhongShader.updateShader(vs, lights), PhongShader.updateShader(fs, lights));
     this.uProjectMatrix = this.gl.getUniformLocation(this.id, 'u_projectMatrix');
     this.uViewMatrix = this.gl.getUniformLocation(this.id, 'u_viewMatrix');
     this.uModelMatrix = this.gl.getUniformLocation(this.id, 'u_modelMatrix');
@@ -85,6 +88,9 @@ export class PhongShader extends Shader {
         cutOff: this.gl.getUniformLocation(this.id, `u_spotLight[${index}].cutOff`),
         outerCutOff: this.gl.getUniformLocation(this.id, `u_spotLight[${index}].outerCutOff`),
         intensity: this.gl.getUniformLocation(this.id, `u_spotLight[${index}].intensity`),
+        projectMatrix: this.gl.getUniformLocation(this.id, `u_spotLight[${index}].projMatrix`),
+        viewMatrix: this.gl.getUniformLocation(this.id, `u_spotLight[${index}].viewMatrix`),
+        shadowmap: this.gl.getUniformLocation(this.id, `u_spotLightShadowMap[${index}]`),
       }
     })
 
@@ -149,6 +155,15 @@ export class PhongShader extends Shader {
       this.gl.uniform1f(this.uSpotLights[i].cutOff, lights[i].cutOff);
       this.gl.uniform1f(this.uSpotLights[i].outerCutOff, lights[i].outerCutOff);
       this.gl.uniform4fv(this.uSpotLights[i].color, lights[i].color);
+      this.gl.uniformMatrix4fv(this.uSpotLights[i].viewMatrix, false, lights[i].viewMatrix);
+      this.gl.uniformMatrix4fv(this.uSpotLights[i].projectMatrix, false, lights[i].projMatrix);
+
+      const id = 0; // todo: need to be dynamic
+      const { shadowmap } = lights[i];
+      if (shadowmap) {
+        this.gl.uniform1i(this.uSpotLights[i].shadowmap, id);
+        shadowmap.bindForRead(id);
+      }
     }
     return this;
   }

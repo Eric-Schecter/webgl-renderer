@@ -32,12 +32,12 @@ export class ColorDepthRenderPass extends RenderPass implements Disposable {
     this.colorTexture.dispose();
     this.depthTexture.dispose();
   }
-  public bindForReadColor = (id = 0) => {
-    this.colorTexture.bind(id);
-    return this;
-  }
-  public bindForReadDepth = (id = 0) => {
-    this.depthTexture.bind(id);
+  public bindForRead = (id = 0, type = this.gl.COLOR_BUFFER_BIT) => {
+    if (type === this.gl.COLOR_BUFFER_BIT) {
+      this.colorTexture.bind(id);
+    } else if (type === this.gl.DEPTH_BUFFER_BIT) {
+      this.depthTexture.bind(id);
+    }
     return this;
   }
   public clear = () => { // todo: need to modify to bind then clear
@@ -46,7 +46,7 @@ export class ColorDepthRenderPass extends RenderPass implements Disposable {
   }
   public copyToScreen = (width: number, height: number) => {
     this.gl.viewport(0, 0, width, height);
-    this.bindForReadColor();
+    this.bindForRead();
     this.gl.bindFramebuffer(this.gl.DRAW_FRAMEBUFFER, null);
     this.gl.bindFramebuffer(this.gl.READ_FRAMEBUFFER, this.fbo);
     this.gl.blitFramebuffer(0, 0, this.m_width, this.m_height, 0, 0, width, height, this.gl.COLOR_BUFFER_BIT, this.gl.LINEAR);

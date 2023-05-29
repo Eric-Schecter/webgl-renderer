@@ -11,11 +11,12 @@ export class PlaneLayer extends Layer {
   public lights?: Lights;
   private pipeline: MeshPipeline;
   public shader?: PhongShader;
+  public modelMatrix = mat4.create();
   constructor(private gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl) {
     super(window);
     const { vertices, indices, normals, uvs } = new PlaneGeometry(3, 3, 1, 1);
-    const plane = new Mesh(this.gl, vertices, indices, normals, uvs);
-    this.pipeline = new MeshPipeline(gl).setMesh(plane);
+    this.mesh = new Mesh(this.gl, vertices, indices, normals, uvs);
+    this.pipeline = new MeshPipeline(gl).setMesh(this.mesh);
   }
 
   public render() {
@@ -27,7 +28,7 @@ export class PlaneLayer extends Layer {
     const normalMatrix = mat4.transpose(mat4.create(), (mat4.invert(mat4.create(), modelMatrix)));
     const color = vec3.fromValues(1, 1, 1);
     const { projectMatrix, viewMatrix } = this.control;
-
+    this.modelMatrix = modelMatrix;
     if (!this.shader) {
       this.shader = new PhongShader(this.gl, MeshVS, MeshFS, this.lights);
       this.pipeline.setShader(this.shader);

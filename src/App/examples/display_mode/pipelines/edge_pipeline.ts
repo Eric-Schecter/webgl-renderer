@@ -42,7 +42,7 @@ export class EdgePipeline extends Pipeline {
     }
 
     const { width, height } = window;
-    renderpass.bindForReadColor();
+    renderpass.bindForRead();
 
     this.shader.bind()
       .updateTexture()

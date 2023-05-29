@@ -74,7 +74,7 @@ export abstract class Application {
     // entities.forEach(entity=>entity.updateMovement())
     // entities.forEach(entity=>entity.updateShadow())
     // entities.forEach(entity=>entity.render())
-
+    
     this.lights.update(this.layers);
     this.layers.forEach(layer => layer.visible && layer.update(this.clock.current));
     this.layers.forEach(layer => layer.visible && layer.render());

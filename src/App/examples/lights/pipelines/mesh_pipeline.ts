@@ -1,5 +1,6 @@
 import { mat4, vec3 } from "gl-matrix";
-import { ColorDepthRenderPass, Pipeline, WGLWindow } from "../../../gl";
+import { ColorDepthRenderPass, WGLWindow } from "../../../gl";
+import { Pipeline } from '../../../gl/pipeline';
 import { Lights } from "../lights";
 import { Mesh } from "../mesh";
 import { PhongShader } from "../shaders";
@@ -7,7 +8,7 @@ import { PhongShader } from "../shaders";
 export class MeshPipeline extends Pipeline {
   protected shader?: PhongShader;
   protected mesh?: Mesh;
-  protected renderpass?: ColorDepthRenderPass | undefined;
+  protected renderpass?: ColorDepthRenderPass;
   constructor(private gl: WebGL2RenderingContext) {
     super();
   }
