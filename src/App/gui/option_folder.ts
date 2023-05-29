@@ -8,6 +8,7 @@ export class OptionFolder extends Folder {
     this.folder
       .add(this.data, item)
       .name(item)
+      .setValue(value)
       .listen()
       .onChange((value: boolean) => {
         this.data[item] = value;

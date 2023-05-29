@@ -11,6 +11,9 @@ type DirectionalLightUniforms = {
   color: WebGLUniformLocation | null,
   direction: WebGLUniformLocation | null,
   intensity: WebGLUniformLocation | null,
+  shadowmap: WebGLUniformLocation | null,
+  projectMatrix: WebGLUniformLocation | null,
+  viewMatrix: WebGLUniformLocation | null,
 }
 
 type SpotLightUniforms = {
@@ -42,7 +45,7 @@ export class PhongShader extends Shader {
     shader = shader.replaceAll('#define POINT_LIGHT_COUNT 0', '');
 
     shader = shader.replaceAll('AMBIENT_LIGHT_COUNT', lights.ambientLights.length.toString());
-    shader = shader.replaceAll('DIRECTIONAL_LIGHT_COUNT', lights.ambientLights.length.toString());
+    shader = shader.replaceAll('DIRECTIONAL_LIGHT_COUNT', lights.directionalLights.length.toString());
     shader = shader.replaceAll('SPOT_LIGHT_COUNT', lights.spotLights.length.toString());
     shader = shader.replaceAll('POINT_LIGHT_COUNT', lights.pointLights.length.toString());
 
@@ -77,6 +80,9 @@ export class PhongShader extends Shader {
         color: this.gl.getUniformLocation(this.id, `u_directionalLight[${index}].color`),
         direction: this.gl.getUniformLocation(this.id, `u_directionalLight[${index}].direction`),
         intensity: this.gl.getUniformLocation(this.id, `u_directionalLight[${index}].intensity`),
+        projectMatrix: this.gl.getUniformLocation(this.id, `u_directionalLight[${index}].projMatrix`),
+        viewMatrix: this.gl.getUniformLocation(this.id, `u_directionalLight[${index}].viewMatrix`),
+        shadowmap: this.gl.getUniformLocation(this.id, `u_directionalLightShadowMap[${index}]`),
       }
     })
 
@@ -106,22 +112,22 @@ export class PhongShader extends Shader {
     })
   }
   public updateProjectMatrix = (matrix: mat4) => {
-    this.gl.uniformMatrix4fv(this.uProjectMatrix, false, matrix.values());
+    this.gl.uniformMatrix4fv(this.uProjectMatrix, false, matrix);
     return this;
   }
 
   public updateViewMatrix = (matrix: mat4) => {
-    this.gl.uniformMatrix4fv(this.uViewMatrix, false, matrix.values());
+    this.gl.uniformMatrix4fv(this.uViewMatrix, false, matrix);
     return this;
   }
 
   public updateModelMatrix = (matrix: mat4) => {
-    this.gl.uniformMatrix4fv(this.uModelMatrix, false, matrix.values());
+    this.gl.uniformMatrix4fv(this.uModelMatrix, false, matrix);
     return this;
   }
 
   public updateNormalMatrix = (matrix: mat4) => {
-    this.gl.uniformMatrix4fv(this.uNormalMatrix, false, matrix.values());
+    this.gl.uniformMatrix4fv(this.uNormalMatrix, false, matrix);
     return this;
   }
 
@@ -143,6 +149,15 @@ export class PhongShader extends Shader {
       this.gl.uniform1f(this.uDirectionalLights[i].intensity, lights[i].intensity);
       this.gl.uniform3fv(this.uDirectionalLights[i].direction, lights[i].direction);
       this.gl.uniform4fv(this.uDirectionalLights[i].color, lights[i].color);
+      this.gl.uniformMatrix4fv(this.uDirectionalLights[i].viewMatrix, false, lights[i].viewMatrix);
+      this.gl.uniformMatrix4fv(this.uDirectionalLights[i].projectMatrix, false, lights[i].projMatrix);
+
+      const id = 1; // todo: need to be dynamic 
+      const { shadowmap } = lights[i];
+      if (shadowmap) {
+        this.gl.uniform1i(this.uDirectionalLights[i].shadowmap, id);
+        shadowmap.bindForRead(id);
+      }
     }
     return this;
   }

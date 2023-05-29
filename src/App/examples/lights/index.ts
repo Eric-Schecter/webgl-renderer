@@ -29,7 +29,8 @@ export class LightsDemo extends Application {
     const ambientLight = new AmbientLight(vec4.fromValues(1, 1, 1, 1), 0.1);
     this.lights.ambientLights.push(ambientLight);
 
-    const directionalLight = new DirectionalLight(this.gl, vec4.fromValues(0.5, 0.5, 1, 1), vec3.fromValues(-1, -1, -1), 0.2);
+    const directionalLight = new DirectionalLight(vec4.fromValues(0.5, 0.5, 1, 1), vec3.normalize(vec3.create(),vec3.fromValues(0, -1, 1)), 1);
+    directionalLight.setupShadowMap(this.gl);
     this.lights.directionalLights.push(directionalLight);
 
     const targetSpotLight = vec3.fromValues(0, 0, 0);

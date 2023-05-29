@@ -14,7 +14,7 @@ export class RadioFolder extends Folder {
         if (!value) {  // prevent call function when self click to false
           return;
         }
-        cb();
+        cb(value);
       });
   }
   private disableOthers = (item: string) => {

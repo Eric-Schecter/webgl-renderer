@@ -1,5 +1,5 @@
 import { mat4, vec3, vec4 } from "gl-matrix";
-import { DepthRenderPass, Layer, PerspectiveCamera, VisualizePostProcess } from "../../../gl";
+import { DepthRenderPass, Layer, PerspectiveCamera } from "../../../gl";
 import { Object3D } from '../../../gl/object3D';
 import { ProjectionShadowPipeline } from "../pipelines";
 import { ProjectionShadowShader } from "../shaders";
@@ -9,7 +9,6 @@ export class SpotLight extends Object3D {
 	public shadowmap?: DepthRenderPass;
 	private camera: PerspectiveCamera;
 	private pipeline?: ProjectionShadowPipeline;
-	private pp?: VisualizePostProcess;
 
 	constructor(
 		public color: vec4,
@@ -39,7 +38,6 @@ export class SpotLight extends Object3D {
 		const near = 0.1;
 		const far = 1000;
 		this.camera.setProjection(fov, width / height, near, far);
-		this.camera.update()
 
 		pipeline
 			.setRenderPass(this.shadowmap)
@@ -47,6 +45,7 @@ export class SpotLight extends Object3D {
 			.clear();
 
 		const { projectMatrix, viewMatrix } = this.camera;
+
 		layers.forEach(layer => {
 			if (layer.mesh) {
 				pipeline

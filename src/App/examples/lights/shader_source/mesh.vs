@@ -1,6 +1,7 @@
 #version 300 es
 
 #define SPOT_LIGHT_COUNT 0
+#define DIRECTIONAL_LIGHT_COUNT 0
 
 layout(location=0)in vec3 a_position;
 layout(location=1)in vec3 a_normal;
@@ -30,6 +31,22 @@ out vec4 v_spotLightSpacePos[SPOT_LIGHT_COUNT];
 
 #endif
 
+#if DIRECTIONAL_LIGHT_COUNT>0
+
+struct DirectionalLight{
+    mediump vec4 color;
+    mediump vec3 direction;
+    mediump float intensity;
+    mediump mat4 projMatrix;
+    mediump mat4 viewMatrix;
+};
+
+uniform DirectionalLight u_directionalLight[DIRECTIONAL_LIGHT_COUNT];
+
+out vec4 v_directionalLightSpacePos[DIRECTIONAL_LIGHT_COUNT];
+
+#endif
+
 out vec3 v_normal;
 out vec3 v_worldPosition;
 
@@ -41,6 +58,14 @@ void main(){
     
     for(int i=0;i<SPOT_LIGHT_COUNT;++i){
         v_spotLightSpacePos[i]=u_spotLight[i].projMatrix*u_spotLight[i].viewMatrix*u_modelMatrix*vec4(a_position,1.);
+    }
+    
+    #endif
+    
+    #if DIRECTIONAL_LIGHT_COUNT>0
+    
+    for(int i=0;i<DIRECTIONAL_LIGHT_COUNT;++i){
+        v_directionalLightSpacePos[i]=u_directionalLight[i].projMatrix*u_directionalLight[i].viewMatrix*u_modelMatrix*vec4(a_position,1.);
     }
     
     #endif

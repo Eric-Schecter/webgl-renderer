@@ -19,23 +19,23 @@ float calcShadowFactor(vec4 lightSpacePos,vec3 normal,vec3 lightDir,sampler2D sh
     float bias=max(.0002*(1.-dot(normal,-lightDir)),.0001);
     
     //sample directly
-    float closestDepth = texture(shadowMap, projCoords.xy).x;
-    return currentDepth - bias > closestDepth ? 0.0 : 1.0;
+    // float closestDepth=texture(shadowMap,projCoords.xy).x;
+    // return currentDepth-bias>closestDepth?0.:1.;
     
     //PCF sample
-    // float shadow=0.;
-    // ivec2 texelSize=ivec2(1)/textureSize(shadowMap,0);
-    // for(int x=-1;x<=1;++x)
-    // {
-    //     for(int y=-1;y<=1;++y)
-    //     {
-    //         float pcfDepth=texture(shadowMap,projCoords.xy+vec2(x,y)*vec2(texelSize)).r;
-    //         shadow+=currentDepth-bias>pcfDepth?0.:1.;
-    //     }
-    // }
-    // shadow/=9.;
+    float shadow=0.;
+    ivec2 texelSize=ivec2(1)/textureSize(shadowMap,0);
+    for(int x=-1;x<=1;++x)
+    {
+            for(int y=-1;y<=1;++y)
+            {
+                    float pcfDepth=texture(shadowMap,projCoords.xy+vec2(x,y)*vec2(texelSize)).r;
+                    shadow+=currentDepth-bias>pcfDepth?0.:1.;
+            }
+    }
+    shadow/=9.;
     
-    // return shadow;
+    return shadow;
 }
 
 float calcDiffuseLight(vec3 normal,vec3 lightDir){
@@ -73,12 +73,16 @@ struct DirectionalLight{
     vec4 color;
     vec3 direction;
     float intensity;
+    mat4 projMatrix;
+    mat4 viewMatrix;
 };
 
+uniform sampler2D u_directionalLightShadowMap[DIRECTIONAL_LIGHT_COUNT];
 uniform DirectionalLight u_directionalLight[DIRECTIONAL_LIGHT_COUNT];
+in vec4 v_directionalLightSpacePos[1];
 
-vec4 calcDirectionalLight(vec3 viewDir,vec3 normal,DirectionalLight light,float specular,float shininess){
-    float shadowFactor=1.;
+vec4 calcDirectionalLight(vec3 viewDir,vec3 normal,DirectionalLight light,float specular,float shininess,vec4 lightSpacePos,sampler2D shadowMap){
+    float shadowFactor=calcShadowFactor(lightSpacePos,normal,light.direction,shadowMap);
     return calcColor(viewDir,normal,normalize(light.direction),light.color,light.intensity,specular,shininess,shadowFactor);
 }
 
@@ -168,11 +172,12 @@ void main(){
         lightColor+=u_ambientLight[i].color*u_ambientLight[i].intensity;
     };
     #endif
-    
+
     // directional lights
     #if DIRECTIONAL_LIGHT_COUNT>0
+    // todo: need to generate dynamic for shadowmap
     for(int i=0;i<DIRECTIONAL_LIGHT_COUNT;++i){
-        lightColor+=calcDirectionalLight(viewDir,normal,u_directionalLight[i],u_material.specular,u_material.shininess);
+        lightColor+=calcDirectionalLight(viewDir,normal,u_directionalLight[i],u_material.specular,u_material.shininess,v_directionalLightSpacePos[i],u_directionalLightShadowMap[0]);
     };
     #endif
     
