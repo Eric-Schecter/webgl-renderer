@@ -24,13 +24,17 @@ export class SpotLight extends Object3D {
 	}
 
 	public update = (layers: Layer[]) => {
+		this.rotateByAxis(vec3.fromValues(0, 1, 0));
+		this.pos = mat4.getTranslation(vec3.create(), this.modelMatrix);
+
 		const pipeline = this.pipeline;
 		if (!pipeline || !this.shadowmap) {
 			return;
 		}
 
 		this.camera.pos = this.pos;
-		const target = vec3.fromValues(0, 0, 0);
+		this.direction = vec3.normalize(vec3.create(), vec3.subtract(vec3.create(), vec3.fromValues(0, 0, 0), this.pos));
+		const target = vec3.add(vec3.create(), this.pos, this.direction);
 		this.camera.up = vec3.fromValues(0, 0, 1);
 		this.camera.setViewMatrix(target);
 		const fov = 45 / 180 * Math.PI;

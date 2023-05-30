@@ -35,6 +35,8 @@ type PointLightUniforms = {
   constant: WebGLUniformLocation | null,
   linear: WebGLUniformLocation | null,
   quadratic: WebGLUniformLocation | null,
+  far: WebGLUniformLocation | null,
+  shadowmap: WebGLUniformLocation | null,
 }
 
 export class PhongShader extends Shader {
@@ -108,6 +110,8 @@ export class PhongShader extends Shader {
         constant: this.gl.getUniformLocation(this.id, `u_pointLight[${index}].constant`),
         linear: this.gl.getUniformLocation(this.id, `u_pointLight[${index}].linear`),
         quadratic: this.gl.getUniformLocation(this.id, `u_pointLight[${index}].quadratic`),
+        far: this.gl.getUniformLocation(this.id, `u_pointLight[${index}].far`),
+        shadowmap: this.gl.getUniformLocation(this.id, `u_pointLightShadowMap[${index}]`),
       }
     })
   }
@@ -191,6 +195,14 @@ export class PhongShader extends Shader {
       this.gl.uniform1f(this.uPointLights[i].linear, lights[i].linear);
       this.gl.uniform1f(this.uPointLights[i].quadratic, lights[i].quadratic);
       this.gl.uniform4fv(this.uPointLights[i].color, lights[i].color);
+      this.gl.uniform1f(this.uPointLights[i].far, lights[i].far);
+
+      const id = 2; // todo: need to be dynamic
+      const { shadowmap } = lights[i];
+      if (shadowmap) {
+        this.gl.uniform1i(this.uPointLights[i].shadowmap, id);
+        shadowmap.bindForRead(id);
+      }
     }
     return this;
   }

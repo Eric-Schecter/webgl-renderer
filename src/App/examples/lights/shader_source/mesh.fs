@@ -9,6 +9,26 @@ precision mediump float;
 
 #if DIRECTIONAL_LIGHT_COUNT>0||SPOT_LIGHT_COUNT>0||POINT_LIGHT_COUNT>0
 
+float calcDiffuseLight(vec3 normal,vec3 lightDir){
+    return clamp(dot(-lightDir,normal),0.f,1.f);
+}
+
+float calcSpecularLight(vec3 viewDir,vec3 normal,vec3 lightDir,float shininess){
+    vec3 halfwayDir=normalize(lightDir-viewDir);//Blinn-Phong
+    return pow(max(dot(normal,halfwayDir),0.),shininess);
+}
+
+vec4 calcColor(vec3 viewDir,vec3 normal,vec3 lightDir,vec4 color,float intensity,float specular,float shininess,float shadowFactor){
+    vec4 light=vec4(0.f);
+    light+=calcDiffuseLight(normal,lightDir)*color;
+    // light+=calcSpecularLight(viewDir,normal,lightDir,shininess)*specular*color;
+    return light*intensity*shadowFactor;
+}
+
+#endif
+
+#if DIRECTIONAL_LIGHT_COUNT>0||SPOT_LIGHT_COUNT>0
+
 float calcShadowFactor(vec4 lightSpacePos,vec3 normal,vec3 lightDir,sampler2D shadowMap){
     vec3 projCoords=lightSpacePos.xyz/lightSpacePos.w;
     projCoords=projCoords*.5+.5;
@@ -27,31 +47,15 @@ float calcShadowFactor(vec4 lightSpacePos,vec3 normal,vec3 lightDir,sampler2D sh
     ivec2 texelSize=ivec2(1)/textureSize(shadowMap,0);
     for(int x=-1;x<=1;++x)
     {
-            for(int y=-1;y<=1;++y)
-            {
-                    float pcfDepth=texture(shadowMap,projCoords.xy+vec2(x,y)*vec2(texelSize)).r;
-                    shadow+=currentDepth-bias>pcfDepth?0.:1.;
-            }
+        for(int y=-1;y<=1;++y)
+        {
+            float pcfDepth=texture(shadowMap,projCoords.xy+vec2(x,y)*vec2(texelSize)).r;
+            shadow+=currentDepth-bias>pcfDepth?0.:1.;
+        }
     }
     shadow/=9.;
     
     return shadow;
-}
-
-float calcDiffuseLight(vec3 normal,vec3 lightDir){
-    return clamp(dot(-lightDir,normal),0.f,1.f);
-}
-
-float calcSpecularLight(vec3 viewDir,vec3 normal,vec3 lightDir,float shininess){
-    vec3 halfwayDir=normalize(lightDir-viewDir);//Blinn-Phong
-    return pow(max(dot(normal,halfwayDir),0.),shininess);
-}
-
-vec4 calcColor(vec3 viewDir,vec3 normal,vec3 lightDir,vec4 color,float intensity,float specular,float shininess,float shadowFactor){
-    vec4 light=vec4(0.f);
-    light+=calcDiffuseLight(normal,lightDir)*color;
-    // light+=calcSpecularLight(viewDir,normal,lightDir,shininess)*specular*color;
-    return light*intensity*shadowFactor;
 }
 
 #endif
@@ -130,13 +134,24 @@ struct PointLight{
     float constant;
     float linear;
     float quadratic;
+    float far;
 };
 
 uniform PointLight u_pointLight[POINT_LIGHT_COUNT];
+uniform samplerCube u_pointLightShadowMap[POINT_LIGHT_COUNT];
 
-vec4 calcPointLight(vec3 viewDir,vec3 normal,vec3 worldPosition,PointLight light,float specular,float shininess){
+float calcShadowPoint(vec3 normal,vec3 posToLight,float far,samplerCube shadowMap){
+    float closestDepth=texture(shadowMap,posToLight).r;
+    closestDepth*=far;
+    float currentDepth=length(posToLight);
+    float bias=.01;
+    return currentDepth-bias>closestDepth?0.:1.;
+}
+
+vec4 calcPointLight(vec3 viewDir,vec3 normal,vec3 worldPosition,PointLight light,float specular,float shininess,samplerCube shadowMap){
     vec3 lightDir=normalize(worldPosition-light.pos);
-    vec4 color=calcColor(viewDir,normal,lightDir,light.color,light.intensity,specular,shininess,1.);
+    float shadowFactor=calcShadowPoint(normal,worldPosition-light.pos,light.far,shadowMap);
+    vec4 color=calcColor(viewDir,normal,lightDir,light.color,light.intensity,specular,shininess,shadowFactor);
     float dis=length(light.pos-worldPosition);
     float attenuation=1.f/(light.constant+light.linear*dis+light.quadratic*(dis*dis));
     return color*attenuation;
@@ -172,7 +187,7 @@ void main(){
         lightColor+=u_ambientLight[i].color*u_ambientLight[i].intensity;
     };
     #endif
-
+    
     // directional lights
     #if DIRECTIONAL_LIGHT_COUNT>0
     // todo: need to generate dynamic for shadowmap
@@ -191,8 +206,9 @@ void main(){
     
     // point lights
     #if POINT_LIGHT_COUNT>0
+    // todo: need to generate dynamic for shadowmap
     for(int i=0;i<POINT_LIGHT_COUNT;++i){
-        lightColor+=calcPointLight(viewDir,normal,v_worldPosition,u_pointLight[i],u_material.specular,u_material.shininess);
+        lightColor+=calcPointLight(viewDir,normal,v_worldPosition,u_pointLight[i],u_material.specular,u_material.shininess,u_pointLightShadowMap[0]);
     };
     #endif
     

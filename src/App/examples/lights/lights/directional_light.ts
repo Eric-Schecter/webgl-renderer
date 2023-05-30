@@ -1,24 +1,33 @@
-import { vec3, vec4 } from "gl-matrix";
-import { DepthRenderPass, Layer, OrthographicCamera, VisualizePostProcess } from "../../../gl";
+import { mat4, vec3, vec4 } from "gl-matrix";
+import { DepthRenderPass, Layer, OrthographicCamera } from "../../../gl";
+import { Object3D } from "../../../gl/object3D";
 import { ProjectionShadowPipeline } from "../pipelines";
 import { ProjectionShadowShader } from "../shaders";
 import { ProjectionShadowMapFS, ProjectionShadowMapVS } from "../shader_source";
 
-export class DirectionalLight {
+export class DirectionalLight extends Object3D {
 	public shadowmap?: DepthRenderPass;
 	private camera: OrthographicCamera;
 	private pipeline?: ProjectionShadowPipeline;
-	private pp?: VisualizePostProcess;
+	private target = vec3.fromValues(0, 0, 0);
 
 	constructor(
 		public color: vec4,
 		public direction: vec3,
 		public intensity: number,
 	) {
+		super();
 		this.camera = new OrthographicCamera();
+		const pos = vec3.subtract(vec3.create(), this.target, this.direction);
+		mat4.translate(this.modelMatrix, mat4.create(), pos);
 	}
 
 	public update = (layers: Layer[]) => {
+		this.rotateByAxis(vec3.fromValues(0, 1, 0));
+		const pos = mat4.getTranslation(vec3.create(), this.modelMatrix);
+		this.direction = vec3.normalize(vec3.create(), vec3.subtract(vec3.create(), this.target, pos));
+
+
 		const pipeline = this.pipeline;
 		if (!pipeline || !this.shadowmap) {
 			return;
@@ -50,16 +59,12 @@ export class DirectionalLight {
 		})
 
 		pipeline.unbind();
-
-		// this.pp?.render(this.shadowmap);
 	}
 
 	public setupShadowMap = (gl: WebGL2RenderingContext, size = 1024) => {
 		this.shadowmap = new DepthRenderPass(gl, size, size);
 		const shader = new ProjectionShadowShader(gl, ProjectionShadowMapVS, ProjectionShadowMapFS);
 		this.pipeline = new ProjectionShadowPipeline(gl).setShader(shader);
-
-		this.pp = new VisualizePostProcess(gl);
 	}
 
 	public get viewMatrix() {

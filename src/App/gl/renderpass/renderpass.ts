@@ -8,7 +8,7 @@ export abstract class RenderPass {
   constructor(protected gl: WebGL2RenderingContext) {
     this.fbo = throwErrorIfInvalid(this.gl.createFramebuffer());
   }
-  public bind = () => {
+  public bind = (...args: any) => {
     this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.fbo);
     this.gl.viewport(0, 0, this.m_width, this.m_height);
     return this;

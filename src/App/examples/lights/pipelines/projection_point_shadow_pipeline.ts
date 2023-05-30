@@ -1,11 +1,11 @@
-import { mat4 } from "gl-matrix";
+import { mat4, vec3 } from "gl-matrix";
 import { DepthCubeRenderPass, DepthRenderPass } from "../../../gl";
 import { Pipeline } from '../../../gl/pipeline';
 import { Mesh } from "../mesh";
-import { ProjectionShadowShader } from "../shaders";
+import { ProjectionPointShadowShader } from "../shaders";
 
-export class ProjectionShadowPipeline extends Pipeline {
-  protected shader?: ProjectionShadowShader;
+export class ProjectionPointShadowPipeline extends Pipeline {
+  protected shader?: ProjectionPointShadowShader;
   protected mesh?: Mesh;
   protected renderpass?: DepthRenderPass | DepthCubeRenderPass;
   constructor(private gl: WebGL2RenderingContext) {
@@ -18,9 +18,9 @@ export class ProjectionShadowPipeline extends Pipeline {
       this.gl.viewport(0, 0, width, height);
     }
     this.gl.enable(this.gl.DEPTH_TEST);
-    if(this.renderpass instanceof DepthRenderPass){
+    if (this.renderpass instanceof DepthRenderPass) {
       this.renderpass?.bind();
-    }else if(index){
+    } else if (index !== undefined) {
       this.renderpass?.bind(index);
     }
     return this;
@@ -33,7 +33,7 @@ export class ProjectionShadowPipeline extends Pipeline {
     }
     return this;
   }
-  public update = (projectMatrix: mat4, viewMatrix: mat4, modelMatrix: mat4) => {
+  public update = (projectMatrix: mat4, viewMatrix: mat4, modelMatrix: mat4, lightPos: vec3, far: number) => {
     if (!this.shader || !this.mesh) {
       return this;
     }
@@ -42,7 +42,9 @@ export class ProjectionShadowPipeline extends Pipeline {
       .bind()
       .updateProjectMatrix(projectMatrix)
       .updateViewMatrix(viewMatrix)
-      .updateModelMatrix(modelMatrix);
+      .updateModelMatrix(modelMatrix)
+      .updateLightPos(lightPos)
+      .updateFar(far);
 
     this.mesh.bind()
 

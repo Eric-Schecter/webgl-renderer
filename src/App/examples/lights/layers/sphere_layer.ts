@@ -13,9 +13,9 @@ export class SphereLayer extends Layer {
   constructor(private gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl, private pointLight: PointLight) {
     super(window);
     const { vertices, indices, normals, uvs } = new BoxGeometry(0.01, 0.01, 0.01); // todo: change to sphere geometry
-    this.mesh = new Mesh(this.gl, vertices, indices, normals, uvs);
+    const mesh = new Mesh(this.gl, vertices, indices, normals, uvs);
     const shader = new BasicShader(this.gl, PointVS, PointFS);
-    this.pipeline = new BasicPipeline(gl).setMesh(this.mesh).setShader(shader);
+    this.pipeline = new BasicPipeline(gl).setMesh(mesh).setShader(shader);
   }
 
   public render() {

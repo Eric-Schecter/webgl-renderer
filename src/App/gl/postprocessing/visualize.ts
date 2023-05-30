@@ -1,6 +1,6 @@
 import { vec2 } from "gl-matrix";
 import { ScreenPlane } from "../geometry";
-import { RenderPass } from "../renderpass";
+import { DepthCubeRenderPass, RenderPass } from "../renderpass";
 import { CopyShader } from "../shaders";
 import { CopyFS, CopyVS } from "../shader_source";
 
@@ -11,7 +11,7 @@ export class VisualizePostProcess {
     this.screen = new ScreenPlane(gl);
     this.copyShader = new CopyShader(gl, CopyVS, CopyFS);
   }
-  public render = (renderpass: RenderPass) => {
+  public render = (renderpass: RenderPass | DepthCubeRenderPass) => {
     renderpass.bindForRead();
 
     const { width, height } = renderpass;

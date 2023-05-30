@@ -34,7 +34,7 @@ export class LightsDemo extends Application {
     this.lights.directionalLights.push(directionalLight);
 
     const targetSpotLight = vec3.fromValues(0, 0, 0);
-    const posSpotLight = vec3.fromValues(0, 3, 0);
+    const posSpotLight = vec3.fromValues(0, 3, 1);
     const dirSpotLight = vec3.normalize(vec3.create(), (vec3.subtract(vec3.create(), targetSpotLight, posSpotLight)));
     const spotLight = new SpotLight(
       vec4.fromValues(1, 1, 1, 1),
@@ -52,6 +52,7 @@ export class LightsDemo extends Application {
       vec3.fromValues(1, 1, 1),
       1,
     );
+    pointLight.setupShadowMap(this.gl);
     this.lights.pointLights.push(pointLight);
 
     const folder = GUIHandler.getInstance().createFolder('modes', OptionFolder);
