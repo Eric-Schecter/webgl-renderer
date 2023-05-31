@@ -6,7 +6,7 @@ import { ModelShader, PlaneShader, ProjectShader } from "../shaders";
 import { PlaneGeometry } from "../plane";
 import { GUIHandler, OptionFolder } from "../../../gui";
 import { ModelPipeline, ProjectPipeline, PlanePipeline } from "../pipelines";
-import { BoxGeometry } from "../../lights/geometry";
+// import { BoxGeometry } from "../../lights/geometry";
 
 export class ClipPlaneStencilLayer extends Layer {
   public mesh?: Mesh
