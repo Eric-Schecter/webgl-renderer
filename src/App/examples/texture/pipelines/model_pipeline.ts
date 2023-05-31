@@ -41,7 +41,7 @@ export class ModelPipeline extends Pipeline {
       return this;
     }
 
-    const modelMatrix = mat4.create();
+    const modelMatrix = mat4.rotateY(mat4.create(), mat4.create(), Math.PI);
     const normalMatrix = mat4.transpose(mat4.create(), (mat4.invert(mat4.create(), modelMatrix)));
 
     this.shader
@@ -55,7 +55,8 @@ export class ModelPipeline extends Pipeline {
       .updateMetalRoughnessTexture(2, pbrTextures.metallicRoughnessTexture)
       .updateOcclusionTexture(3, pbrTextures.occlusionTexture)
       .updateEmissiveTexture(4, pbrTextures.emissiveTexture)
-      .updateAlpha(alpha);
+      .updateAlpha(alpha)
+      .updateCameraPos(control.camera.pos);
 
     this.mesh
       .bind()

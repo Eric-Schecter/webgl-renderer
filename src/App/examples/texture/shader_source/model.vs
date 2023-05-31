@@ -11,20 +11,20 @@ uniform mat4 u_viewMatrix;
 uniform mat4 u_modelMatrix;
 uniform mat4 u_normalMatrix;
 
-out vec3 v_pos;
+out vec3 v_worldPosition;
 out vec3 v_normal;
 out vec2 v_uv;
 out mat3 v_TBN;
 
 void main(){
-    v_pos=a_position;
-    v_normal = a_normal;
-    v_uv = a_uv;
-
+    v_normal=(u_normalMatrix*vec4(a_normal,1.)).xyz;
+    v_worldPosition=(u_modelMatrix*vec4(a_position,1.)).xyz;
+    v_uv=a_uv;
+    
     vec3 T=normalize(u_normalMatrix*vec4(a_tangent,1.f)).xyz;
     vec3 N=normalize(u_normalMatrix*vec4(a_normal,1.f)).xyz;
     vec3 B=normalize(u_normalMatrix*vec4(a_biTangent,1.f)).xyz;
     v_TBN=mat3(T,B,N);
-
+    
     gl_Position=u_projectMatrix*u_viewMatrix*u_modelMatrix*vec4(a_position,1.f);
 }

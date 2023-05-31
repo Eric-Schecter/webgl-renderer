@@ -1,4 +1,4 @@
-import { mat4 } from "gl-matrix";
+import { mat4, vec3 } from "gl-matrix";
 import { Shader, Texture } from "../../../gl";
 
 export class ModelShader extends Shader {
@@ -12,6 +12,7 @@ export class ModelShader extends Shader {
   private uMetalRoughnessTexture;
   private uOcclusionTexture;
   private uEmissiveTexture;
+  private uCamaraPos;
   constructor(gl: WebGL2RenderingContext, vs: string, fs: string) {
     super(gl, vs, fs);
     this.uProjectMatrix = this.gl.getUniformLocation(this.id, 'u_projectMatrix');
@@ -24,6 +25,7 @@ export class ModelShader extends Shader {
     this.uMetalRoughnessTexture = this.gl.getUniformLocation(this.id, 'u_metalRoughnessTexture');
     this.uOcclusionTexture = this.gl.getUniformLocation(this.id, 'u_occlusionTexture');
     this.uEmissiveTexture = this.gl.getUniformLocation(this.id, 'u_emissiveTexture');
+    this.uCamaraPos = this.gl.getUniformLocation(this.id, 'u_camaraPos');
   }
   public updateProjectMatrix = (matrix: mat4) => {
     this.gl.uniformMatrix4fv(this.uProjectMatrix, false, matrix.values());
@@ -87,6 +89,11 @@ export class ModelShader extends Shader {
       this.gl.uniform1i(this.uEmissiveTexture, id);
       texture.bind(id);
     }
+    return this;
+  }
+
+  public updateCameraPos = (pos: vec3) => {
+    this.gl.uniform3fv(this.uCamaraPos, pos);
     return this;
   }
 }

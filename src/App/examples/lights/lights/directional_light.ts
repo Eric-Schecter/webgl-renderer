@@ -27,7 +27,6 @@ export class DirectionalLight extends Object3D {
 		const pos = mat4.getTranslation(vec3.create(), this.modelMatrix);
 		this.direction = vec3.normalize(vec3.create(), vec3.subtract(vec3.create(), this.target, pos));
 
-
 		const pipeline = this.pipeline;
 		if (!pipeline || !this.shadowmap) {
 			return;

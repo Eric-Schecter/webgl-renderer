@@ -1,6 +1,6 @@
 import { vec2 } from "gl-matrix";
 import { ScreenPlane } from "../geometry";
-import { ColorRenderPass } from "../renderpass";
+import { ColorDepthRenderPass, ColorRenderPass } from "../renderpass";
 import { SSAAShader } from "../shaders";
 import { SSAAFS, CopyVS } from "../shader_source";
 
@@ -11,7 +11,7 @@ export class AntiAliasingPostProcess {
     this.screen = new ScreenPlane(gl);
     this.ssaaShader = new SSAAShader(gl, CopyVS, SSAAFS);
   }
-  public render = (renderpass: ColorRenderPass) => {
+  public render = (renderpass: ColorRenderPass | ColorDepthRenderPass) => {
     renderpass.bindForRead();
 
     const { width, height } = renderpass;
