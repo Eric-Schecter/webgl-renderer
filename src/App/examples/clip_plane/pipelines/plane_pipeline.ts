@@ -1,4 +1,4 @@
-import { mat4 } from "gl-matrix";
+import { mat4, vec3 } from "gl-matrix";
 import { ColorDepthRenderPass, Pipeline, WGLWindow } from "../../../gl";
 import { Mesh } from "../mesh";
 import { PlaneShader } from "../shaders";
@@ -28,7 +28,7 @@ export class PlanePipeline extends Pipeline {
     }
     return this;
   }
-  public update = (projectMatrix: mat4, viewMatrix: mat4) => {
+  public update = (projectMatrix: mat4, viewMatrix: mat4, color: vec3) => {
     if (!this.shader || !this.mesh) {
       return this;
     }
@@ -37,6 +37,7 @@ export class PlanePipeline extends Pipeline {
       .bind()
       .updateProjectMatrix(projectMatrix)
       .updateViewMatrix(viewMatrix)
+      .updateColor(color)
 
     this.mesh.bind()
 

@@ -76,8 +76,8 @@ export abstract class Application {
     // entities.forEach(entity=>entity.render())
     
     this.lights.update(this.layers);
-    this.layers.forEach(layer => layer.visible && layer.update(this.clock.current));
-    this.layers.forEach(layer => layer.visible && layer.render());
+    // this.layers.forEach(layer => layer.visible && layer.update(this.clock.current));
+    this.layers.forEach(layer => layer.visible && layer.render(this.clock.current));
 
     this.timer = requestAnimationFrame(this.mainLoop);
   }

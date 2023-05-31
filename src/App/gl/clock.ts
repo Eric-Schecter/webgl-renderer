@@ -1,14 +1,14 @@
 export class Clock {
-  public current = 0;
-  private pre = performance.now();
+  public current = performance.now();
+  public elapsedTime = 0;
 
   public reset = () => {
-    this.current = 0;
-    this.pre = performance.now();
+    this.elapsedTime = 0;
+    this.current = performance.now();
   }
 
   public update = () => {
-    this.current = (performance.now() - this.pre) / 1000;
-    this.pre = performance.now();
+    this.elapsedTime = (performance.now() - this.current) / 1000;
+    this.current = performance.now() / 1000;
   }
 }

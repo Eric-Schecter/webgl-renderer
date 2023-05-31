@@ -22,11 +22,11 @@ export class ModelPipeline extends Pipeline {
     if (this.renderpass) {
       this.renderpass.clear();
     } else {
-      this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+      this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT | this.gl.STENCIL_BUFFER_BIT);
     }
     return this;
   }
-  public update = (projectMatrix: mat4, viewMatrix: mat4, needRenderPlane: boolean, plane = vec4.create()) => {
+  public update = (projectMatrix: mat4, viewMatrix: mat4, modelMatrix: mat4, needRenderPlane: boolean, plane = vec4.create()) => {
     if (!this.shader || !this.mesh) {
       return this;
     }
@@ -35,6 +35,7 @@ export class ModelPipeline extends Pipeline {
       .bind()
       .updateProjectMatrix(projectMatrix)
       .updateViewMatrix(viewMatrix)
+      .updateModelMatrix(modelMatrix)
       .updateNeedRenderPlane(needRenderPlane ? 1 : 0)
       .updatePlane(plane);
 

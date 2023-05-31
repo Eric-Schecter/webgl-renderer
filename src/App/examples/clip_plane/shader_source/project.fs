@@ -20,7 +20,7 @@ mat2 rotate(float angle)
 
 void main(){
     float depth=texture(u_texture,v_uv).x;
-    depth*=1000. - 0.1;
+    depth*=10.-.01;
     if(depth>u_nearestDepth){
         discard;
     }

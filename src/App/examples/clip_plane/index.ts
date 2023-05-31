@@ -1,7 +1,9 @@
 import { vec3 } from "gl-matrix";
+// import { load } from '@loaders.gl/core';
+// import { GLTFLoader } from '@loaders.gl/gltf';
 import { Application, GLTFLoader } from "../../gl";
 import { OrbitControl } from "../../gl/orbit_control";
-import { ClipPlaneLayer } from "./clip_plane_layer";
+import { ClipPlaneLayer, ClipPlaneStencilLayer } from "./layers";
 import { Mesh } from "./mesh";
 
 export class ClipPlaneDemo extends Application {
@@ -24,11 +26,13 @@ export class ClipPlaneDemo extends Application {
     const clipPlaneLayer = new ClipPlaneLayer(this.gl, this.window, this.control)
     this.layers.push(clipPlaneLayer);
 
+    // const clipPlaneLayer = new ClipPlaneStencilLayer(this.gl, this.window, this.control)
+    // this.layers.push(clipPlaneLayer);
+
     new GLTFLoader().load('models/DamagedHelmet/DamagedHelmet.gltf')
-      .then((model) => {
-        const { positions, indices } = model[0];
+      .then(gltf => {
+        const { positions, indices, } = gltf[0];
         clipPlaneLayer.mesh = new Mesh(this.gl, Array.from(positions), Array.from(indices));
       })
   }
-
 }

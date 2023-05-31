@@ -13,6 +13,5 @@ void main(){
     if(u_needrenderplane==1&&dot(v_pos,u_plane.xyz)>u_plane.w){
         discard;
     }
-    vec3 color=(v_pos+vec3(1.f))/2.f;
-    f_color=vec4(color,1.f);
+    f_color=vec4(1.f);
 }
