@@ -86,7 +86,7 @@ export class ClipPlaneStencilLayer extends Layer {
       this.gl.colorMask(false, false, false, false);
       this.gl.depthMask(true);
       this.gl.enable(this.gl.STENCIL_TEST);
-      this.gl.stencilFunc(this.gl.ALWAYS, 0, 0xFF);
+      this.gl.stencilFunc(this.gl.ALWAYS, 1, 0xFF);
       this.gl.stencilMask(0xFF); // allow write value, keep value that inputs
       this.gl.stencilOp(this.gl.INCR_WRAP, this.gl.INCR_WRAP, this.gl.INCR_WRAP);
       this.pipeline
@@ -131,11 +131,11 @@ export class ClipPlaneStencilLayer extends Layer {
         .unbind()
 
       this.gl.disable(this.gl.STENCIL_TEST);
-      this.planePipeline
-        .bind(this.window)
-        .update(this.control.projectMatrix, this.control.viewMatrix, vec3.fromValues(1, 1, 1))
-        .render()
-        .unbind()
+      // this.planePipeline
+      //   .bind(this.window)
+      //   .update(this.control.projectMatrix, this.control.viewMatrix, vec3.fromValues(1, 1, 1))
+      //   .render()
+      //   .unbind()
     }
   }
 }

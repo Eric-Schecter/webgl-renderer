@@ -23,11 +23,11 @@ export class ClipPlaneDemo extends Application {
     this.control = new OrbitControl(this.window.canvas, this.camera, target, up, 4, Math.PI / 3, Math.PI / 8);
     this.control.updateViewMatrix();
 
-    const clipPlaneLayer = new ClipPlaneLayer(this.gl, this.window, this.control)
-    this.layers.push(clipPlaneLayer);
-
-    // const clipPlaneLayer = new ClipPlaneStencilLayer(this.gl, this.window, this.control)
+    // const clipPlaneLayer = new ClipPlaneLayer(this.gl, this.window, this.control)
     // this.layers.push(clipPlaneLayer);
+
+    const clipPlaneLayer = new ClipPlaneStencilLayer(this.gl, this.window, this.control)
+    this.layers.push(clipPlaneLayer);
 
     new GLTFLoader().load('models/DamagedHelmet/DamagedHelmet.gltf')
       .then(gltf => {
