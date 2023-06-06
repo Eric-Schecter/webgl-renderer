@@ -6,10 +6,11 @@ import { ModelShader, PlaneShader, ProjectShader } from "../shaders";
 import { PlaneGeometry } from "../plane";
 import { GUIHandler, OptionFolder } from "../../../gui";
 import { ModelPipeline, ProjectPipeline, PlanePipeline } from "../pipelines";
+import { Mesh } from "../mesh";
 // import { BoxGeometry } from "../../lights/geometry";
 
 export class ClipPlaneLayer extends Layer {
-  public mesh?: PlaneMesh;
+  public mesh?: Mesh;
   private needRenderPlane = false;
   private camera: OrthographicCamera;
   private renderpass: ColorDepthRenderPass;

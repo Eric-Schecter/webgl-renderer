@@ -21,4 +21,6 @@ export abstract class AbstractMesh extends Object3D {
   public unbind() {
     this.gl.bindVertexArray(null);
   }
+
+  public abstract dispose(): void;
 }
