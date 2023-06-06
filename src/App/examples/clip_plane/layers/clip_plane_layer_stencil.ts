@@ -1,5 +1,5 @@
 import { mat4, vec3, vec4 } from "gl-matrix";
-import { Layer, WGLWindow, OrbitControl, OrthographicCamera, ColorDepthRenderPass } from "../../../gl";
+import { Layer, WGLWindow, OrbitControl, ColorDepthRenderPass } from "../../../gl";
 import { ModelVS, ModelFS, PlaneVS, PlaneFS, ProjectVS, ProjectFS } from '../shader_source';
 import { ModelShader, PlaneShader, ProjectShader } from "../shaders";
 import { PlaneGeometry } from "../plane";
@@ -7,7 +7,6 @@ import { GUIHandler, OptionFolder } from "../../../gui";
 import { ModelPipeline, ProjectPipeline, PlanePipeline } from "../pipelines";
 import { PlaneMesh } from "../plane_mesh";
 import { Mesh } from "../mesh";
-// import { BoxGeometry } from "../../lights/geometry";
 
 export class ClipPlaneStencilLayer extends Layer {
   public mesh?: Mesh;
@@ -32,9 +31,6 @@ export class ClipPlaneStencilLayer extends Layer {
 
     const folder = GUIHandler.getInstance().createFolder('mode', OptionFolder);
     folder.addItem('render plane', () => this.needRenderPlane = !this.needRenderPlane, this.needRenderPlane);
-
-    // const { vertices: v, indices: i, uvs: u } = new BoxGeometry(0.5, 0.5, 0.5);
-    // this.mesh = new Mesh(this.gl, v, i, u);
 
   }
 

@@ -7,7 +7,6 @@ import { PlaneGeometry } from "../plane";
 import { GUIHandler, OptionFolder } from "../../../gui";
 import { ModelPipeline, ProjectPipeline, PlanePipeline } from "../pipelines";
 import { Mesh } from "../mesh";
-// import { BoxGeometry } from "../../lights/geometry";
 
 export class ClipPlaneLayer extends Layer {
   public mesh?: Mesh;
@@ -34,9 +33,6 @@ export class ClipPlaneLayer extends Layer {
 
     const folder = GUIHandler.getInstance().createFolder('mode', OptionFolder);
     folder.addItem('render plane', () => this.needRenderPlane = !this.needRenderPlane, this.needRenderPlane);
-
-    // const { vertices: v, indices: i, uvs: u } = new BoxGeometry(0.5, 0.5, 0.5);
-    // this.mesh = new Mesh(this.gl, v, i, u);
   }
 
   public render(time: number) {
