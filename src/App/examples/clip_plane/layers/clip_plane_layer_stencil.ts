@@ -6,12 +6,12 @@ import { PlaneGeometry } from "../plane";
 import { GUIHandler, OptionFolder } from "../../../gui";
 import { ModelPipeline, ProjectPipeline, PlanePipeline } from "../pipelines";
 import { PlaneMesh } from "../plane_mesh";
+import { Mesh } from "../mesh";
 // import { BoxGeometry } from "../../lights/geometry";
 
 export class ClipPlaneStencilLayer extends Layer {
-  public mesh?: PlaneMesh
+  public mesh?: Mesh;
   private needRenderPlane = false;
-  private camera: OrthographicCamera;
   private renderpass: ColorDepthRenderPass;
   private pipeline: ModelPipeline;
   private projectPipeline: ProjectPipeline;
@@ -24,7 +24,6 @@ export class ClipPlaneStencilLayer extends Layer {
     const planeShader = new PlaneShader(this.gl, PlaneVS, PlaneFS);
     const modelShader = new ModelShader(this.gl, ModelVS, ModelFS);
     const projectShader = new ProjectShader(this.gl, ProjectVS, ProjectFS);
-    this.camera = new OrthographicCamera();
     this.renderpass = new ColorDepthRenderPass(gl, width, height);
 
     this.pipeline = new ModelPipeline(gl).setShader(modelShader);
@@ -44,8 +43,28 @@ export class ClipPlaneStencilLayer extends Layer {
       return;
     }
 
-    const scale = 5;
-    const modelMatrix = mat4.scale(mat4.create(), mat4.create(), vec3.fromValues(scale, scale, scale));
+    const scale = 1 / 5000;
+    const tranlateMatrix = mat4.translate(
+      mat4.create(),
+      mat4.create(),
+      vec3.scale(
+        vec3.create(),
+        this.mesh.boundingBox.center,
+        -1,
+      )
+    );
+    const scaleMatrix = mat4.scale(
+      mat4.create(),
+      mat4.create(),
+      vec3.fromValues(scale, scale, scale)
+    );
+    const rotateMatrix = mat4.rotate(
+      mat4.create(),
+      mat4.create(),
+      time,
+      vec3.fromValues(0, 1, 0)
+    )
+    const modelMatrix = mat4.multiply(mat4.create(), rotateMatrix, mat4.multiply(mat4.create(), scaleMatrix, tranlateMatrix));
 
     if (!this.needRenderPlane) {
       // render opaque objects
@@ -58,11 +77,6 @@ export class ClipPlaneStencilLayer extends Layer {
         .render()
         .unbind();
     } else {
-      // set camere
-      const focus = vec3.create();
-      this.camera.pos = vec3.fromValues(0, 0, 1);
-      this.camera.setViewMatrix(focus).setProjection(3, 3, 1, 0.01, 10);
-
       // render model
 
       const a = 0;
@@ -71,13 +85,13 @@ export class ClipPlaneStencilLayer extends Layer {
       const d = 0;
       const plane = vec4.fromValues(a, b, c, d);
 
-      // this.pipeline
-      //   .setMesh(this.mesh)
-      //   .bind(this.window)
-      //   .clear()
-      //   .update(this.camera.projectMatrix, this.camera.viewMatrix, this.needRenderPlane, plane)
-      //   .render()
-      //   .unbind();
+      this.pipeline
+        .setMesh(this.mesh)
+        .bind(this.window)
+        .clear()
+        .update(this.control.projectMatrix, this.control.viewMatrix, modelMatrix, this.needRenderPlane, plane)
+        .render()
+        .unbind();
 
       // render opaque objects
       // render model

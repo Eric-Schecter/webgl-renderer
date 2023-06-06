@@ -1,6 +1,7 @@
-import { AbstractMesh } from "../../gl";
+import { AbstractMesh, BoundingBox } from "../../gl";
 
 export class Mesh extends AbstractMesh {
+  public boundingBox = new BoundingBox();
   private vbo: WebGLBuffer;
   private vboNormal: WebGLBuffer;
   private ibo: WebGLBuffer;
@@ -18,7 +19,7 @@ export class Mesh extends AbstractMesh {
 
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vbo);
     this.gl.bufferData(this.gl.ARRAY_BUFFER, positions, this.gl.STATIC_DRAW);
-    this.gl.vertexAttribPointer(0, 3, this.gl.UNSIGNED_SHORT, true, 4 * 2, 0);
+    this.gl.vertexAttribPointer(0, 3, this.gl.UNSIGNED_SHORT, false, 4 * 2, 0);
     this.gl.enableVertexAttribArray(0);
 
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vboNormal);
@@ -31,6 +32,8 @@ export class Mesh extends AbstractMesh {
 
     // reset
     this.gl.bindVertexArray(null);
+
+    this.boundingBox.setFromArray(Array.from(positions));
   }
 
   public render() {

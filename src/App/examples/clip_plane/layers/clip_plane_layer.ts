@@ -19,7 +19,7 @@ export class ClipPlaneLayer extends Layer {
   private planePipeline: PlanePipeline;
   constructor(private gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl) {
     super(window);
-    const { vertices, indices, uvs } = new PlaneGeometry(3, 3, 1, 1);
+    const { vertices, indices, uvs } = new PlaneGeometry(5, 5, 1, 1);
     const { width, height } = window;
     const plane = new PlaneMesh(this.gl, vertices, indices, uvs);
     const planeShader = new PlaneShader(this.gl, PlaneVS, PlaneFS);
@@ -44,8 +44,28 @@ export class ClipPlaneLayer extends Layer {
       return;
     }
 
-    const scale = 5;
-    const modelMatrix = mat4.scale(mat4.create(), mat4.create(), vec3.fromValues(scale, scale, scale));
+    const scale = 1 / 5000;
+    const tranlateMatrix = mat4.translate(
+      mat4.create(),
+      mat4.create(),
+      vec3.scale(
+        vec3.create(),
+        this.mesh.boundingBox.center,
+        -1,
+      )
+    );
+    const scaleMatrix = mat4.scale(
+      mat4.create(),
+      mat4.create(),
+      vec3.fromValues(scale, scale, scale)
+    );
+    const rotateMatrix = mat4.rotate(
+      mat4.create(),
+      mat4.create(),
+      time,
+      vec3.fromValues(0, 1, 0)
+    )
+    const modelMatrix = mat4.multiply(mat4.create(), rotateMatrix, mat4.multiply(mat4.create(), scaleMatrix, tranlateMatrix));
 
     if (!this.needRenderPlane) {
       // render opaque objects
@@ -61,7 +81,7 @@ export class ClipPlaneLayer extends Layer {
       // set camere
       const focus = vec3.create();
       this.camera.pos = vec3.fromValues(0, 0, 1);
-      this.camera.setViewMatrix(focus).setProjection(3, 3, 1, 0.01, 10);
+      this.camera.setViewMatrix(focus).setProjection(5, 5, 1, 0.01, 10);
 
       // render model
 
