@@ -1,6 +1,6 @@
 import { mat4, vec3, vec4 } from "gl-matrix";
 import { Layer, WGLWindow, OrbitControl, OrthographicCamera, ColorDepthRenderPass } from "../../../gl";
-import { Mesh } from "../mesh";
+import { PlaneMesh } from "../plane_mesh";
 import { ModelVS, ModelFS, PlaneVS, PlaneFS, ProjectVS, ProjectFS } from '../shader_source';
 import { ModelShader, PlaneShader, ProjectShader } from "../shaders";
 import { PlaneGeometry } from "../plane";
@@ -9,7 +9,7 @@ import { ModelPipeline, ProjectPipeline, PlanePipeline } from "../pipelines";
 // import { BoxGeometry } from "../../lights/geometry";
 
 export class ClipPlaneLayer extends Layer {
-  public mesh?: Mesh;
+  public mesh?: PlaneMesh;
   private needRenderPlane = false;
   private camera: OrthographicCamera;
   private renderpass: ColorDepthRenderPass;
@@ -20,7 +20,7 @@ export class ClipPlaneLayer extends Layer {
     super(window);
     const { vertices, indices, uvs } = new PlaneGeometry(3, 3, 1, 1);
     const { width, height } = window;
-    const plane = new Mesh(this.gl, vertices, indices, uvs);
+    const plane = new PlaneMesh(this.gl, vertices, indices, uvs);
     const planeShader = new PlaneShader(this.gl, PlaneVS, PlaneFS);
     const modelShader = new ModelShader(this.gl, ModelVS, ModelFS);
     const projectShader = new ProjectShader(this.gl, ProjectVS, ProjectFS);
@@ -43,7 +43,8 @@ export class ClipPlaneLayer extends Layer {
       return;
     }
 
-    const modelMatrix = mat4.create();
+    const scale = 5;
+    const modelMatrix = mat4.scale(mat4.create(), mat4.create(), vec3.fromValues(scale, scale, scale));
 
     if (!this.needRenderPlane) {
       // render opaque objects
@@ -80,12 +81,12 @@ export class ClipPlaneLayer extends Layer {
 
       // render opaque objects
       // render model
-      // this.pipeline
-      //   .setRenderPass()
-      //   .clear()
-      //   .update(this.control.projectMatrix, this.control.viewMatrix, modelMatrix, this.needRenderPlane, plane)
-      //   .render()
-      //   .unbind();
+      this.pipeline
+        .setRenderPass()
+        .clear()
+        .update(this.control.projectMatrix, this.control.viewMatrix, modelMatrix, this.needRenderPlane, plane)
+        .render()
+        .unbind();
 
       // refer to https://www.cuemath.com/geometry/distance-between-point-and-plane/
       const { pos } = this.camera;
