@@ -1,7 +1,7 @@
 import { vec3 } from "gl-matrix";
 import { Application } from "../../gl";
 import { OrbitControl } from "../../gl/orbit_control";
-import { ClipPlaneLayer, ClipPlaneStencilLayer } from "./layers";
+import { ClipPlaneStencilLayer } from "./layers";
 import { Mesh } from "./mesh";
 
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
