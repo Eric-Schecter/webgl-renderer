@@ -1,12 +1,11 @@
 import { vec3 } from "gl-matrix";
-import { Application } from "../../gl";
-import { OrbitControl } from "../../gl/orbit_control";
-import { ClipPlaneStencilLayer } from "./layers";
-import { Mesh } from "./mesh";
-
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import * as THREE from 'three';
+import { Application, TypedArray } from "../../gl";
+import { OrbitControl } from "../../gl/orbit_control";
+import { ClipPlaneStencilLayer } from "./layers";
+import { LargeMesh } from "./mesh";
 
 export class ClipPlaneDemo extends Application {
   private control: OrbitControl;
@@ -34,17 +33,30 @@ export class ClipPlaneDemo extends Application {
     const loader = new GLTFLoader();
     loader.setMeshoptDecoder(MeshoptDecoder);
 
-    loader.loadAsync('models/internal_combustion_engine/model.gltf')
+    // const src = 'models/DamagedHelmet/DamagedHelmet.gltf';
+    // loader.loadAsync(src)
+    //   .then(gltf => {
+    //     const { attributes: { position, normal }, index } = (gltf.scene.children[0] as THREE.Mesh).geometry;
+    //     if (index)
+    //       clipPlaneLayer.mesh = new HelmetMesh(
+    //         this.gl,
+    //         position.array as TypedArray,
+    //         normal.array as TypedArray,
+    //         index.array as TypedArray
+    //       );
+    //   })
+
+    const src = 'models/internal_combustion_engine/model.gltf';
+    loader.loadAsync(src)
       .then(gltf => {
         const { attributes: { position, normal }, index } = (gltf.scene.children[0] as THREE.Mesh).geometry;
         if (index)
-          clipPlaneLayer.mesh = new Mesh(
+          clipPlaneLayer.mesh = new LargeMesh(
             this.gl,
-            position.array as Uint16Array,
-            normal.array as Int8Array,
-            index.array as Uint32Array
+            position.array as TypedArray,
+            normal.array as TypedArray,
+            index.array as TypedArray
           );
       })
-
   }
 }

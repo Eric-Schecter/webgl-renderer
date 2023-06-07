@@ -1,37 +1,29 @@
 import { mat4, vec3, vec4 } from "gl-matrix";
-import { Layer, WGLWindow, OrbitControl, ColorDepthRenderPass } from "../../../gl";
-import { ModelVS, ModelFS, PlaneVS, PlaneFS, ProjectVS, ProjectFS } from '../shader_source';
-import { ModelShader, PlaneShader, ProjectShader } from "../shaders";
-import { PlaneGeometry } from "../plane";
+import { Layer, WGLWindow, OrbitControl } from "../../../gl";
+import { ModelVS, ModelFS, PlaneVS, PlaneFS } from '../shader_source';
+import { ModelShader, PlaneShader } from "../shaders";
+import { PlaneGeometry } from "../geometry";
 import { GUIHandler, OptionFolder } from "../../../gui";
-import { ModelPipeline, ProjectPipeline, PlanePipeline } from "../pipelines";
-import { PlaneMesh } from "../plane_mesh";
-import { Mesh } from "../mesh";
+import { ModelPipeline, PlanePipeline } from "../pipelines";
+import { PlaneMesh, LargeMesh, HelmetMesh } from "../mesh";
 
 export class ClipPlaneStencilLayer extends Layer {
-  public mesh?: Mesh;
+  public mesh?: LargeMesh | HelmetMesh;
   private needRenderPlane = false;
-  private renderpass: ColorDepthRenderPass;
   private pipeline: ModelPipeline;
-  private projectPipeline: ProjectPipeline;
   private planePipeline: PlanePipeline;
   constructor(private gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl) {
     super(window);
     const { vertices, indices, uvs } = new PlaneGeometry(3, 3, 1, 1);
-    const { width, height } = window;
     const plane = new PlaneMesh(this.gl, vertices, indices, uvs);
     const planeShader = new PlaneShader(this.gl, PlaneVS, PlaneFS);
     const modelShader = new ModelShader(this.gl, ModelVS, ModelFS);
-    const projectShader = new ProjectShader(this.gl, ProjectVS, ProjectFS);
-    this.renderpass = new ColorDepthRenderPass(gl, width, height);
 
     this.pipeline = new ModelPipeline(gl).setShader(modelShader);
-    this.projectPipeline = new ProjectPipeline(gl).setMesh(plane).setShader(projectShader);
     this.planePipeline = new PlanePipeline(gl).setMesh(plane).setShader(planeShader);
 
     const folder = GUIHandler.getInstance().createFolder('mode', OptionFolder);
     folder.addItem('render plane', () => this.needRenderPlane = !this.needRenderPlane, this.needRenderPlane);
-
   }
 
   public render(time: number) {
@@ -39,6 +31,7 @@ export class ClipPlaneStencilLayer extends Layer {
       return;
     }
 
+    // const scale = 1;
     const scale = 1 / 5000;
     const tranlateMatrix = mat4.translate(
       mat4.create(),

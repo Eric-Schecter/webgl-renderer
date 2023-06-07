@@ -18,11 +18,8 @@ mat2 rotate(float angle)
 }
 
 void main(){
-    vec2 uv=v_uv*rotate(-45.);
-    float temp=fract(uv.y*60.);
-    if(temp<1.&&temp>.5){
-        f_color=vec4(vec3(0.),1.);
-    }else{
-        f_color=vec4(1.);
-    }
+    vec2 uv=v_uv*rotate(-45.)*60.;
+    float ratio=smoothstep(.45,.55,fract(uv.y));
+    ratio+=1.-smoothstep(.45,.55,fract(uv.y+.45));
+    f_color=vec4(vec3(ratio),1.);
 }

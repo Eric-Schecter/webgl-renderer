@@ -1,11 +1,10 @@
 import { mat4, vec3 } from "gl-matrix";
-import { ColorDepthRenderPass, Pipeline, WGLWindow } from "../../../gl";
-import { Mesh } from "../mesh";
+import { ColorDepthRenderPass, Pipeline, WGLWindow, AbstractMesh } from "../../../gl";
 import { PlaneShader } from "../shaders";
 
 export class PlanePipeline extends Pipeline {
   protected shader?: PlaneShader;
-  protected mesh?: Mesh;
+  protected mesh?: AbstractMesh;
   protected renderpass?: ColorDepthRenderPass | undefined;
   constructor(private gl: WebGL2RenderingContext) {
     super();

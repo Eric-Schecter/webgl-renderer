@@ -1,4 +1,4 @@
-import { AbstractMesh } from "../../gl";
+import { AbstractMesh } from "../../../gl";
 
 export class PlaneMesh extends AbstractMesh {
   private vbo: WebGLBuffer;

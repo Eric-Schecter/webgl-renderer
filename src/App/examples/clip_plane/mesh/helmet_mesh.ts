@@ -1,11 +1,11 @@
-import { AbstractMesh, BoundingBox } from "../../gl";
+import { AbstractMesh, BoundingBox, TypedArray } from "../../../gl";
 
-export class Mesh extends AbstractMesh {
+export class HelmetMesh extends AbstractMesh {
   public boundingBox = new BoundingBox();
   private vbo: WebGLBuffer;
   private vboNormal: WebGLBuffer;
   private ibo: WebGLBuffer;
-  constructor(gl: WebGL2RenderingContext, positions: Uint16Array, normals: Int8Array, indices: Uint32Array) {
+  constructor(gl: WebGL2RenderingContext, positions: TypedArray, normals: TypedArray, indices: TypedArray) {
     super(gl);
     this.size = indices.length;
 
@@ -16,15 +16,15 @@ export class Mesh extends AbstractMesh {
     this.ibo = this.gl.createBuffer() as WebGLBuffer;
     // bind
     this.gl.bindVertexArray(this.vao);
-
+    
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vbo);
     this.gl.bufferData(this.gl.ARRAY_BUFFER, positions, this.gl.STATIC_DRAW);
-    this.gl.vertexAttribPointer(0, 3, this.gl.UNSIGNED_SHORT, false, 4 * 2, 0);
+    this.gl.vertexAttribPointer(0, 3, this.gl.FLOAT, false, 4 * 3, 0);
     this.gl.enableVertexAttribArray(0);
 
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vboNormal);
     this.gl.bufferData(this.gl.ARRAY_BUFFER, normals, this.gl.STATIC_DRAW);
-    this.gl.vertexAttribPointer(1, 3, this.gl.BYTE, true, 4, 0);
+    this.gl.vertexAttribPointer(1, 3, this.gl.FLOAT, true, 4 * 3, 0);
     this.gl.enableVertexAttribArray(1);
 
     this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.ibo);
@@ -37,7 +37,7 @@ export class Mesh extends AbstractMesh {
   }
 
   public render() {
-    this.gl.drawElements(this.gl.TRIANGLES, this.size, this.gl.UNSIGNED_INT, 0);
+    this.gl.drawElements(this.gl.TRIANGLES, this.size, this.gl.UNSIGNED_SHORT, 0);
     return this;
   }
 
