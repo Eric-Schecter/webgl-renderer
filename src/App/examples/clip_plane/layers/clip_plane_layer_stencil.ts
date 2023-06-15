@@ -66,14 +66,14 @@ export class ClipPlaneStencilLayer extends Layer {
         .render()
         .unbind();
     } else {
-      // render model
-
+      // define clip plane
       const a = 0;
       const b = 0;
       const c = 1;
       const d = 0;
       const plane = vec4.fromValues(a, b, c, d);
 
+      // render model and clip
       this.pipeline
         .setMesh(this.mesh)
         .bind(this.window)
@@ -82,47 +82,32 @@ export class ClipPlaneStencilLayer extends Layer {
         .render()
         .unbind();
 
-      // render opaque objects
-      // render model
-      this.gl.enable(this.gl.CULL_FACE);
-      this.gl.cullFace(this.gl.BACK);
-      // this.gl.colorMask(true, true, true, true);
-      this.gl.colorMask(false, false, false, false);
-      this.gl.depthMask(true);
       this.gl.enable(this.gl.STENCIL_TEST);
       this.gl.stencilFunc(this.gl.ALWAYS, 1, 0xFF);
       this.gl.stencilMask(0xFF); // allow write value, keep value that inputs
+
+      // render front face and +1 if stencil test pass
+      this.gl.enable(this.gl.CULL_FACE);
+      this.gl.cullFace(this.gl.BACK);
+      this.gl.colorMask(false, false, false, false);
+      this.gl.depthMask(true);
       this.gl.stencilOp(this.gl.INCR_WRAP, this.gl.INCR_WRAP, this.gl.INCR_WRAP);
       this.pipeline
         .setMesh(this.mesh)
         .clear()
         .update(this.control.projectMatrix, this.control.viewMatrix, modelMatrix, this.needRenderPlane, plane)
         .render()
-      // .unbind();
 
+      // render back face and -1 if stencil test pass
       this.gl.cullFace(this.gl.FRONT);
-      // this.gl.colorMask(true, true, true, true);
       this.gl.colorMask(false, false, false, false);
       this.gl.depthMask(false);
       this.gl.stencilOp(this.gl.DECR_WRAP, this.gl.DECR_WRAP, this.gl.DECR_WRAP);
       this.pipeline
-        // .update(this.control.projectMatrix, this.control.viewMatrix, this.needRenderPlane, plane)
         .render()
         .unbind();
 
-      // // refer to https://www.cuemath.com/geometry/distance-between-point-and-plane/
-      // const { pos } = this.camera;
-      // const nearestDepth = Math.abs(a * pos[0] + b * pos[1] + c * pos[2]) / Math.sqrt(a ** 2 + b ** 2 + c ** 2);
-
-      // this.projectPipeline
-      //   .bind(this.window)
-      //   .update(this.control.projectMatrix, this.control.viewMatrix, nearestDepth, this.renderpass)
-      //   .render()
-      //   .unbind()
-
-      // // render transparent objects
-      // // render plane
-
+      // render cliped pattern when stencil not equal to 0
       this.gl.disable(this.gl.CULL_FACE);
       this.gl.colorMask(true, true, true, true);
       this.gl.depthMask(true);
@@ -135,6 +120,8 @@ export class ClipPlaneStencilLayer extends Layer {
         .unbind()
 
       this.gl.disable(this.gl.STENCIL_TEST);
+
+      //// render clip plane
       // this.planePipeline
       //   .bind(this.window)
       //   .update(this.control.projectMatrix, this.control.viewMatrix, vec3.fromValues(1, 1, 1))
