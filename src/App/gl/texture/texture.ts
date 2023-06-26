@@ -13,6 +13,9 @@ export class Texture implements Disposable {
     this.gl.activeTexture(this.gl.TEXTURE0 + id);
     this.gl.bindTexture(this.gl.TEXTURE_2D, this.m_id);
   }
+  public unbind = () => {
+    this.gl.bindTexture(this.gl.TEXTURE_2D, 0);
+  }
   public resize = (width: number, height: number, internalformat: number, format: number, type: number) => {
     this.gl.texImage2D(this.gl.TEXTURE_2D, 0, internalformat, width, height, 0, format, type, null);
     this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.NEAREST);

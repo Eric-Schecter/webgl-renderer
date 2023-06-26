@@ -8,15 +8,17 @@ import { ModelDepthShader, ModelDepthWireframeShader } from "../shaders";
 import { WireframePipeline } from "../pipelines";
 import { RenderPipeline } from "../pipelines/render_pipeline";
 import { ModelDepthPipeline } from "../pipelines/model_depth_pipeline";
+import { LineMesh } from "../lineMesh";
 
 export class WireframeDepthLayer extends Layer {
   public mesh?: Mesh;
+  public lineMesh?: LineMesh;
   private renderpass: DepthRenderPass;
   private renderpassSurface: DepthRenderPass;
   private pipeline: ModelDepthPipeline;
   private wireframePipeline: WireframePipeline;
   private renderPipeline: RenderPipeline;
-  constructor(gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl, visible: boolean) {
+  constructor(private gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl, visible: boolean) {
     super(window, visible);
     const { width, height } = window;
     this.renderpass = new DepthRenderPass(gl, width, height);
@@ -35,11 +37,14 @@ export class WireframeDepthLayer extends Layer {
   }
 
   public render() {
-    if (!this.mesh) {
+    if (!this.mesh || !this.lineMesh) {
       return;
     }
     const { disMin, disMax } = this.getRenderRange(this.mesh);
     this.updateCamera(disMin, disMax);
+
+    this.gl.enable(this.gl.POLYGON_OFFSET_FILL);
+    this.gl.polygonOffset(1.0, 1.0);
 
     // render mesh to get surface depth
     this.pipeline
@@ -53,11 +58,11 @@ export class WireframeDepthLayer extends Layer {
 
     // render mesh
     this.wireframePipeline
-      .setMesh(this.mesh)
+      .setMesh(this.lineMesh)
       .setRenderPass(this.renderpass)
       .bind(this.window)
       .clear()
-      .update(this.control, this.window, this.renderpassSurface, true)
+      .update(this.control, this.window, this.renderpassSurface)
       .render()
       .unbind();
 

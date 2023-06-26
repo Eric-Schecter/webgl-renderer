@@ -94,7 +94,7 @@ export class ClipPlaneStencilLayer extends Layer {
       this.gl.stencilOp(this.gl.INCR_WRAP, this.gl.INCR_WRAP, this.gl.INCR_WRAP);
       this.pipeline
         .setMesh(this.mesh)
-        .clear()
+        .clear()    
         .update(this.control.projectMatrix, this.control.viewMatrix, modelMatrix, this.needRenderPlane, plane)
         .render()
 

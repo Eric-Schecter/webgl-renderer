@@ -4,9 +4,11 @@ import { Mesh } from "../mesh";
 import { ModelVS, ModelFS, ModelColorFS } from '../shader_source';
 import { ModelShader, ModelColorShader } from "../shaders";
 import { ModelColorPipeline, ModelPipeline } from "../pipelines";
+import { LineMesh } from "../lineMesh";
 
 export class TransparentLayer extends Layer {
   public mesh?: Mesh;
+  public lineMesh?: LineMesh;
   private pipeline: ModelPipeline;
   private colorPipeline: ModelColorPipeline;
   constructor(private gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl, visible: boolean) {
@@ -18,17 +20,17 @@ export class TransparentLayer extends Layer {
   }
 
   public render() {
-    if (!this.mesh) {
+    if (!this.mesh || !this.lineMesh) {
       return;
     }
 
-    const black = vec3.fromValues(0, 0, 0);
+    const white = vec3.fromValues(1, 1, 1);
 
     this.colorPipeline
-      .setMesh(this.mesh)
+      .setMesh(this.lineMesh)
       .bind(this.window)
       .clear()
-      .update(this.control, black, true)
+      .update(this.control, white)
       .render()
       .unbind();
 

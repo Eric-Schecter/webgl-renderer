@@ -1,11 +1,11 @@
 import { Layer, WGLWindow, OrbitControl } from "../../../gl";
-import { Mesh } from "../mesh";
 import { ModelVS, ModelFS } from '../shader_source';
 import { ModelShader } from "../shaders";
 import { ModelPipeline } from "../pipelines";
+import { LineMesh } from "../lineMesh";
 
 export class WireframeLayer extends Layer {
-  public mesh?: Mesh;
+  public mesh?: LineMesh;
   private pipeline: ModelPipeline;
   constructor(gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl, visible: boolean) {
     super(window, visible);
@@ -22,7 +22,7 @@ export class WireframeLayer extends Layer {
       .setMesh(this.mesh)
       .bind(this.window)
       .clear()
-      .update(this.control, 1, true)
+      .update(this.control, 1)
       .render()
       .unbind();
   }

@@ -24,9 +24,10 @@ export class ModelLayer extends Layer {
     this.gl.clearColor(0, 0, 0, 1);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT);
 
-    this.shader.bind();
-    this.shader.updateProjectMatrix(this.control.projectMatrix);
-    this.shader.updateViewMatrix(this.control.viewMatrix);
+    this.shader
+      .bind()
+      .updateProjectMatrix(this.control.projectMatrix)
+      .updateViewMatrix(this.control.viewMatrix);
 
     this.mesh.bind();
     this.mesh.render();

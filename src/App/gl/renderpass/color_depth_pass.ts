@@ -2,6 +2,7 @@ import { Disposable } from "../events";
 import { Texture } from "../texture";
 import { RenderPass } from "./renderpass";
 
+// todo: need to support resize
 export class ColorDepthRenderPass extends RenderPass implements Disposable {
   private colorTexture: Texture;
   private depthTexture: Texture;

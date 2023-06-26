@@ -3,9 +3,11 @@ import { Mesh } from "../mesh";
 import { ModelVS, ModelFS } from '../shader_source';
 import { ModelShader } from "../shaders";
 import { ModelPipeline } from '../pipelines';
+import { LineMesh } from "../lineMesh";
 
 export class SurfaceWireframeLayer extends Layer {
   public mesh?: Mesh;
+  public lineMesh?: LineMesh;
   private pipeline: ModelPipeline;
   constructor(gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl, visible: boolean) {
     super(window, visible);
@@ -14,7 +16,7 @@ export class SurfaceWireframeLayer extends Layer {
   }
 
   public render() {
-    if (!this.mesh) {
+    if (!this.mesh || !this.lineMesh) {
       return;
     }
     this.pipeline
@@ -24,7 +26,8 @@ export class SurfaceWireframeLayer extends Layer {
       .update(this.control)
       .disableColorMask()
       .render()
-      .update(this.control, 1, true)
+      .setMesh(this.lineMesh)
+      .update(this.control, 1)
       .enableColorMask()
       .render()
       .unbind();

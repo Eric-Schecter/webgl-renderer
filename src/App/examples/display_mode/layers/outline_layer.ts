@@ -29,10 +29,10 @@ export class OutlineLayer extends Layer {
       .bind(this.window)
       .clear()
       .setStencilMask()
-      .update(this.control, 0, false, this.modelMatrix)
+      .update(this.control, 0, this.modelMatrix)
       .render()
       .compareStencilMask()
-      .update(this.control, 1, false, this.modelMatrixScaled)
+      .update(this.control, 1, this.modelMatrixScaled)
       .render()
       .unbind();
   }

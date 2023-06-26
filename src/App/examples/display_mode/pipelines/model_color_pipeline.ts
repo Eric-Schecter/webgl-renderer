@@ -1,11 +1,10 @@
 import { mat4, vec3 } from "gl-matrix";
-import { OrbitControl, Pipeline, WGLWindow } from "../../../gl";
-import { Mesh } from "../mesh";
+import { AbstractMesh, OrbitControl, Pipeline, WGLWindow } from "../../../gl";
 import { ModelColorShader } from "../shaders";
 
 export class ModelColorPipeline extends Pipeline {
   protected shader?: ModelColorShader;
-  protected mesh?: Mesh;
+  protected mesh?: AbstractMesh;
   constructor(private gl: WebGL2RenderingContext) {
     super();
   }
@@ -29,7 +28,7 @@ export class ModelColorPipeline extends Pipeline {
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
     return this;
   }
-  public update = (control: OrbitControl, color: vec3, isWireframe = false) => {
+  public update = (control: OrbitControl, color: vec3) => {
     if (!this.shader || !this.mesh) {
       return this;
     }
@@ -41,9 +40,7 @@ export class ModelColorPipeline extends Pipeline {
       .updateModelMatrix(mat4.create())
       .updateColor(color);
 
-    this.mesh
-      .bind()
-      .setWireframe(isWireframe);
+    this.mesh.bind();
 
     return this;
   }

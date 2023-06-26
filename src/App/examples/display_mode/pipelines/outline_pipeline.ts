@@ -43,7 +43,7 @@ export class OutlinePipeline extends Pipeline {
     }
     return this;
   }
-  public update = (control: OrbitControl, alpha = 1, isWireframe = false, modelMatrix: mat4) => {
+  public update = (control: OrbitControl, alpha = 1, modelMatrix: mat4) => {
     if (!this.shader || !this.mesh) {
       return this;
     }
@@ -56,8 +56,7 @@ export class OutlinePipeline extends Pipeline {
       .updateAlpha(alpha);
 
     this.mesh
-      .bind()
-      .setWireframe(isWireframe);
+      .bind();
 
     return this;
   }

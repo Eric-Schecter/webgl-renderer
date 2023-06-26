@@ -26,7 +26,7 @@ export class WireframePipeline extends Pipeline {
     }
     return this;
   }
-  public update = (control: OrbitControl, window: WGLWindow, renderpass: DepthRenderPass, isWireframe = false) => {
+  public update = (control: OrbitControl, window: WGLWindow, renderpass: DepthRenderPass) => {
     if (!this.shader || !this.mesh) {
       return this;
     }
@@ -43,8 +43,7 @@ export class WireframePipeline extends Pipeline {
       .updateSize(vec2.fromValues(width, height));
 
     this.mesh
-      .bind()
-      .setWireframe(isWireframe);
+      .bind();
 
     return this;
   }

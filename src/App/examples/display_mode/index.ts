@@ -1,9 +1,10 @@
 import { vec3 } from "gl-matrix";
 import { Application, GLTFLoader, Layer, OrbitControl, PerspectiveCamera } from "../../gl";
 import { GUIHandler, RadioFolder } from "../../gui";
-import { EdgeLayer, ModelLayer, OutlineLayer, SurfaceWireframeLayer, TransparentLayer, WireframeDepthLayer, WireframeLayer } from "./layers";
+import { EdgeLayer, ModelLayer, OutlineLayer, SurfaceWireframeLayer, TransparentLayer, WireframeDashedV1Layer, WireframeDashedV2Layer, WireframeDepthDashedLayer, WireframeDepthLayer, WireframeLayer } from "./layers";
 import { Mesh } from "./mesh";
 import { MeshWireframeLayer } from "./layers";
+import { LineMesh } from "./lineMesh";
 
 export class DisplayModeDemo extends Application {
   private control: OrbitControl;
@@ -30,6 +31,9 @@ export class DisplayModeDemo extends Application {
     const outlineLayer = new OutlineLayer(this.gl, this.window, this.control, false);
     const wireframeDepthLayer = new WireframeDepthLayer(this.gl, this.window, this.control, false);
     const edgeLayer = new EdgeLayer(this.gl, this.window, this.control, false);
+    const wireframeDepthDashedLayer = new WireframeDepthDashedLayer(this.gl, this.window, this.control, false);
+    const wireframeDashedV1Layer = new WireframeDashedV1Layer(this.gl, this.window, this.control, false);
+    const wireframeDashedV2Layer = new WireframeDashedV2Layer(this.gl, this.window, this.control, false);
     this.layers.push(
       meshLayer,
       wireframeLayer,
@@ -39,20 +43,32 @@ export class DisplayModeDemo extends Application {
       outlineLayer,
       wireframeDepthLayer,
       edgeLayer,
+      wireframeDepthDashedLayer,
+      wireframeDashedV1Layer,
+      wireframeDashedV2Layer
     );
 
     new GLTFLoader().load('models/DamagedHelmet/DamagedHelmet.gltf')
       .then((model) => {
         const { positions, indices, normals } = model[0];
         const mesh = new Mesh(this.gl, Array.from(positions), Array.from(indices), Array.from(normals));
+        const lineMesh = new LineMesh(this.gl, Array.from(positions), Array.from(indices), Array.from(normals));
         meshLayer.mesh = mesh;
-        wireframeLayer.mesh = mesh;
+        wireframeLayer.mesh = lineMesh;
         meshWireframeLayer.mesh = mesh;
+        meshWireframeLayer.lineMesh = lineMesh;
         transparentLayer.mesh = mesh;
+        transparentLayer.lineMesh = lineMesh;
         surfaceWireframeLayer.mesh = mesh;
+        surfaceWireframeLayer.lineMesh = lineMesh;
         outlineLayer.mesh = mesh;
         wireframeDepthLayer.mesh = mesh;
+        wireframeDepthLayer.lineMesh = lineMesh;
         edgeLayer.mesh = mesh;
+        wireframeDepthDashedLayer.mesh = mesh;
+        wireframeDepthDashedLayer.lineMesh = lineMesh;
+        wireframeDashedV1Layer.lineMesh = lineMesh;
+        wireframeDashedV2Layer.lineMesh = lineMesh;
       })
 
     const disableOthers = (selectedLayer: Layer) => {
@@ -68,6 +84,9 @@ export class DisplayModeDemo extends Application {
     folder.addItem('outline - stencil', () => disableOthers(outlineLayer), false);
     folder.addItem('wireframe depth - framebuffer', () => disableOthers(wireframeDepthLayer), false);
     folder.addItem('edge detection', () => disableOthers(edgeLayer), false);
+    folder.addItem('wireframe dashed line - by flat vertex', () => disableOthers(wireframeDashedV1Layer), false);
+    folder.addItem('wireframe dashed line - by additional vertex', () => disableOthers(wireframeDashedV2Layer), false);
+    folder.addItem('wireframe depth dashed line', () => disableOthers(wireframeDepthDashedLayer), false);
   }
 
 }

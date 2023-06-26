@@ -6,3 +6,6 @@ export * from './transparent_layer';
 export * from './wireframe_depth_layer';
 export * from './wireframe_layer';
 export * from './mesh_wireframe_layer';
+export * from './wireframe_depth_dashed_layer';
+export * from './wireframe_dashed_v1_layer';
+export * from './wireframe_dashed_v2_layer';

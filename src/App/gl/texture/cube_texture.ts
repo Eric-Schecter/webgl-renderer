@@ -1,6 +1,8 @@
 import { Disposable } from "../events";
 import { throwErrorIfInvalid } from "../utils";
 
+// todo: add load function, support skybox
+// todo: reconstruct for considering texture class
 export class CubeTexture implements Disposable {
   private m_id: WebGLTexture;
   constructor(protected gl: WebGL2RenderingContext) {
@@ -9,6 +11,9 @@ export class CubeTexture implements Disposable {
   public bind = (id = 0) => {
     this.gl.activeTexture(this.gl.TEXTURE0 + id);
     this.gl.bindTexture(this.gl.TEXTURE_CUBE_MAP, this.m_id);
+  }
+  public unbind = () => {
+    this.gl.bindTexture(this.gl.TEXTURE_2D, 0);
   }
   public resize = (width: number, height: number, internalformat: number, format: number, type: number) => {
     for (let i = 0; i < 6; i++) {

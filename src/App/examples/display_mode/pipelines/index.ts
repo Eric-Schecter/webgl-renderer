@@ -3,3 +3,7 @@ export * from './model_color_pipeline';
 export * from './edge_pipeline';
 export * from './outline_pipeline';
 export * from './wireframe_pipeline';
+export * from './model_dashed_v1_pipeline';
+export * from './model_dashed_v2_pipeline';
+export * from './model_depth_pipeline';
+export * from './render_pipeline';

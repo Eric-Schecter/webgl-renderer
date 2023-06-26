@@ -30,9 +30,10 @@ export class TriangleLayer extends Layer {
 
     this.shader.bind();
 
-    this.mesh.bind();
-    this.mesh.render();
-    this.mesh.unbind();
+    this.mesh
+      .bind()
+      .render()
+      .unbind();
 
     this.shader.unbind();
   }

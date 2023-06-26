@@ -1,10 +1,10 @@
 import { mat4 } from "gl-matrix";
 import { ColorDepthRenderPass, OrbitControl, Pipeline, WGLWindow } from "../../../gl";
 import { Mesh } from "../mesh";
-import { ModelShader } from "../shaders";
+import { ModelDashedV1Shader } from "../shaders";
 
-export class ModelPipeline extends Pipeline {
-  protected shader?: ModelShader;
+export class ModelDashedV1Pipeline extends Pipeline {
+  protected shader?: ModelDashedV1Shader;
   protected mesh?: Mesh;
   protected renderpass?: ColorDepthRenderPass | undefined;
   constructor(private gl: WebGL2RenderingContext) {
@@ -22,7 +22,7 @@ export class ModelPipeline extends Pipeline {
     const { width, height } = window;
     this.gl.viewport(0, 0, width, height);
     this.gl.enable(this.gl.DEPTH_TEST);
-    this.gl.clearColor(0, 0, 0, 1);
+    this.gl.clearColor(1, 1, 1, 1);
     this.gl.enable(this.gl.BLEND);
     this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
     this.renderpass?.bind();
@@ -36,17 +36,22 @@ export class ModelPipeline extends Pipeline {
     }
     return this;
   }
-  public update = (control: OrbitControl, alpha = 1) => {
+  public update = (control: OrbitControl, window: WGLWindow, dashGap: number, dashSize: number, alpha = 1) => {
     if (!this.shader || !this.mesh) {
       return this;
     }
+
+    const { width, height } = window;
 
     this.shader
       .bind()
       .updateProjectMatrix(control.projectMatrix)
       .updateViewMatrix(control.viewMatrix)
       .updateModelMatrix(mat4.create())
-      .updateAlpha(alpha);
+      .updateAlpha(alpha)
+      .updateResolution(width, height)
+      .updateDashGap(dashGap)
+      .updateDashSize(dashSize);
 
     this.mesh.bind();
 

@@ -46,8 +46,7 @@ export class ModelDepthPipeline extends Pipeline {
       .updateModelMatrix(mat4.create())
 
     this.mesh
-      .bind()
-      .setWireframe(isWireframe);
+      .bind();
 
     return this;
   }
