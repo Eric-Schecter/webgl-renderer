@@ -3,6 +3,7 @@ import { ModelDashedlineV1VS, ModelDashedlineV1FS } from '../shader_source';
 import { ModelDashedV1Shader } from "../shaders";
 import { ModelDashedV1Pipeline } from "../pipelines";
 import { LineMesh } from "../lineMesh";
+import { vec3 } from "gl-matrix";
 
 export class WireframeDashedV1Layer extends Layer {
   public lineMesh?: LineMesh;
@@ -23,12 +24,13 @@ export class WireframeDashedV1Layer extends Layer {
 
     const dashGap = 10;
     const dashSize = 10;
+    const black = vec3.fromValues(0, 0, 0);
 
     this.modelPipeline
       .setMesh(this.lineMesh)
       .bind(this.window)
       .clear()
-      .update(this.control, this.window, dashGap, dashSize, 1)
+      .update(this.control, this.window, dashGap, dashSize, black, 1)
       .render()
       .unbind();
 

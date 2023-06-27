@@ -10,19 +10,11 @@ export class ModelDashedV2Pipeline extends Pipeline {
   constructor(private gl: WebGL2RenderingContext) {
     super();
   }
-  public disableColorMask = () => {
-    this.gl.colorMask(false, false, false, false);
-    return this;
-  }
-  public enableColorMask = () => {
-    this.gl.colorMask(true, true, true, true);
-    return this;
-  }
   public bind = (window: WGLWindow) => {
     const { width, height } = window;
     this.gl.viewport(0, 0, width, height);
     this.gl.enable(this.gl.DEPTH_TEST);
-    this.gl.clearColor(1, 1, 1, 1);
+    this.gl.clearColor(0, 0, 0, 1);
     this.gl.enable(this.gl.BLEND);
     this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
     this.renderpass?.bind();

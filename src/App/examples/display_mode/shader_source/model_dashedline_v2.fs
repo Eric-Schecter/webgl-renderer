@@ -15,6 +15,5 @@ void main(){
     if(mod(v_lineDistance,(u_dashSize+u_gapSize))>u_dashSize){
         discard;
     }
-    vec3 color=(v_pos+vec3(1.f))/2.f;
-    fColor=vec4(color,u_alpha);
+    fColor=vec4(vec3(1.f),u_alpha);
 }

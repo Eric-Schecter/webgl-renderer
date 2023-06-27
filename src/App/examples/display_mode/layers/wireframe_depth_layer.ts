@@ -57,6 +57,9 @@ export class WireframeDepthLayer extends Layer {
       .unbind();
 
     // render mesh
+    this.gl.enable(this.gl.POLYGON_OFFSET_FILL);
+    this.gl.polygonOffset(1.0, 1.0);
+
     this.wireframePipeline
       .setMesh(this.lineMesh)
       .setRenderPass(this.renderpass)
@@ -65,6 +68,8 @@ export class WireframeDepthLayer extends Layer {
       .update(this.control, this.window, this.renderpassSurface)
       .render()
       .unbind();
+
+    this.gl.disable(this.gl.POLYGON_OFFSET_FILL);
 
     // render buffer
     this.renderPipeline

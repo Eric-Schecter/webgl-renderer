@@ -1,4 +1,4 @@
-import { mat4 } from "gl-matrix";
+import { mat4, vec3 } from "gl-matrix";
 import { ColorDepthRenderPass, OrbitControl, Pipeline, WGLWindow } from "../../../gl";
 import { Mesh } from "../mesh";
 import { ModelDashedV1Shader } from "../shaders";
@@ -36,7 +36,7 @@ export class ModelDashedV1Pipeline extends Pipeline {
     }
     return this;
   }
-  public update = (control: OrbitControl, window: WGLWindow, dashGap: number, dashSize: number, alpha = 1) => {
+  public update = (control: OrbitControl, window: WGLWindow, dashGap: number, dashSize: number, color: vec3, alpha = 1) => {
     if (!this.shader || !this.mesh) {
       return this;
     }
@@ -51,7 +51,8 @@ export class ModelDashedV1Pipeline extends Pipeline {
       .updateAlpha(alpha)
       .updateResolution(width, height)
       .updateDashGap(dashGap)
-      .updateDashSize(dashSize);
+      .updateDashSize(dashSize)
+      .updateColor(color);
 
     this.mesh.bind();
 

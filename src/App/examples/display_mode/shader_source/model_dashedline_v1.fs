@@ -6,6 +6,7 @@ uniform float u_alpha;
 uniform vec2 u_resolution;
 uniform float u_dashSize;
 uniform float u_gapSize;
+uniform vec3 u_color;
 
 in vec3 v_pos;
 flat in vec3 v_startPos;
@@ -20,5 +21,5 @@ void main(){
         discard;
     }
     
-    fColor=vec4(vec3(0.),u_alpha);
+    fColor=vec4(u_color,u_alpha);
 }

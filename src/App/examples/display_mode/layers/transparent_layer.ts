@@ -26,6 +26,9 @@ export class TransparentLayer extends Layer {
 
     const white = vec3.fromValues(1, 1, 1);
 
+    this.gl.enable(this.gl.POLYGON_OFFSET_FILL);
+    this.gl.polygonOffset(1.0, 1.0);
+
     this.colorPipeline
       .setMesh(this.lineMesh)
       .bind(this.window)
@@ -33,6 +36,8 @@ export class TransparentLayer extends Layer {
       .update(this.control, white)
       .render()
       .unbind();
+
+    this.gl.disable(this.gl.POLYGON_OFFSET_FILL);
 
     this.pipeline
       .setMesh(this.mesh)

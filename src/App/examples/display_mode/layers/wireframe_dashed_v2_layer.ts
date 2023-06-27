@@ -21,8 +21,9 @@ export class WireframeDashedV2Layer extends Layer {
     this.gl.enable(this.gl.POLYGON_OFFSET_FILL);
     this.gl.polygonOffset(1.0, 1.0);
 
-    const dashGap = 10;
-    const dashSize = 10;
+    const dashGap = 1;
+    const dashSize = 1;
+
 
     this.modelPipeline
       .setMesh(this.lineMesh)

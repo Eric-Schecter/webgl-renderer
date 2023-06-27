@@ -5,7 +5,7 @@ import { ModelPipeline } from "../pipelines";
 import { LineMesh } from "../lineMesh";
 
 export class WireframeLayer extends Layer {
-  public mesh?: LineMesh;
+  public lineMesh?: LineMesh;
   private pipeline: ModelPipeline;
   constructor(gl: WebGL2RenderingContext, window: WGLWindow, private control: OrbitControl, visible: boolean) {
     super(window, visible);

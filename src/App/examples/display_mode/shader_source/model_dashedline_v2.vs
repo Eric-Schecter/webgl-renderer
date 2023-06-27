@@ -8,7 +8,7 @@ uniform mat4 u_projectMatrix;
 uniform mat4 u_viewMatrix;
 uniform mat4 u_modelMatrix;
 // uniform float scale;
-const float scale=1.f;
+const float scale=200.f;
 
 out vec3 v_pos;
 out float v_lineDistance;
