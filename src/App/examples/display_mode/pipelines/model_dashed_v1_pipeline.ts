@@ -6,7 +6,7 @@ import { ModelDashedV1Shader } from "../shaders";
 export class ModelDashedV1Pipeline extends Pipeline {
   protected shader?: ModelDashedV1Shader;
   protected mesh?: Mesh;
-  protected renderpass?: ColorDepthRenderPass | undefined;
+  protected renderpass?: ColorDepthRenderPass;
   constructor(private gl: WebGL2RenderingContext) {
     super();
   }

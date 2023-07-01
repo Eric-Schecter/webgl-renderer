@@ -1,22 +1,12 @@
 import { vec2 } from "gl-matrix";
-import { ColorDepthRenderPass, Pipeline, WGLWindow } from "../../../gl";
-import { ScreenPlane } from "../screen_plane";
-import { SobelShader } from "../shaders";
+import { ColorDepthStencilRenderPass, Pipeline, WGLWindow } from "../../../gl";
+import { ScreenPlane } from "../mesh";
+import { CopyShader } from "../shaders";
 
-export class EdgePipeline extends Pipeline {
-  protected shader?: SobelShader;
+export class CopyPipeline extends Pipeline {
+  protected shader?: CopyShader;
   protected mesh?: ScreenPlane;
-  protected renderpass?: ColorDepthRenderPass;
-  private hCoef = [
-    1.0, 0.0, -1.0,
-    2.0, 0.0, -2.0,
-    1.0, 0.0, -1.0
-  ];
-  private vCoef = [
-    1.0, 2.0, 1.0,
-    0.0, 0.0, 0.0,
-    -1.0, -2.0, -1.0
-  ];
+  protected renderpass?: ColorDepthStencilRenderPass;
   constructor(private gl: WebGL2RenderingContext) {
     super();
   }
@@ -25,6 +15,8 @@ export class EdgePipeline extends Pipeline {
     this.gl.viewport(0, 0, width, height);
     this.gl.enable(this.gl.DEPTH_TEST);
     this.gl.clearColor(0, 0, 0, 1);
+    this.gl.enable(this.gl.BLEND);
+    this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
     this.renderpass?.bind();
     return this;
   }
@@ -36,21 +28,23 @@ export class EdgePipeline extends Pipeline {
     }
     return this;
   }
-  public update = (window: WGLWindow, renderpass: ColorDepthRenderPass) => {
+  public update = (renderpassForPattern: ColorDepthStencilRenderPass,renderpassBorder: ColorDepthStencilRenderPass) => {
     if (!this.shader || !this.mesh) {
       return this;
     }
 
-    const { width, height } = window;
-    renderpass.bindForRead();
+    const { width, height } = renderpassForPattern;
 
-    this.shader.bind()
-      .updateTexture()
+    renderpassBorder.bindForRead(0);
+    renderpassForPattern.bindForRead(1);
+
+    this.shader
+      .bind()
       .updateSize(vec2.fromValues(width, height))
-      .updateHCoef(this.hCoef)
-      .updateVCoef(this.vCoef);
+      .updateBorderTexture(0)
+      .updatePatternTexture(1);
 
-    this.mesh.bind()
+    this.mesh.bind();
 
     return this;
   }
@@ -62,8 +56,5 @@ export class EdgePipeline extends Pipeline {
     this.mesh?.unbind();
     this.shader?.unbind();
     this.renderpass?.unbind();
-
-    this.gl.stencilMask(0xFF);
-    this.gl.disable(this.gl.STENCIL_TEST);
   }
 }

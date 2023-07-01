@@ -6,7 +6,7 @@ import { DepthShader } from "../shaders";
 export class RenderPipeline extends Pipeline {
   protected shader?: DepthShader;
   protected mesh?: Mesh;
-  protected renderpass?: ColorDepthRenderPass | undefined;
+  protected renderpass?: ColorDepthRenderPass;
   constructor(private gl: WebGL2RenderingContext) {
     super();
   }

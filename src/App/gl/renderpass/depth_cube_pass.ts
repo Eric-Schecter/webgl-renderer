@@ -46,4 +46,7 @@ export class DepthCubeRenderPass extends RenderPass implements Disposable {
     }
     return this;
   }
+  public clone = () => {
+    throw new Error('not implemented');
+  }
 }

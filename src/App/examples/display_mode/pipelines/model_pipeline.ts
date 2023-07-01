@@ -6,7 +6,7 @@ import { ModelShader } from "../shaders";
 export class ModelPipeline extends Pipeline {
   protected shader?: ModelShader;
   protected mesh?: Mesh;
-  protected renderpass?: ColorDepthRenderPass | undefined;
+  protected renderpass?: ColorDepthRenderPass;
   constructor(private gl: WebGL2RenderingContext) {
     super();
   }

@@ -4,9 +4,9 @@ import { RenderPass } from "./renderpass";
 // todo: texture manager to dispose
 export class DepthRenderPass extends RenderPass implements Disposable {
   private depthTexture: Texture;
-  constructor(gl: WebGL2RenderingContext, protected m_width: number, protected m_height: number) {
+  constructor(gl: WebGL2RenderingContext, protected m_width: number, protected m_height: number, depthTexture?: Texture) {
     super(gl);
-    this.depthTexture = new Texture(this.gl);
+    this.depthTexture = depthTexture || new Texture(this.gl);
 
     this.bind();
 
@@ -32,5 +32,9 @@ export class DepthRenderPass extends RenderPass implements Disposable {
   public clear = () => {
     this.gl.clear(this.gl.DEPTH_BUFFER_BIT);
     return this;
+  }
+  public clone = () => {
+    const depthTexture = this.depthTexture.clone();
+    return new DepthRenderPass(this.gl, this.m_width, this.m_height, depthTexture);
   }
 }

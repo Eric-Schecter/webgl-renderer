@@ -1,11 +1,11 @@
 import { mat4, vec4 } from "gl-matrix";
-import { ColorDepthRenderPass, Pipeline, WGLWindow, AbstractMesh } from "../../../gl";
+import { Pipeline, WGLWindow, AbstractMesh, ColorDepthStencilRenderPass } from "../../../gl";
 import { ModelShader } from "../shaders";
 
 export class ModelPipeline extends Pipeline {
   protected shader?: ModelShader;
   protected mesh?: AbstractMesh;
-  protected renderpass?: ColorDepthRenderPass | undefined;
+  protected renderpass?: ColorDepthStencilRenderPass;
   constructor(private gl: WebGL2RenderingContext) {
     super();
   }
@@ -21,7 +21,7 @@ export class ModelPipeline extends Pipeline {
     if (this.renderpass) {
       this.renderpass.clear();
     } else {
-      this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT | this.gl.STENCIL_BUFFER_BIT);
+      this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
     }
     return this;
   }

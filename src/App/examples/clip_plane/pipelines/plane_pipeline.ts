@@ -1,11 +1,11 @@
 import { mat4, vec3 } from "gl-matrix";
-import { ColorDepthRenderPass, Pipeline, WGLWindow, AbstractMesh } from "../../../gl";
+import { Pipeline, WGLWindow, AbstractMesh, ColorDepthStencilRenderPass } from "../../../gl";
 import { PlaneShader } from "../shaders";
 
 export class PlanePipeline extends Pipeline {
   protected shader?: PlaneShader;
   protected mesh?: AbstractMesh;
-  protected renderpass?: ColorDepthRenderPass | undefined;
+  protected renderpass?: ColorDepthStencilRenderPass;
   constructor(private gl: WebGL2RenderingContext) {
     super();
   }
@@ -27,7 +27,7 @@ export class PlanePipeline extends Pipeline {
     }
     return this;
   }
-  public update = (projectMatrix: mat4, viewMatrix: mat4, color: vec3) => {
+  public update = (projectMatrix: mat4, viewMatrix: mat4, modelMatrix: mat4, color: vec3) => {
     if (!this.shader || !this.mesh) {
       return this;
     }
@@ -36,6 +36,7 @@ export class PlanePipeline extends Pipeline {
       .bind()
       .updateProjectMatrix(projectMatrix)
       .updateViewMatrix(viewMatrix)
+      .updateModelMatrix(modelMatrix)
       .updateColor(color)
 
     this.mesh.bind()

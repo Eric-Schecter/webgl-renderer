@@ -3,6 +3,7 @@
 precision mediump float;
 
 const float PI=3.14;
+const float patternRatio = 60.;
 
 uniform vec3 u_color;
 
@@ -18,8 +19,8 @@ mat2 rotate(float angle)
 }
 
 void main(){
-    vec2 uv=v_uv*rotate(-45.)*60.;
+    vec2 uv=v_uv*rotate(-45.)*patternRatio;
     float ratio=smoothstep(.45,.55,fract(uv.y));
     ratio+=1.-smoothstep(.45,.55,fract(uv.y+.45));
-    f_color=vec4(vec3(ratio),1.);
+    f_color=vec4(vec3(ratio)*u_color,1.);
 }

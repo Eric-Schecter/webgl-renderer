@@ -3,13 +3,13 @@ import { Texture } from "../texture";
 import { RenderPass } from "./renderpass";
 
 // todo: need to support resize
-export class ColorDepthRenderPass extends RenderPass implements Disposable {
+export class ColorDepthStencilRenderPass extends RenderPass implements Disposable {
   private colorTexture: Texture;
-  private depthTexture: Texture;
-  constructor(protected gl: WebGL2RenderingContext, protected m_width: number, protected m_height: number, colorTexture?: Texture, depthTexture?: Texture) {
+  private depthStencilTexture: Texture;
+  constructor(protected gl: WebGL2RenderingContext, protected m_width: number, protected m_height: number) {
     super(gl);
-    this.colorTexture = colorTexture || new Texture(this.gl);
-    this.depthTexture = depthTexture || new Texture(this.gl);
+    this.colorTexture = new Texture(this.gl);
+    this.depthStencilTexture = new Texture(this.gl);
 
     this.bind();
 
@@ -17,9 +17,9 @@ export class ColorDepthRenderPass extends RenderPass implements Disposable {
     this.colorTexture.resize(m_width, m_height, this.gl.RGBA8, this.gl.RGBA, this.gl.UNSIGNED_BYTE);
     this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.COLOR_ATTACHMENT0, this.gl.TEXTURE_2D, this.colorTexture.id, 0);
 
-    this.depthTexture.bind();
-    this.depthTexture.resize(m_width, m_height, this.gl.DEPTH_COMPONENT32F, this.gl.DEPTH_COMPONENT, this.gl.FLOAT);
-    this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.DEPTH_ATTACHMENT, this.gl.TEXTURE_2D, this.depthTexture.id, 0);
+    this.depthStencilTexture.bind();
+    this.depthStencilTexture.resize(m_width, m_height, this.gl.DEPTH24_STENCIL8, this.gl.DEPTH_STENCIL, this.gl.UNSIGNED_INT_24_8);
+    this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.DEPTH_STENCIL_ATTACHMENT, this.gl.TEXTURE_2D, this.depthStencilTexture.id, 0);
 
     const status = this.gl.checkFramebufferStatus(this.gl.FRAMEBUFFER);
     if (status !== this.gl.FRAMEBUFFER_COMPLETE) {
@@ -30,19 +30,17 @@ export class ColorDepthRenderPass extends RenderPass implements Disposable {
   }
   public dispose = () => {
     this.gl.deleteFramebuffer(this.fbo);
-    this.colorTexture.dispose();
-    this.depthTexture.dispose();
   }
   public bindForRead = (id = 0, type = this.gl.COLOR_BUFFER_BIT) => {
     if (type === this.gl.COLOR_BUFFER_BIT) {
       this.colorTexture.bind(id);
     } else if (type === this.gl.DEPTH_BUFFER_BIT) {
-      this.depthTexture.bind(id);
+      this.depthStencilTexture.bind(id);
     }
     return this;
   }
   public clear = () => { // todo: need to modify to bind then clear
-    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT | this.gl.STENCIL_BUFFER_BIT);
     return this;
   }
   public copyToScreen = (width: number, height: number) => {
@@ -56,7 +54,12 @@ export class ColorDepthRenderPass extends RenderPass implements Disposable {
   }
   public clone = () => {
     const colorTexture = this.colorTexture.clone();
-    const depthTexture = this.depthTexture.clone();
-    return new ColorDepthRenderPass(this.gl, this.m_width, this.m_height, colorTexture, depthTexture);
+    const depthStencilTexture = this.depthStencilTexture.clone();
+    const renderpass = new ColorDepthStencilRenderPass(this.gl, this.m_width, this.m_height);
+    renderpass.colorTexture.dispose();
+    renderpass.depthStencilTexture.dispose();
+    renderpass.colorTexture = colorTexture;
+    renderpass.depthStencilTexture = depthStencilTexture;
+    return renderpass;
   }
 }

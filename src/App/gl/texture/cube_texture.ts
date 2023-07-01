@@ -13,7 +13,7 @@ export class CubeTexture implements Disposable {
     this.gl.bindTexture(this.gl.TEXTURE_CUBE_MAP, this.m_id);
   }
   public unbind = () => {
-    this.gl.bindTexture(this.gl.TEXTURE_2D, 0);
+    this.gl.bindTexture(this.gl.TEXTURE_2D, null);
   }
   public resize = (width: number, height: number, internalformat: number, format: number, type: number) => {
     for (let i = 0; i < 6; i++) {
@@ -24,6 +24,9 @@ export class CubeTexture implements Disposable {
     this.gl.texParameteri(this.gl.TEXTURE_CUBE_MAP, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE);
     this.gl.texParameteri(this.gl.TEXTURE_CUBE_MAP, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE);
     this.gl.texParameteri(this.gl.TEXTURE_CUBE_MAP, this.gl.TEXTURE_WRAP_R, this.gl.CLAMP_TO_EDGE);
+  }
+  public clone = () => {
+    throw new Error('not implemented');
   }
   public dispose = () => {
     this.gl.deleteTexture(this.id);
