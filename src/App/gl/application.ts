@@ -2,29 +2,9 @@ import { Lights } from '../examples/lights/lights';
 import { Camera } from './camera';
 import { PerspectiveCamera } from './camera';
 import { Clock } from './clock';
-import { Disposable, EventInfo, WGLEvents } from './events';
+import { Disposable, ResizeEvent, WGLEvents } from './events';
 import { Layer } from './layer';
 import { WGLWindow } from './window';
-
-class ResizeEvent implements Disposable {
-  constructor(private canvas: HTMLCanvasElement, private camera: Camera) {
-    WGLEvents.getInstance().register('resize', window, this.resize);
-    window.addEventListener('resize', () => WGLEvents.getInstance().dispatch(new EventInfo('resize', window)));
-  }
-
-  public dispose = () => {
-    WGLEvents.getInstance().unregister('resize', window, this.resize);
-    window.removeEventListener('resize', () => WGLEvents.getInstance().dispatch(new EventInfo('resize', window)));
-  };
-
-  private resize = () => {
-    if (this.canvas.width !== this.canvas.clientWidth || this.canvas.height !== this.canvas.clientHeight) {
-      this.canvas.width = this.canvas.clientWidth;
-      this.canvas.height = this.canvas.clientHeight;
-      this.camera.updateAspect(this.canvas.width / this.canvas.height);
-    }
-  }
-}
 
 export abstract class Application {
   protected window: WGLWindow;
@@ -37,6 +17,7 @@ export abstract class Application {
   constructor(protected container: HTMLElement, protected camera: Camera = new PerspectiveCamera()) {
     this.window = new WGLWindow(container);
     this.events.push(new ResizeEvent(this.window.canvas, this.camera));
+    // this.events.push(new CaptureEvent(this.window.canvas, this.render));
     this.clock.reset();
   }
 
@@ -56,28 +37,17 @@ export abstract class Application {
     return this.window.gl;
   }
 
+  private render = () => {
+    this.layers.forEach(layer => layer.visible && layer.render(this.clock.current));
+  }
+
   private mainLoop = () => {
     this.clock.update();
     this.window.update();
     WGLEvents.getInstance().update();
 
-    // solution 1:
-    // // state update
-    // objects.forEach(object=>object.update())
-    // lights.forEach(light=>light.update())
-    // // shadow pass
-    // lights.forEach(light=>light.render(objects)
-    // // render pass
-    // objects.forEach(object=>object.render(lights))
-
-    // solution 2:
-    // entities.forEach(entity=>entity.updateMovement())
-    // entities.forEach(entity=>entity.updateShadow())
-    // entities.forEach(entity=>entity.render())
-    
     this.lights.update(this.layers);
-    // this.layers.forEach(layer => layer.visible && layer.update(this.clock.current));
-    this.layers.forEach(layer => layer.visible && layer.render(this.clock.current));
+    this.render();
 
     this.timer = requestAnimationFrame(this.mainLoop);
   }
