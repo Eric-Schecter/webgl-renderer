@@ -6,6 +6,7 @@ import {
   AntiAliasingDemo,
   LightsDemo,
   ModelDemo,
+  // MultipleModelsDemo,
 } from './examples';
 
 export const routes = [
@@ -16,4 +17,5 @@ export const routes = [
   { path: '/texture', name: 'texture', app: TextureDemo },
   { path: '/anti-aliasing', name: 'anti-aliasing', app: AntiAliasingDemo },
   { path: '/lights', name: 'lights', app: LightsDemo },
+  // { path: '/multiple-models', name: 'multiple-models', app: MultipleModelsDemo },
 ]
